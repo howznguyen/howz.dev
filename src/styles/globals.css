@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    /* @apply bg-gray-200; */
+  }
+
+  :root {
+    --gap : 3.2rem;
+    --container-width : 1200px;
+    --content-width : 720px;
+    --tw-clr-primary-200: 219 255 0;
+    --tw-clr-primary-300: 0 232 135;
+    --tw-clr-primary-400: 0 224 243;
+    --tw-clr-primary-500: 0 196 253;
+    --clr-primary-200: rgb(var(--tw-clr-primary-200));
+    --clr-primary-300: rgb(var(--tw-clr-primary-300));
+    --clr-primary-400: rgb(var(--tw-clr-primary-400));
+    --clr-primary-500: rgb(var(--tw-clr-primary-500));
+  }
+}
+
+@layer components {
+  .layout {
+    max-width: 70rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 91.666667%;
+  }
+
+  .nav-item:hover .nav-item-child-overlay {
+    @apply opacity-100;
+  }
+  .nav-item-child-overlay {
+    @apply opacity-0;
+  }
+
+  .nav-item:hover .dropdown-icon {
+    @apply transform rotate-180;
+  }
+
+
+  div[data-rmiz-modal-overlay="visible"] {
+    @apply bg-gray-900 bg-opacity-80;
+  }
+  
+
+  .list-decimal > li > * {
+    @apply pl-2 !important;
+  }
+
+  .border-blockquote {
+    border-image: linear-gradient(0deg,#00ff94,#00e0f3,#00c4fd) 1
+  }
+
+  .cursor-newtab {
+      cursor: url(/assets/images/new-tab.png) 10 10,pointer
+  }
+
+}
+
+@media (min-width: 768px) {
+  .md\:code-block {
+    @apply pt-14 !important;
+  }
+}
