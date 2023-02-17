@@ -10,7 +10,7 @@ interface LogoProps {
 const Logo = ({title}: LogoProps) => {
   return (
     <Link href="/" className="flex items-center mr-10">
-      <div className="flex items-center justify-center p-[4px] bg-gray-900 rounded-lg mr-2">
+      <div className="flex items-center justify-center p-2 bg-gray-900 rounded-lg mr-2">
         <Image
           width={20}
           height={20}

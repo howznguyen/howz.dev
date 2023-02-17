@@ -11,9 +11,10 @@ import { HiEye, HiOutlineClock } from "react-icons/hi";
 interface PostPageProps {
   post: any;
   settings: any;
+  navigation: any;
 }
 
-const PostPage = ({ post, settings }: PostPageProps) => {
+const PostPage = ({ post, settings, navigation }: PostPageProps) => {
   if (!post) return <div>Loading...</div>;
 
   let head = {
@@ -23,7 +24,7 @@ const PostPage = ({ post, settings }: PostPageProps) => {
 
   return (
     <>
-      <MainTemplate head={head} settings={settings}>
+      <MainTemplate head={head} settings={settings} navigation={navigation}>
         <main className="layout">
           <div className="pb-4 dark:border-gray-600">
             <Zoom>
@@ -94,11 +95,13 @@ export const getStaticProps: GetStaticProps = async (context) => {
   let slug = context.params?.slug;
   let settings = await Notion.getSettings();
   let post = await Notion.getPostBySlug(slug as string);
+  let navigation = await Notion.getNavigation();
 
   return {
     props: {
       post: post,
       settings: settings,
+      navigation: navigation,
     },
     revalidate: 60,
   };

@@ -5,6 +5,7 @@ import readingTime from 'reading-time';
 const NOTION_API_KEY = process.env.NOTION_API_KEY || '';
 const POST_DATABASE_ID = process.env.POST_DATABASE_ID || '';
 const SETTING_DATABASE_ID = process.env.SETTING_DATABASE_ID || '';
+const NAVIGATION_DATABASE_ID = process.env.NAVIGATION_DATABASE_ID || '';
 
 const notion = new Client({ auth: NOTION_API_KEY});
 // passing notion client to the option
@@ -127,6 +128,58 @@ const Notion = {
         }, {});
 
         return settings;
+    },
+
+    async getNavigation() {
+        let response = await notion.databases.query({
+            database_id: NAVIGATION_DATABASE_ID,
+        });
+
+        let navigation = response.results.sort((a : any, b : any) => {
+            let aParent = this.getProperties(a.properties.parent)?.id || null;
+            let bParent = this.getProperties(b.properties.parent)?.id || null;
+
+            if(aParent === bParent || (!aParent && !bParent)){
+                let aIndex = this.getProperties(a.properties.index);
+                let bIndex = this.getProperties(b.properties.index);
+                return aIndex - bIndex;
+            } else {
+                if(aParent && bParent){
+                    return aParent.localeCompare(bParent);
+                } else {
+                    return aParent ? 1 : -1;
+                }
+            }
+        }).map((item : any) => {
+            let id = item.id;
+            let title = this.getProperties(item.properties.title).content;
+            let index = this.getProperties(item.properties.index);
+            let url = this.getProperties(item.properties.url).content;
+            let parent = this.getProperties(item.properties.parent)?.id || null;
+            let children: any[] = [];
+
+            return {
+                id,
+                title,
+                index,
+                url,
+                parent,
+                children,
+            };
+        });
+
+        navigation = navigation.reduce((acc : any, item : any) => {
+            let parentObj = (item.parent) ? navigation.filter(el => el.id === item.parent) : [];
+
+            if (parentObj.length) {
+                parentObj[0].children.push(item);
+            } else {
+                acc.push(item);
+            }
+            return acc;
+        }, []);
+
+        return navigation;
     },
 
     async getChildern(id : string) {
