@@ -1,75 +1,56 @@
 import React from "react";
-import { NavItem, Logo } from "@/components/atoms";
-import { HiBars3, HiXMark } from "react-icons/hi";
+import { NavItem, Logo, ThemeSwitcher, Button } from "@/components/atoms";
+import { HiBars3, HiXMark } from "react-icons/hi2";
 
 interface NavigationProps {
-  data: Array<any>;
+  navigation: Array<any>;
 }
 
-interface NavigationState {}
+const Navigation = ({navigation} : NavigationProps) => {
+  const [isShowMobileMenu, setIsShowMobileMenu] = React.useState(false);
 
-class Navigation extends React.Component<NavigationProps, NavigationState> {
-  state = {
-    isShowMobileMenu: false,
-    setShowMobileMenu: () => {
-      this.setState({ isShowMobileMenu: !this.state.isShowMobileMenu });
-    },
-  };
-  render() {
-    let { data } = this.props;
-    return (
-      <>
+  return (
+    <>
         <nav className="hidden md:flex">
-          {data.map((item, index) => {
+          {navigation.map((item, index) => {
             return (
-              <NavItem key={index} data={item}>
-                {item.label}
-              </NavItem>
+              <NavItem key={index} data={item}/>
             );
           })}
         </nav>
 
         <div className="md:hidden">
-          <button
+          <Button
             type="button"
-            className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-            aria-expanded="false"
-            onClick={() => this.state.setShowMobileMenu()}
+            onClick={() => setIsShowMobileMenu(true)}
           >
-            <span className="sr-only">Open menu</span>
             <HiBars3 />
-          </button>
+          </Button>
         </div>
 
         <div
-          className={`absolute inset-x-0 top-0 origin-top-right transform p-2 transition md:hidden ${
-            this.state.isShowMobileMenu
-              ? "opacity-100 scale-100"
-              : "opacity-0 scale-95"
-          }`}
+          className={`absolute inset-x-0 top-0 origin-top-right transform p-2 transition md:hidden ${isShowMobileMenu? "opacity-100 scale-100": "opacity-0 scale-95"}`}
         >
-          <div className="divide-y-2 divide-gray-50 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+          <div className={`divide-y-2 divide-gray-50 rounded-lg bg-white dark:bg-slate-800 shadow-lg ring-1 ring-black ring-opacity-5 ${isShowMobileMenu ? "block" : "hidden"}`}>
             <div className="px-5 pt-5 pb-6">
               <div className="flex items-center justify-between">
-                <Logo />
+                <Logo title={""} />
                 <div className="mr-2">
-                  <button
+                <ThemeSwitcher />
+                  <Button
                     type="button"
-                    className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-                    onClick={() => this.state.setShowMobileMenu()}
+                    className="ml-2"
+                    onClick={() => setIsShowMobileMenu(false)}
                   >
-                    <span className="sr-only">Close Menu</span>
                     <HiXMark />
-                  </button>
+                  </Button>
                 </div>
               </div>
               <div className="mt-6 flex">
-                <nav className="grid gap-y-0">
-                  {data.map((item, index) => {
+                <nav className="grid gap-y-0 w-full">
+                  {navigation.map((item, index) => {
                     return (
-                      <NavItem key={index} data={item} isMobile={true}>
-                        {item.label}
-                      </NavItem>
+                      <NavItem key={index} data={item} isMobile={true} />
                     );
                   })}
                 </nav>
@@ -78,8 +59,7 @@ class Navigation extends React.Component<NavigationProps, NavigationState> {
           </div>
         </div>
       </>
-    );
-  }
+  )
 }
 
 export default Navigation;
