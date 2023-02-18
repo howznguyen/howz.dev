@@ -11,6 +11,7 @@ import {
   UnorderedList,
   Toggle,
   Bookmark,
+  Table,
 } from "@/components/content";
 import nl2br from "react-nl2br";
 import Link from "next/link";
@@ -154,6 +155,19 @@ export const NotionElementToReact = (content: any, _index: number, contents: Arr
       let url = content[type].url;
       component = <Bookmark key={_index} url={url} />;
     }
+
+    // Table
+    if (type === "table") {
+      let options = content[type];
+      let data = content.children.map((row: any) => {
+        let type = row.type;
+        let cells = row[type].cells;
+        return cells;
+      });
+
+      component = <Table data={data} options={options} />
+    }
+    
   }
   return component;
 };
