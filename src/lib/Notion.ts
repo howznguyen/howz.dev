@@ -100,6 +100,33 @@ const Notion = {
         return post;
     },
 
+    async updateViewsBySlug(slug : string) {
+        const response = await notion.databases.query({
+            database_id: POST_DATABASE_ID,
+            filter: {
+                property: 'slug',
+                rich_text: { equals: slug },
+            },
+        });
+
+        if(response.results.length === 0)
+            return {};
+
+        let post : any = response.results[0];
+
+        let views = this.getProperties(post.properties.views);
+        views = views ? views + 1 : 1;
+
+        return await notion.pages.update({
+            page_id: post.id,
+            properties: {
+                views: {
+                    number: views,
+                },
+            },
+        });
+    },
+
     async getTagsBySlug(slug : string) {
         let posts : any = [];
         const response = await notion.databases.query({
@@ -221,6 +248,7 @@ const Notion = {
                 description: this.getProperties(post.properties.description).content,
                 featured: this.getProperties(post.properties.featured),
                 readingTime: Math.ceil(minutes),
+                views: this.getProperties(post.properties.views),
             };
         }));
     },
