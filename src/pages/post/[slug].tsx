@@ -4,23 +4,28 @@ import { Notion } from "@/lib";
 import moment from "moment";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Zoom from "react-medium-image-zoom";
 import { HiEye, HiOutlineClock } from "react-icons/hi";
 
 interface PostPageProps {
+  slug: any;
   post: any;
   settings: any;
   navigation: any;
 }
 
-const PostPage = ({ post, settings, navigation }: PostPageProps) => {
-  if (!post) return <div>Loading...</div>;
+const PostPage = ({ slug, post, settings, navigation }: PostPageProps) => {
+  useEffect(() => {
+    fetch(`/api/update-views?slug=${slug}`);
+  }, [slug]);
+
+  if(!post) return <div>Loading...</div>;
 
   let head = {
     title: post.title,
     description: post.description,
-  }
+  };
 
   return (
     <>
@@ -52,7 +57,7 @@ const PostPage = ({ post, settings, navigation }: PostPageProps) => {
               </div>
               <div className="flex items-center gap-1">
                 <HiEye />
-                <span>{50} views</span>
+                <span>{post.views} views</span>
               </div>
             </div>
           </div>
@@ -102,6 +107,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       post: post,
       settings: settings,
       navigation: navigation,
+      slug: slug,
     },
     revalidate: 60,
   };

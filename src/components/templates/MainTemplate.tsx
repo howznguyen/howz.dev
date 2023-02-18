@@ -1,5 +1,5 @@
 import React from "react";
-import { Header } from "@/components/organisms";
+import { Footer, Header } from "@/components/organisms";
 import Head from "next/head";
 import { NextSeo } from "next-seo";
 
@@ -48,6 +48,7 @@ const MainTemplate = ({ children, head, settings, navigation }: MainTemplateProp
           </div>
       </div>
       {children}
+      <Footer />
     </>
   );
 };

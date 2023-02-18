@@ -12,9 +12,10 @@ import {
   Toggle,
   Bookmark,
   Table,
-} from "@/components/content";
+  Link,
+} from "@/components/atoms";
 import nl2br from "react-nl2br";
-import Link from "next/link";
+
 
 interface NotionRenderProps {
   contents: Array<any>;
@@ -198,7 +199,6 @@ export const RichTextToReact = (contents: Array<any>, options: any = {}) => {
               target="_blank"
               href={content[type].link.url}
               key={index}
-              className="text-blue-500 hover:underline dark:text-blue-400 cursor-newtab"
             >
               {nl2br(content[type].content)}
             </Link>
