@@ -43,6 +43,7 @@
     "react-notion-x": "^6.15.8",
     "react-scrollspy": "^3.4.3",
     "reading-time": "^1.5.0",
+    "remove-accents": "^0.4.4",
     "swr": "^2.0.3",
     "typescript": "4.9.4"
   },

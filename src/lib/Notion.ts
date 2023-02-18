@@ -6,6 +6,7 @@ const NOTION_API_KEY = process.env.NOTION_API_KEY || '';
 const POST_DATABASE_ID = process.env.POST_DATABASE_ID || '';
 const SETTING_DATABASE_ID = process.env.SETTING_DATABASE_ID || '';
 const NAVIGATION_DATABASE_ID = process.env.NAVIGATION_DATABASE_ID || '';
+const FOOTER_DATABASE_ID = process.env.FOOTER_DATABASE_ID || '';
 
 const notion = new Client({ auth: NOTION_API_KEY});
 // passing notion client to the option
@@ -142,6 +143,18 @@ const Notion = {
         return posts;
     },
 
+    async getNotionOptions() {
+        let settings = await this.getSettings();
+        let navigation = await this.getNavigation();
+        let footer = await this.getFooter();
+
+        return {
+            settings,
+            navigation,
+            footer,
+        };
+    },
+
     async getSettings() {
         let response = await notion.databases.query({
             database_id: SETTING_DATABASE_ID,
@@ -207,6 +220,32 @@ const Notion = {
         }, []);
 
         return navigation;
+    },
+
+    async getFooter() {
+        let response = await notion.databases.query({
+            database_id: FOOTER_DATABASE_ID,
+        });
+
+        let footer = response.results.sort((a : any, b : any) => {
+            let aIndex = this.getProperties(a.properties.index);
+            let bIndex = this.getProperties(b.properties.index);
+            return aIndex - bIndex;
+        }).map((item : any) => {
+            let id = item.id;
+            let title = this.getProperties(item.properties.title).content;
+            let index = this.getProperties(item.properties.index);
+            let url = this.getProperties(item.properties.url).content;
+
+            return {
+                id,
+                title,
+                index,
+                url,
+            };
+        });
+
+        return footer;
     },
 
     async getChildern(id : string) {
