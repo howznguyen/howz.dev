@@ -1,13 +1,13 @@
 {
-  "name": "howz_dev_fe",
-  "version": "0.1.0",
+  "name": "howz.dev",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "begin": "next build && next start"
+    "start:all": "next build && next start"
   },
   "dependencies": {
     "@giscus/react": "^2.2.6",

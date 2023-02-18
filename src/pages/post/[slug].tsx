@@ -7,16 +7,23 @@ import Image from "next/image";
 import React, { useEffect } from "react";
 import Zoom from "react-medium-image-zoom";
 import { HiEye, HiOutlineClock } from "react-icons/hi";
+import {
+  GISCUS_REPO,
+  GISCUS_REPO_ID,
+  GISCUS_CATEGORY,
+  GISCUS_CATEGORY_ID,
+} from "@/lib/env";
 
 interface PostPageProps {
   slug: any;
   post: any;
   options: any;
+  giscus: any;
 }
 
-const PostPage = ({ slug, post, options }: PostPageProps) => {
+const PostPage = ({ slug, post, giscus, options }: PostPageProps) => {
   useEffect(() => {
-    fetch(`/api/update-views?slug=${slug}`);
+    fetch(`/api/update-views?slug=${slug}`,{method:'POST'});
   }, [slug]);
 
   if(!post) return <div>Loading...</div>;
@@ -72,7 +79,7 @@ const PostPage = ({ slug, post, options }: PostPageProps) => {
               <TableOfContents data={post.contents} />
             </div>
 
-            <CommentSection />
+            <CommentSection giscus={giscus} />
           </div>
         </main>
       </MainTemplate>
@@ -99,11 +106,18 @@ export const getStaticProps: GetStaticProps = async (context) => {
   let slug = context.params?.slug;
   let post = await Notion.getPostBySlug(slug as string);
   let options = await Notion.getNotionOptions();
+  let giscus = {
+    GISCUS_REPO,
+    GISCUS_REPO_ID,
+    GISCUS_CATEGORY,
+    GISCUS_CATEGORY_ID,
+  }
 
   return {
     props: {
       post: post,
       options: options,
+      giscus: giscus,
       slug: slug,
     },
     revalidate: 60,
