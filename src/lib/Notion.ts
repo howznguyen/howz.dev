@@ -1,12 +1,13 @@
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown }  from "notion-to-md";
 import readingTime from 'reading-time';
-
-const NOTION_API_KEY = process.env.NOTION_API_KEY || '';
-const POST_DATABASE_ID = process.env.POST_DATABASE_ID || '';
-const SETTING_DATABASE_ID = process.env.SETTING_DATABASE_ID || '';
-const NAVIGATION_DATABASE_ID = process.env.NAVIGATION_DATABASE_ID || '';
-const FOOTER_DATABASE_ID = process.env.FOOTER_DATABASE_ID || '';
+import { 
+    NOTION_API_KEY, 
+    SETTING_DATABASE_ID,
+    NAVIGATION_DATABASE_ID,
+    FOOTER_DATABASE_ID,
+    POST_DATABASE_ID,
+} from '@/lib/env'
 
 const notion = new Client({ auth: NOTION_API_KEY});
 // passing notion client to the option
