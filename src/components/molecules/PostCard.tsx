@@ -41,7 +41,7 @@ const PostCard = ({ post }: PostCardProps) => {
             </div>
             <div className="flex items-center gap-1">
               <HiEye />
-              <span>50 views</span>
+              <span>{post.views} views</span>
             </div>
           </div>
           <p className="mt-4 mb-2 text-sm text-gray-600 dark:text-gray-300">

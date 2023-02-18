@@ -11,9 +11,11 @@ import {
   UnorderedList,
   Toggle,
   Bookmark,
-} from "@/components/content";
+  Table,
+  Link,
+} from "@/components/atoms";
 import nl2br from "react-nl2br";
-import Link from "next/link";
+
 
 interface NotionRenderProps {
   contents: Array<any>;
@@ -154,6 +156,19 @@ export const NotionElementToReact = (content: any, _index: number, contents: Arr
       let url = content[type].url;
       component = <Bookmark key={_index} url={url} />;
     }
+
+    // Table
+    if (type === "table") {
+      let options = content[type];
+      let data = content.children.map((row: any) => {
+        let type = row.type;
+        let cells = row[type].cells;
+        return cells;
+      });
+
+      component = <Table data={data} options={options} />
+    }
+    
   }
   return component;
 };
@@ -184,7 +199,6 @@ export const RichTextToReact = (contents: Array<any>, options: any = {}) => {
               target="_blank"
               href={content[type].link.url}
               key={index}
-              className="text-blue-500 hover:underline dark:text-blue-400 cursor-newtab"
             >
               {nl2br(content[type].content)}
             </Link>

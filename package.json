@@ -1,13 +1,13 @@
 {
-  "name": "howz_dev_fe",
-  "version": "0.1.0",
+  "name": "howz.dev",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "begin": "next build && next start"
+    "start:all": "next build && next start"
   },
   "dependencies": {
     "@giscus/react": "^2.2.6",
@@ -43,6 +43,7 @@
     "react-notion-x": "^6.15.8",
     "react-scrollspy": "^3.4.3",
     "reading-time": "^1.5.0",
+    "remove-accents": "^0.4.4",
     "swr": "^2.0.3",
     "typescript": "4.9.4"
   },

@@ -1,10 +1,13 @@
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown }  from "notion-to-md";
 import readingTime from 'reading-time';
-
-const NOTION_API_KEY = process.env.NOTION_API_KEY || '';
-const POST_DATABASE_ID = process.env.POST_DATABASE_ID || '';
-const SETTING_DATABASE_ID = process.env.SETTING_DATABASE_ID || '';
+import { 
+    NOTION_API_KEY, 
+    SETTING_DATABASE_ID,
+    NAVIGATION_DATABASE_ID,
+    FOOTER_DATABASE_ID,
+    POST_DATABASE_ID,
+} from '@/lib/env'
 
 const notion = new Client({ auth: NOTION_API_KEY});
 // passing notion client to the option
@@ -99,6 +102,33 @@ const Notion = {
         return post;
     },
 
+    async updateViewsBySlug(slug : string) {
+        const response = await notion.databases.query({
+            database_id: POST_DATABASE_ID,
+            filter: {
+                property: 'slug',
+                rich_text: { equals: slug },
+            },
+        });
+
+        if(response.results.length === 0)
+            return {};
+
+        let post : any = response.results[0];
+
+        let views = this.getProperties(post.properties.views);
+        views = views ? views + 1 : 1;
+
+        return await notion.pages.update({
+            page_id: post.id,
+            properties: {
+                views: {
+                    number: views,
+                },
+            },
+        });
+    },
+
     async getTagsBySlug(slug : string) {
         let posts : any = [];
         const response = await notion.databases.query({
@@ -114,6 +144,18 @@ const Notion = {
         return posts;
     },
 
+    async getNotionOptions() {
+        let settings = await this.getSettings();
+        let navigation = await this.getNavigation();
+        let footer = await this.getFooter();
+
+        return {
+            settings,
+            navigation,
+            footer,
+        };
+    },
+
     async getSettings() {
         let response = await notion.databases.query({
             database_id: SETTING_DATABASE_ID,
@@ -127,6 +169,84 @@ const Notion = {
         }, {});
 
         return settings;
+    },
+
+    async getNavigation() {
+        let response = await notion.databases.query({
+            database_id: NAVIGATION_DATABASE_ID,
+        });
+
+        let navigation = response.results.sort((a : any, b : any) => {
+            let aParent = this.getProperties(a.properties.parent)?.id || null;
+            let bParent = this.getProperties(b.properties.parent)?.id || null;
+
+            if(aParent === bParent || (!aParent && !bParent)){
+                let aIndex = this.getProperties(a.properties.index);
+                let bIndex = this.getProperties(b.properties.index);
+                return aIndex - bIndex;
+            } else {
+                if(aParent && bParent){
+                    return aParent.localeCompare(bParent);
+                } else {
+                    return aParent ? 1 : -1;
+                }
+            }
+        }).map((item : any) => {
+            let id = item.id;
+            let title = this.getProperties(item.properties.title).content;
+            let index = this.getProperties(item.properties.index);
+            let url = this.getProperties(item.properties.url).content;
+            let parent = this.getProperties(item.properties.parent)?.id || null;
+            let children: any[] = [];
+
+            return {
+                id,
+                title,
+                index,
+                url,
+                parent,
+                children,
+            };
+        });
+
+        navigation = navigation.reduce((acc : any, item : any) => {
+            let parentObj = (item.parent) ? navigation.filter(el => el.id === item.parent) : [];
+
+            if (parentObj.length) {
+                parentObj[0].children.push(item);
+            } else {
+                acc.push(item);
+            }
+            return acc;
+        }, []);
+
+        return navigation;
+    },
+
+    async getFooter() {
+        let response = await notion.databases.query({
+            database_id: FOOTER_DATABASE_ID,
+        });
+
+        let footer = response.results.sort((a : any, b : any) => {
+            let aIndex = this.getProperties(a.properties.index);
+            let bIndex = this.getProperties(b.properties.index);
+            return aIndex - bIndex;
+        }).map((item : any) => {
+            let id = item.id;
+            let title = this.getProperties(item.properties.title).content;
+            let index = this.getProperties(item.properties.index);
+            let url = this.getProperties(item.properties.url).content;
+
+            return {
+                id,
+                title,
+                index,
+                url,
+            };
+        });
+
+        return footer;
     },
 
     async getChildern(id : string) {
@@ -168,6 +288,7 @@ const Notion = {
                 description: this.getProperties(post.properties.description).content,
                 featured: this.getProperties(post.properties.featured),
                 readingTime: Math.ceil(minutes),
+                views: this.getProperties(post.properties.views),
             };
         }));
     },

@@ -4,26 +4,38 @@ import { Notion } from "@/lib";
 import moment from "moment";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Zoom from "react-medium-image-zoom";
 import { HiEye, HiOutlineClock } from "react-icons/hi";
+import {
+  GISCUS_REPO,
+  GISCUS_REPO_ID,
+  GISCUS_CATEGORY,
+  GISCUS_CATEGORY_ID,
+} from "@/lib/env";
 
 interface PostPageProps {
+  slug: any;
   post: any;
-  settings: any;
+  options: any;
+  giscus: any;
 }
 
-const PostPage = ({ post, settings }: PostPageProps) => {
-  if (!post) return <div>Loading...</div>;
+const PostPage = ({ slug, post, giscus, options }: PostPageProps) => {
+  useEffect(() => {
+    fetch(`/api/update-views?slug=${slug}`,{method:'POST'});
+  }, [slug]);
+
+  if(!post) return <div>Loading...</div>;
 
   let head = {
     title: post.title,
     description: post.description,
-  }
+  };
 
   return (
     <>
-      <MainTemplate head={head} settings={settings}>
+      <MainTemplate head={head} options={options}>
         <main className="layout">
           <div className="pb-4 dark:border-gray-600">
             <Zoom>
@@ -51,7 +63,7 @@ const PostPage = ({ post, settings }: PostPageProps) => {
               </div>
               <div className="flex items-center gap-1">
                 <HiEye />
-                <span>{50} views</span>
+                <span>{post.views} views</span>
               </div>
             </div>
           </div>
@@ -67,7 +79,7 @@ const PostPage = ({ post, settings }: PostPageProps) => {
               <TableOfContents data={post.contents} />
             </div>
 
-            <CommentSection />
+            <CommentSection giscus={giscus} />
           </div>
         </main>
       </MainTemplate>
@@ -92,13 +104,21 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   let slug = context.params?.slug;
-  let settings = await Notion.getSettings();
   let post = await Notion.getPostBySlug(slug as string);
+  let options = await Notion.getNotionOptions();
+  let giscus = {
+    GISCUS_REPO,
+    GISCUS_REPO_ID,
+    GISCUS_CATEGORY,
+    GISCUS_CATEGORY_ID,
+  }
 
   return {
     props: {
       post: post,
-      settings: settings,
+      options: options,
+      giscus: giscus,
+      slug: slug,
     },
     revalidate: 60,
   };
