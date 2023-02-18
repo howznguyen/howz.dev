@@ -10,3 +10,4 @@ export { default as Span } from './Span';
 export { default as Toggle } from './Toggle';
 export { default as Bookmark } from './Bookmark';
 export { default as Tag } from './Tag';
+export { default as Table } from './Table';
