@@ -6,11 +6,11 @@ import { NextSeo } from "next-seo";
 interface MainTemplateProps {
   children: React.ReactNode;
   head ?: any;
-  settings ?: any;
-  navigation ?: any;
+  options ?: any;
 }
 
-const MainTemplate = ({ children, head, settings, navigation }: MainTemplateProps) => {
+const MainTemplate = ({ children, head, options }: MainTemplateProps) => {
+  let { settings, navigation, footer } = options ?? {};
   let siteName =  settings?.site_name ?? "Howz.Dev"; 
   let siteDescription = head?.description ?? settings?.site_description ?? "Howz.Dev is a blog about web development, programming, and technology.";
   let siteTitle = head?.title ? `${head.title} | ${siteName}` : siteName;
@@ -48,7 +48,7 @@ const MainTemplate = ({ children, head, settings, navigation }: MainTemplateProp
           </div>
       </div>
       {children}
-      <Footer />
+      <Footer data={footer} />
     </>
   );
 };

@@ -11,11 +11,10 @@ import { HiEye, HiOutlineClock } from "react-icons/hi";
 interface PostPageProps {
   slug: any;
   post: any;
-  settings: any;
-  navigation: any;
+  options: any;
 }
 
-const PostPage = ({ slug, post, settings, navigation }: PostPageProps) => {
+const PostPage = ({ slug, post, options }: PostPageProps) => {
   useEffect(() => {
     fetch(`/api/update-views?slug=${slug}`);
   }, [slug]);
@@ -29,7 +28,7 @@ const PostPage = ({ slug, post, settings, navigation }: PostPageProps) => {
 
   return (
     <>
-      <MainTemplate head={head} settings={settings} navigation={navigation}>
+      <MainTemplate head={head} options={options}>
         <main className="layout">
           <div className="pb-4 dark:border-gray-600">
             <Zoom>
@@ -98,15 +97,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   let slug = context.params?.slug;
-  let settings = await Notion.getSettings();
   let post = await Notion.getPostBySlug(slug as string);
-  let navigation = await Notion.getNavigation();
+  let options = await Notion.getNotionOptions();
 
   return {
     props: {
       post: post,
-      settings: settings,
-      navigation: navigation,
+      options: options,
       slug: slug,
     },
     revalidate: 60,

@@ -5,15 +5,14 @@ import { GetStaticProps } from 'next';
 
 interface HomePageProps {
   posts: any[]
-  settings: any,
-  navigation: any,
+  options: any
 }
 
-const HomePage = ({posts, settings, navigation}: HomePageProps) => {
+const HomePage = ({posts, options}: HomePageProps) => {
   return (
-    <MainTemplate settings={settings} navigation={navigation}>
+    <MainTemplate options={options}>
         <div className="layout mt-2">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Latest Posts</h2>
+            <h2 className="mb-2 text-4xl font-bold text-gray-800 dark:text-gray-100">Latest Posts</h2>
             <PostList posts={posts} />
         </div>
     </MainTemplate>
@@ -21,17 +20,15 @@ const HomePage = ({posts, settings, navigation}: HomePageProps) => {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  let posts = await Notion.getPosts({});
-  let settings = await Notion.getSettings();
-  let navigation = await Notion.getNavigation();
+  let posts = await Notion.getPosts();
+    let options = await Notion.getNotionOptions();
 
   return {
-    props: {
-      posts: posts,
-      settings: settings,
-      navigation: navigation
-    },
-    revalidate: 10
+      props: {
+          posts: posts,
+          options: options
+      },
+      revalidate: 10,
   }
 }
 
