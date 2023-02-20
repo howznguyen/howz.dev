@@ -33,7 +33,7 @@ cp .env .env.example
 ```
 ### Notion Database Setup
 
-You can duplicate the Notion page for database template [here](https://chenjinguyen.notion.site/chenjinguyen/Howz-Nguyen-Blog-Template-6085aaf78b84462bb137db0e8fea2676). 
+You can duplicate the Notion page for database template [here](https://howznguyen.notion.site/Howz-Nguyen-Blog-Template-6085aaf78b84462bb137db0e8fea2676). 
 
 Once you have your own duplicate page, you can get the `NOTION_API_KEY` and database IDs needed to run the project. To get your `NOTION_API_KEY`, follow these steps:
 
@@ -76,22 +76,3 @@ npm run start:all
 ```
 
 The project will be available at [http://localhost:3000](http://localhost:3000).
-
-
-## Customization
-
-### Home Page
-
-To customize the landing page, you can edit the `index.tsx` file.
-
-### Blog Page
-
-To customize the blog page, you can edit the `pages/blog.tsx` file.
-
-### Blog Post Pages
-
-To customize the blog post pages, you can edit the `pages/posts/[slug].tsx` file.
-
-### Styling
-
-To customize the styling, you can edit
