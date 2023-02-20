@@ -41,6 +41,7 @@ const BlogPage = ({posts, options}: BlogPageProps) => {
                 {/* Sort to Date */}
                 
                 <PostList posts={filterPosts} />
+                {filterPosts.length === 0 && <h2 className="mt-8 text-center text-2xl dark:text-white font-bold">{"Not found :<"}</h2>}
             </div>
         </div>
     </MainTemplate>

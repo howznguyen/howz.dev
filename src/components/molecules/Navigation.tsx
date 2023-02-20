@@ -8,11 +8,11 @@ interface NavigationProps {
 
 const Navigation = ({navigation} : NavigationProps) => {
   const [isShowMobileMenu, setIsShowMobileMenu] = React.useState(false);
-
+  let nav = navigation || [];
   return (
     <>
         <nav className="hidden md:flex">
-          {navigation.map((item, index) => {
+          {nav.map((item, index) => {
             return (
               <NavItem key={index} data={item}/>
             );
@@ -48,7 +48,7 @@ const Navigation = ({navigation} : NavigationProps) => {
               </div>
               <div className="mt-6 flex">
                 <nav className="grid gap-y-0 w-full">
-                  {navigation.map((item, index) => {
+                  {nav.map((item, index) => {
                     return (
                       <NavItem key={index} data={item} isMobile={true} />
                     );
