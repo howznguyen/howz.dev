@@ -90,7 +90,7 @@ const Notion = {
         });
 
         if(response.results.length === 0)
-            return {};
+            return null;
         let posts = await this.convertNotionDatabaseToPosts(response.results);
 
         post = {
@@ -283,7 +283,7 @@ const Notion = {
                 cover: this.getProperties(post.cover).url,
                 published: this.getProperties(post.properties.published),
                 slug: this.getProperties(post.properties.slug).content,
-                tags: this.getProperties(post.properties.tags, true) || [],
+                tags: this.getProperties(post.properties.tags, true).map((x:any) => x.name) || [],
                 authors: this.getProperties(post.properties.authors, true),
                 description: this.getProperties(post.properties.description).content,
                 featured: this.getProperties(post.properties.featured),

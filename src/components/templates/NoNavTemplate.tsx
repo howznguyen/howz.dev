@@ -3,13 +3,13 @@ import { Footer, Header } from "@/components/organisms";
 import Head from "next/head";
 import { NextSeo } from "next-seo";
 
-interface MainTemplateProps {
-  children: React.ReactNode;
+interface NoNavTemplateProps {
+  children ?: React.ReactNode;
   head ?: any;
   options ?: any;
 }
 
-const MainTemplate = ({ children, head, options }: MainTemplateProps) => {
+const NoNavTemplate = ({ children, head, options }: NoNavTemplateProps) => {
   let { settings, navigation, footer } = options ?? {};
   let siteName =  settings?.site_name ?? "Howz Nguyen Blog"; 
   let siteDescription = head?.description ?? settings?.site_description ?? "Howz Nguyen Blog is a blog about web development, programming, and technology.";
@@ -42,14 +42,8 @@ const MainTemplate = ({ children, head, options }: MainTemplateProps) => {
         <link rel="icon" href="/assets/images/logo.png" />
         <meta name="author" content="Howz Nguyen" />
       </Head>
-      <div className="w-full py-2 sticky top-0 z-50 transition-shadow shadow-sm bg-white dark:bg-dark mb-2">
-          <div className="layout">
-            <Header settings={settings} navigation={navigation} />
-          </div>
-      </div>
       {children}
-      <Footer data={footer} />
     </>
   );
 };
-export default MainTemplate;
+export default NoNavTemplate;
