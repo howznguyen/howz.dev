@@ -52,7 +52,7 @@ const HomePage = ({
           <section className="pb-20 fade-in-start">
             <div data-fade="0" id="featured-post" className="scroll-mt-[70px]">
               <h2 className="mb-2 text-4xl font-bold text-gray-800 dark:text-gray-100">
-                Bài Viết Đặt Sắc
+                Bài Viết Đặc Sắc
               </h2>
               <PostList posts={featuredPosts} limit={6} className="mt-3" />
               <Button className="mt-4 scale-100 hover:scale-[1.1] active:scale-[0.97] motion-safe:transform-gpu transition duration-100">
