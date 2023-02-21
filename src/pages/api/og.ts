@@ -67,6 +67,9 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     </html>`;
 
     let image = await nodeHtmlToImage({
+        puppeteerArgs: {
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        },
         html: html,
         content: {
             avatar: 'https://avatars.githubusercontent.com/u/54036529?v=4',
