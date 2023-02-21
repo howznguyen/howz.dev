@@ -34,6 +34,7 @@ const PostPage = ({ slug, post, giscus, options }: PostPageProps) => {
   let head = {
     title: post?.title,
     description: post?.description,
+    image: post?.cover,
   };
 
   return (

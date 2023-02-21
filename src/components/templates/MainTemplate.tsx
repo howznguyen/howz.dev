@@ -14,7 +14,7 @@ const MainTemplate = ({ children, head, options }: MainTemplateProps) => {
   let siteName =  settings?.site_name ?? "Howz Nguyen Blog"; 
   let siteDescription = head?.description ?? settings?.site_description ?? "Howz Nguyen Blog is a blog about web development, programming, and technology.";
   let siteTitle = head?.title ? `${head.title} | ${siteName}` : siteName;
-  let ogImage = `/api/og?title=${head?.title}&description=${head?.description}`;
+  let ogImage = head?.image ?? '/assets/images/og.png';
 
   return (
     <>
