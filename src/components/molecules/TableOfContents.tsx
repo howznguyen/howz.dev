@@ -11,7 +11,7 @@ const TableOfContents = ({ data }: TableOfContentsProps) => {
   if (headings.length === 0) return <></>;
   return (
     <aside className="hidden md:block md:sticky md:top-20 w-full h-fit p-4 rounded-lg bg-slate-100 text-black dark:bg-slate-800 dark:text-white">
-      <h3 className="text-lg font-semibold">Table of Contents</h3>
+      <h3 className="text-lg font-semibold">Mục Lục</h3>
       <nav className="my-2 w-full max-h-[calc(100vh-9rem-200px)] overflow-auto transition-all text-slate-500 dark:text-slate-500">
         <Scrollspy items={headings.map((heading: any) => heading.id)} currentClassName="text-black dark:text-white">
           {headings.map((heading: any, i: number) => (

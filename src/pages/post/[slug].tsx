@@ -1,6 +1,6 @@
 import { CommentSection, TableOfContents, NotionRender } from "@/components/molecules"
 import { MainTemplate, PageNotFound } from "@/components/templates";
-import { Notion } from "@/lib";
+import { HeadMeta, Notion } from "@/lib";
 import moment from "moment";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
@@ -15,31 +15,50 @@ import {
 } from "@/lib/env";
 import { useRouter } from "next/router";
 import { Loading } from "@/components/organisms";
+import { NextSeo } from "next-seo";
+import Head from "next/head";
 
 interface PostPageProps {
   slug: any;
   post: any;
+  head: any;
   options: any;
   giscus: any;
 }
 
-const PostPage = ({ slug, post, giscus, options }: PostPageProps) => {
+const PostPage = ({ slug, post, head, giscus, options }: PostPageProps) => {
   const router = useRouter()
   useEffect(() => {
     fetch(`/api/update-views?slug=${slug}`,{method:'POST'});
   }, [slug]);
 
-  if (!post ) return <PageNotFound options={options}/>
+  if (!post ) return <PageNotFound/>
 
-  let head = {
-    title: post?.title,
-    description: post?.description,
-    image: post?.cover,
-  };
 
   return (
     <>
-      <MainTemplate head={head} options={options}>
+      <NextSeo 
+        title={head.siteTitle}
+        description={head.siteDescription}
+        canonical="https://howz.dev"
+        openGraph={{
+          title: head.siteTitle,
+          description: head.siteDescription,
+          images: [
+            {
+              url: head.ogImage,
+              width: 800,
+              height: 400,
+              alt: head.siteTitle,
+            },
+          ],
+        }}
+      />
+      <Head>
+        <title>{head.siteTitle}</title>
+      </Head>
+
+      <MainTemplate options={options}>
         {router.isFallback && <Loading />}
         {post &&
         <main className="layout">
@@ -59,17 +78,16 @@ const PostPage = ({ slug, post, giscus, options }: PostPageProps) => {
             {post.title}
           </h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            Written on {moment(post.published.start).format("MMMM DD, YYYY")} by{" "}
-            {post.authors[0].name}.
+            Viết vào {moment(post.published.start).format("MMMM DD, YYYY")} bởi{" "}{post.authors[0].name}.
           </p>
           <div className="mt-6 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
             <div className="flex items-center gap-1">
               <HiOutlineClock />
-              <span>{post.readingTime} min read</span>
+              <span>{post.readingTime} phút đọc</span>
             </div>
             <div className="flex items-center gap-1">
               <HiEye />
-              <span>{post.views} views</span>
+              <span>{post.views} lượt xem</span>
             </div>
           </div>
         </div>
@@ -124,11 +142,20 @@ export const getStaticProps: GetStaticProps = async (context) => {
     GISCUS_CATEGORY_ID,
   }
 
+  let headData = {
+    title: post?.title,
+    description: post?.description,
+    image: post?.cover,
+  };
+
+  let head = HeadMeta(options, headData);
+
   return {
     props: {
       post: post,
       options: options,
       giscus: giscus,
+      head: head,
       slug: slug,
     },
     revalidate: 10,

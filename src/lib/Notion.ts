@@ -84,8 +84,16 @@ const Notion = {
         const response = await notion.databases.query({
             database_id: POST_DATABASE_ID,
             filter: {
-                property: 'slug',
-                rich_text: { equals: slug },
+                and: [
+                    {
+                        property: 'published',
+                        date: { before: new Date().toISOString() },
+                    },
+                    {
+                        property: 'slug',
+                        rich_text: { equals: slug },
+                    }
+                ]
             },
         });
 
@@ -106,8 +114,16 @@ const Notion = {
         const response = await notion.databases.query({
             database_id: POST_DATABASE_ID,
             filter: {
-                property: 'slug',
-                rich_text: { equals: slug },
+                and: [
+                    {
+                        property: 'published',
+                        date: { before: new Date().toISOString() },
+                    },
+                    {
+                        property: 'slug',
+                        rich_text: { equals: slug },
+                    }
+                ]
             },
         });
 
@@ -127,21 +143,6 @@ const Notion = {
                 },
             },
         });
-    },
-
-    async getTagsBySlug(slug : string) {
-        let posts : any = [];
-        const response = await notion.databases.query({
-            database_id: POST_DATABASE_ID,
-            filter: {
-                property: 'tags',
-                multi_select: { contains: slug },
-            },
-        });
-        
-        posts = await this.convertNotionDatabaseToPosts(response.results);
-
-        return posts;
     },
 
     async getNotionOptions() {

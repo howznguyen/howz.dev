@@ -37,11 +37,11 @@ const PostCard = ({ post }: PostCardProps) => {
           <div className="mt-2 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
             <div className="flex items-center gap-1">
               <HiOutlineClock />
-              <span>{post.readingTime} min read</span>
+              <span>{post.readingTime} phút đọc</span>
             </div>
             <div className="flex items-center gap-1">
               <HiEye />
-              <span>{post.views} views</span>
+              <span>{post.views} lượt xem</span>
             </div>
           </div>
           <p className="mt-4 mb-2 text-sm text-gray-600 dark:text-gray-300">

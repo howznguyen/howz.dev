@@ -23,7 +23,7 @@ const Footer = ({ data }: FooterProps) => {
             ))}
         </div>
 
-        <p className="mt-12 font-medium text-gray-600 dark:text-gray-300">Reach me out</p>
+        <p className="mt-12 font-medium text-gray-600 dark:text-gray-300">Tìm hiểu về mình</p>
 
         <div className="mt-2 flex space-x-4">
           <Link href='mailto:duyntp2000@gmail.com'>
