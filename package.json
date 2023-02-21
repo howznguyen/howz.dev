@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint",
-    "start:all": "next build && next start"
+    "start:all": "next build && next-sitemap && next start"
   },
   "dependencies": {
     "@giscus/react": "^2.2.6",
@@ -24,6 +25,7 @@
     "moment": "^2.29.4",
     "next": "13.1.6",
     "next-seo": "^5.15.0",
+    "next-sitemap": "^3.1.52",
     "next-themes": "^0.2.1",
     "nextjs-google-analytics": "^2.3.0",
     "node-html-to-image": "^3.3.0",
