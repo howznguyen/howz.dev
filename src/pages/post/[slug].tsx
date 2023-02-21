@@ -1,4 +1,4 @@
-import { CommentSection, TableOfContents, NotionRender } from "@/components/molecules"
+import { CommentSection, TableOfContents, NotionRender, PostList } from "@/components/molecules"
 import { MainTemplate, PageNotFound } from "@/components/templates";
 import { HeadMeta, Notion } from "@/lib";
 import moment from "moment";
@@ -21,12 +21,13 @@ import Head from "next/head";
 interface PostPageProps {
   slug: any;
   post: any;
+  relatedPosts: any;
   head: any;
   options: any;
   giscus: any;
 }
 
-const PostPage = ({ slug, post, head, giscus, options }: PostPageProps) => {
+const PostPage = ({ slug, post, relatedPosts, head, giscus, options }: PostPageProps) => {
   const router = useRouter()
   useEffect(() => {
     fetch(`/api/update-views?slug=${slug}`,{method:'POST'});
@@ -97,10 +98,25 @@ const PostPage = ({ slug, post, head, giscus, options }: PostPageProps) => {
         <div className="lg:grid lg:grid-cols-[auto,250px] lg:gap-4 mt-4">
           <section className="md:mr-6 leading-7 text-justify w-auto">
             <NotionRender contents={post.contents} />
+
+            <span>
+              Tags: {post.tags.map((tag: any, index: number) => (
+              <button key={index} className="bg-opacity-80 dark:!bg-opacity-60 inline-block rounded-md px-1.5 py-0.5 font-medium transition-colors bg-gray-100 text-gray-700 hover:text-black disabled:text-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:text-white dark:disabled:bg-gray-600 focus:outline-none mr-2" tabIndex={-1}>
+                {tag}
+              </button>
+            ))}
+            </span>
           </section>
 
           <div className="relative">
             <TableOfContents data={post.contents} />
+          </div>
+
+          <div className="md:col-span-2">
+              <h3 className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
+                Những Bài Viết Liên Quan:
+              </h3>
+              <PostList posts={relatedPosts} limit={3} />
           </div>
 
           <CommentSection giscus={giscus} />
@@ -130,6 +146,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
   let slug = context.params?.slug;
   let options = await Notion.getNotionOptions();
   let post = null;
+  let posts = await Notion.getPosts();
+  let relatedPosts = [];
   try {
     post = await Notion.getPostBySlug(slug as string);
   } catch (error) { }
@@ -150,9 +168,17 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   let head = HeadMeta(options, headData);
 
+  if(post) {
+    let tags = post.tags;
+    relatedPosts = [...posts].filter((x) => x.tags.some((y : any) => tags.includes(y))).map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+  }
+
   return {
     props: {
       post: post,
+      relatedPosts: relatedPosts,
       options: options,
       giscus: giscus,
       head: head,

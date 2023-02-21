@@ -25,6 +25,7 @@
     "next": "13.1.6",
     "next-seo": "^5.15.0",
     "next-themes": "^0.2.1",
+    "nextjs-google-analytics": "^2.3.0",
     "node-html-to-image": "^3.3.0",
     "notion-client": "6.15.6",
     "notion-compat": "^6.16.0",
@@ -44,6 +45,7 @@
     "react-scrollspy": "^3.4.3",
     "reading-time": "^1.5.0",
     "remove-accents": "^0.4.4",
+    "sharp": "^0.31.3",
     "swr": "^2.0.3",
     "typescript": "4.9.4"
   },
