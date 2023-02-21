@@ -19,10 +19,10 @@ const IntroCard = () => {
             <div className="mb-0">
                 <div className="relative block rounded-lg shadow-lg px-6 py-12 -mt-20 md:px-12 lg:-mr-14 bg-transparen" style={{backdropFilter: 'blur(30px)', zIndex: 1}}>
                 <h2 className="text-xl md:text-3xl font-bold mb-4 display-5">
-                    {"Hi there, I'm Howz Nguyen"}
+                    {"Xin chào, Mình là Howz Nguyễn"}
                 </h2>
                 <p className="mb-5">
-                    {"I'm a Fullstack Developer from Vietnamese. This website is developed for the purpose of sharing my personal knowledge. Hope everyone enjoys it."}
+                    {"Mình hiện tại đang là một Lập Trình Viên Fullstack. Đây là một website mình tạo ra với mong muốn được chia sẻ kiến thức của mình đến với mọi người. Cảm ơn mọi người đã ghé qua. ❤️"}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-4 gap-y-2 md:mt-8">
                     <Link href="https://github.com/howznguyen/my-resume/blob/main/pdf/cv_en_vi_howznguyen.pdf" target="_blank" className="flex items-center">
