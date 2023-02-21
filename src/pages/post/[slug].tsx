@@ -2,7 +2,7 @@ import { CommentSection, TableOfContents, NotionRender, PostList } from "@/compo
 import { MainTemplate, PageNotFound } from "@/components/templates";
 import { HeadMeta, Notion } from "@/lib";
 import moment from "moment";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import React, { useEffect } from "react";
 import Zoom from "react-medium-image-zoom";
@@ -187,5 +187,50 @@ export const getStaticProps: GetStaticProps = async (context) => {
     revalidate: 10,
   };
 };
+
+// export const getServerSideProps: GetServerSideProps = async (context) =>{
+//   let slug = context.params?.slug;
+//   let options = await Notion.getNotionOptions();
+//   let post = null;
+//   let posts = await Notion.getPosts();
+//   let relatedPosts = [];
+//   try {
+//     post = await Notion.getPostBySlug(slug as string);
+//   } catch (error) { }
+  
+
+//   let giscus = {
+//     GISCUS_REPO,
+//     GISCUS_REPO_ID,
+//     GISCUS_CATEGORY,
+//     GISCUS_CATEGORY_ID,
+//   }
+
+//   let headData = {
+//     title: post?.title,
+//     description: post?.description,
+//     image: post?.cover,
+//   };
+
+//   let head = HeadMeta(options, headData);
+
+//   if(post) {
+//     let tags = post.tags;
+//     relatedPosts = [...posts].filter((x) => x.tags.some((y : any) => tags.includes(y))).map(value => ({ value, sort: Math.random() }))
+//     .sort((a, b) => a.sort - b.sort)
+//     .map(({ value }) => value);
+//   }
+
+//   return {
+//     props: {
+//       post: post,
+//       relatedPosts: relatedPosts,
+//       options: options,
+//       giscus: giscus,
+//       head: head,
+//       slug: slug,
+//     },
+//   };
+// }
 
 export default PostPage;
