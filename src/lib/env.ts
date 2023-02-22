@@ -1,3 +1,5 @@
+export const BASE_URL : any = process.env.BASE_URL || 'https://howz.dev';
+
 export const NOTION_API_KEY : any = process.env.NOTION_API_KEY || '';
 export const SETTING_DATABASE_ID : any = process.env.SETTING_DATABASE_ID || '';
 export const NAVIGATION_DATABASE_ID : any = process.env.NAVIGATION_DATABASE_ID || '';
