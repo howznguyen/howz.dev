@@ -114,7 +114,7 @@ export const NotionElementToReact = (content: any, _index: number, contents: Arr
     // Bulleted List
     if (type === "bulleted_list_item") {
       component = (
-        <UnorderedList>
+        <UnorderedList key={_index}>
           <li key={1}>
             {text}
             {content.has_children && NotionToReact(content.children)}

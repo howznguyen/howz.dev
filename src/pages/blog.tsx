@@ -1,6 +1,6 @@
 import { PostList } from "@/components/molecules";
 import { MainTemplate } from "@/components/templates";
-import { HeadMeta, Notion } from "@/lib";
+import { HeadMeta, Notion, Route } from "@/lib";
 import { GetStaticProps } from "next";
 import removeAccents from "remove-accents";
 import React from "react";
@@ -83,6 +83,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   let options = await Notion.getNotionOptions();
 
   let headData = {
+    url: Route.blog(true),
     title: "Blog",
     description: "Blog",
   };
