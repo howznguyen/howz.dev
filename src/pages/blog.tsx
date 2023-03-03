@@ -4,8 +4,6 @@ import { HeadMeta, Notion, Route } from "@/lib";
 import { GetStaticProps } from "next";
 import removeAccents from "remove-accents";
 import React from "react";
-import Head from "next/head";
-import { NextSeo } from "next-seo";
 
 interface BlogPageProps {
   posts: any[];
@@ -18,6 +16,7 @@ const BlogPage = ({ posts, head, options }: BlogPageProps) => {
 
   const findPosts = (e: any) => {
     let filteredPosts = posts.filter((post: any) => {
+      console.log(removeAccents(post.title.toLowerCase()), removeAccents(e.target.value.toLowerCase()))
       return removeAccents(post.title.toLowerCase()).includes(
         removeAccents(e.target.value.toLowerCase())
       );
@@ -27,27 +26,7 @@ const BlogPage = ({ posts, head, options }: BlogPageProps) => {
 
   return (
     <>
-      <NextSeo
-        title={head.siteTitle}
-        description={head.siteDescription}
-        canonical="https://howz.dev"
-        openGraph={{
-          title: head.siteTitle,
-          description: head.siteDescription,
-          images: [
-            {
-              url: head.ogImage,
-              width: 800,
-              height: 400,
-              alt: head.siteTitle,
-            },
-          ],
-        }}
-      />
-      <Head>
-        <title>{head.siteTitle}</title>
-      </Head>
-      <MainTemplate options={options}>
+      <MainTemplate options={options} head={head}>
         <div className="layout py-12">
           <h1 className="text-3xl md:text-5xl font-semibold">Blog</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
@@ -82,13 +61,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
   let posts = await Notion.getPosts();
   let options = await Notion.getNotionOptions();
 
-  let headData = {
+  let head = {
     url: Route.blog(true),
     title: "Blog",
     description: "Blog",
   };
-
-  let head = HeadMeta(options, headData);
 
   return {
     props: {
@@ -96,6 +73,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       options: options,
       head: head,
     },
+    revalidate: 10,
   };
 };
 

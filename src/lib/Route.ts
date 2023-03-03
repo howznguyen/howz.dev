@@ -4,6 +4,11 @@ const Route = {
     index: (includeDomain = false) => `${includeDomain ? BASE_URL : ''}/`,
     post: (slug: string, includeDomain = false) => `${includeDomain ? BASE_URL : ''}/post/${slug}`,
     blog: (includeDomain = false) => `${includeDomain ? BASE_URL : ''}/blog`,
+    author: (slug: string, includeDomain = false) => `${includeDomain ? BASE_URL : ''}/author/${slug}`,
+    tag: {
+        index: (includeDomain = false) => `${includeDomain ? BASE_URL : ''}/tag`,
+        get: (slug: string, includeDomain = false) => `${includeDomain ? BASE_URL : ''}/tag/${slug}`,
+    },
 
     // API
     api: {
@@ -13,8 +18,9 @@ const Route = {
     },
 
     // Image
+    image: (file: string, includeDomain = false) => `${includeDomain ? BASE_URL : ''}/assets/images/${file}`,
     defaultCover: (includeDomain = false) => `${includeDomain ? BASE_URL : ''}/assets/images/og.png`,
-    defaultLogo: (includeDomain = false) => `${includeDomain ? BASE_URL : ''}/assets/images/logo.png`
+    defaultLogo: (includeDomain = false) => `${includeDomain ? BASE_URL : ''}/assets/images/logo.png`,
 };
 
 
