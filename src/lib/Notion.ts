@@ -110,6 +110,28 @@ const Notion = {
         return post;
     },
 
+    async getTags() {
+        const response = await notion.databases.retrieve({
+            database_id: POST_DATABASE_ID,
+        });
+        let tags_raw : any = response.properties.tags;
+        const tags = tags_raw.multi_select.options.map((x : any) => x.name) ?? [];
+
+        return tags;
+    },
+
+    async getPostsByTag(tag: string) {
+        return await Notion.getPosts({
+            filter: { 
+              tags: {
+                multi_select: {
+                    contains: tag
+                }
+              } 
+            }, 
+        });
+    },
+
     async updateViewsBySlug(slug : string) {
         const response = await notion.databases.query({
             database_id: POST_DATABASE_ID,
