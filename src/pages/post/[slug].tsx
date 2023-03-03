@@ -20,6 +20,7 @@ import {
 } from "@/lib/env";
 import { useRouter } from "next/router";
 import { Loading } from "@/components/organisms";
+import { Tag } from "@/components/atoms";
 
 interface PostPageProps {
   slug: any;
@@ -46,79 +47,71 @@ const PostPage = ({
   if (!post) return <PageNotFound />;
 
   return (
-    <>
-      <MainTemplate head={head} options={options}>
-        {router.isFallback && <Loading />}
-        {post && (
-          <main className="layout">
-            <div className="pb-4 dark:border-gray-600">
-              <Zoom>
-                <div className="relative w-full aspect-[5/2] rounded-lg overflow-hidden">
-                  <Image
-                    src={post.cover}
-                    alt={post.title}
-                    fill
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                </div>
-              </Zoom>
+    <MainTemplate head={head} options={options}>
+      {router.isFallback && <Loading />}
+      {post && (
+        <main className="layout">
+          <div className="pb-4 dark:border-gray-600">
+            <Zoom>
+              <div className="relative w-full aspect-[5/2] rounded-lg overflow-hidden">
+                <Image
+                  src={post.cover}
+                  alt={post.title}
+                  fill
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
+            </Zoom>
 
-              <h1 className="mt-4 text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-4xl dark:text-white">
-                {post.title}
-              </h1>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                Viết vào {moment(post.published.start).format("MMMM DD, YYYY")}{" "}
-                bởi {post.authors[0].name}.
-              </p>
-              <div className="mt-6 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-                <div className="flex items-center gap-1">
-                  <HiOutlineClock />
-                  <span>{post.readingTime} phút đọc</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <HiEye />
-                  <span>{post.views} lượt xem</span>
-                </div>
+            <h1 className="mt-4 text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-4xl dark:text-white">
+              {post.title}
+            </h1>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+              Viết vào {moment(post.published.start).format("MMMM DD, YYYY")}{" "}
+              bởi {post.authors[0].name}.
+            </p>
+            <div className="mt-6 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+              <div className="flex items-center gap-1">
+                <HiOutlineClock />
+                <span>{post.readingTime} phút đọc</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <HiEye />
+                <span>{post.views} lượt xem</span>
               </div>
             </div>
+          </div>
 
-            <hr className="dark:border-gray-600" />
+          <hr className="dark:border-gray-600" />
 
-            <div className="lg:grid lg:grid-cols-[auto,250px] lg:gap-4 mt-4">
-              <section className="md:mr-6 leading-7 text-justify w-auto">
-                <NotionRender contents={post.contents} />
+          <div className="lg:grid lg:grid-cols-[auto,250px] lg:gap-4 mt-4">
+            <section className="md:mr-6 leading-7 text-justify w-auto">
+              <NotionRender contents={post.contents} />
 
-                <span>
-                  Tags:{" "}
-                  {post.tags.map((tag: any, index: number) => (
-                    <button
-                      key={index}
-                      className="bg-opacity-80 dark:!bg-opacity-60 inline-block rounded-md px-1.5 py-0.5 font-medium transition-colors bg-gray-100 text-gray-700 hover:text-black disabled:text-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:text-white dark:disabled:bg-gray-600 focus:outline-none mr-2"
-                      tabIndex={-1}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </span>
-              </section>
+              <span>
+                Tags:{" "}
+                {post.tags.map((tag: any, index: number) => (
+                  <Tag key={index} name={tag} />
+                ))}
+              </span>
+            </section>
 
-              <div className="relative">
-                <TableOfContents data={post.contents} />
-              </div>
-
-              <div className="md:col-span-2">
-                <h3 className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
-                  Những Bài Viết Liên Quan:
-                </h3>
-                <PostList posts={relatedPosts} limit={3} />
-              </div>
-
-              <CommentSection giscus={giscus} />
+            <div className="relative">
+              <TableOfContents data={post.contents} />
             </div>
-          </main>
-        )}
-      </MainTemplate>
-    </>
+
+            <div className="md:col-span-2">
+              <h3 className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
+                Những Bài Viết Liên Quan:
+              </h3>
+              <PostList posts={relatedPosts} limit={3} />
+            </div>
+
+            <CommentSection giscus={giscus} />
+          </div>
+        </main>
+      )}
+    </MainTemplate>
   );
 };
 

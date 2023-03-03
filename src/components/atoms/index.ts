@@ -17,3 +17,4 @@ export { default as Span } from './Span';
 export { default as Toggle } from './Toggle';
 export { default as Bookmark } from './Bookmark';
 export { default as Table } from './Table';
+export { default as Tag} from './Tag';

@@ -26,7 +26,7 @@ const HomePage = ({
             <IntroCard />
           </section>
 
-          <section className="pb-20 fade-in-start">
+          <section className="pb-5 md:pb-10 fade-in-start">
             <div data-fade="0" id="featured-post" className="scroll-mt-[70px]">
               <h2 className="mb-2 text-4xl font-bold text-gray-800 dark:text-gray-100">
                 Bài Viết Đặc Sắc
@@ -39,7 +39,7 @@ const HomePage = ({
           </section>
 
           {categoriesPosts.map((category, index) => (
-            <section key={index} className="py-20 fade-in-start">
+            <section key={index} className="py-5 md:py-10 fade-in-start">
               <div data-fade="0">
                 <h2 className="mb-2 text-4xl font-bold text-gray-800 dark:text-gray-100">
                   {category.name}
