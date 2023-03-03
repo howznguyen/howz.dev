@@ -3,6 +3,7 @@ export { default as Link } from './Link';
 export { default as NavItem } from './NavItem';
 export { default as Logo } from './Logo';
 export { default as ThemeSwitcher } from './ThemeSwitcher';
+export { default as DateTime } from './DateTime';
 
 // Notion Content
 export { default as Heading } from './Heading';

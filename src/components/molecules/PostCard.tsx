@@ -1,9 +1,8 @@
-import moment from "moment";
 import Link from "next/link";
 import Image from "next/image";
 import { Route } from "@/lib";
 import { HiEye, HiOutlineClock } from "react-icons/hi";
-import { Tag } from "../atoms";
+import { DateTime, Tag } from "../atoms";
 
 interface PostCardProps {
   post: any;
@@ -45,7 +44,7 @@ const PostCard = ({ post }: PostCardProps) => {
           </div>
           <p className="mt-4 mb-2 text-sm text-gray-600 dark:text-gray-300">
             <span className="font-bold text-gray-800 dark:text-gray-100">
-              {moment(post.published.start).format("MMMM DD, YYYY")}
+              <DateTime value={post.published.start} />
             </span>
           </p>
           <p className="text-sm text-gray-700 dark:text-gray-300">

@@ -6,7 +6,6 @@ import {
 } from "@/components/molecules";
 import { MainTemplate, PageNotFound } from "@/components/templates";
 import { Notion, Route } from "@/lib";
-import moment from "moment";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import React, { useEffect } from "react";
@@ -20,7 +19,7 @@ import {
 } from "@/lib/env";
 import { useRouter } from "next/router";
 import { Loading } from "@/components/organisms";
-import { Tag } from "@/components/atoms";
+import { DateTime, Tag } from "@/components/atoms";
 
 interface PostPageProps {
   slug: any;
@@ -67,7 +66,7 @@ const PostPage = ({
               {post.title}
             </h1>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-              Viết vào {moment(post.published.start).format("MMMM DD, YYYY")}{" "}
+              Viết vào <DateTime value={post.published.start} />{" "}
               bởi {post.authors[0].name}.
             </p>
             <div className="mt-6 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
