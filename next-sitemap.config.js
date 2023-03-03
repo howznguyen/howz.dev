@@ -12,6 +12,8 @@ module.exports = {
                 userAgent: '*',
                 allow: '/',
                 disallow: [
+                    '/post/[slug]',
+                    '/tag/[tag]'
                 ]
             }
 
