@@ -12,8 +12,8 @@ interface HeadingProps {
 const Heading = ({ type, id, children }: HeadingProps) => {
   let sizes = {
     heading_1: "text-2xl",
-    heading_2: "font-xl",
-    heading_3: "text-base",
+    heading_2: "text-xl",
+    heading_3: "text-lg",
   };
 
   let _type = type ?? "heading_1";

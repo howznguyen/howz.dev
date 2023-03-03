@@ -11,7 +11,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
     if (slug) {
         let response = Notion.updateViewsBySlug(slug as string);
-        res.status(200).json(response);
+        res.status(200).json({message: 'Successful'});
     } else {
         res.status(404).json({message: 'Not Found'})
     }

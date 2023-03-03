@@ -59,6 +59,7 @@ export const NotionElementToReact = (content: any, _index: number, contents: Arr
   let text = RichTextToReact(content[type].rich_text ?? []);
   if (typeExist) {
     // Paragraph
+    
     if (type === "paragraph") {
       component = <Paragraph key={_index}>{text}</Paragraph>;
     }
@@ -113,7 +114,7 @@ export const NotionElementToReact = (content: any, _index: number, contents: Arr
     // Bulleted List
     if (type === "bulleted_list_item") {
       component = (
-        <UnorderedList>
+        <UnorderedList key={_index}>
           <li key={1}>
             {text}
             {content.has_children && NotionToReact(content.children)}
@@ -184,7 +185,7 @@ export const RichTextToReact = (contents: Array<any>, options: any = {}) => {
   if (options.getFirstNode && contents.length > 0) {
     let content = contents[0];
     let type = content.type;
-    let annotations = options?.rawContent ? content.annotations : {};
+    let annotations = content?.plain_text ? content.annotations : {};
     return <Span annotations={annotations}>{content[type].content}</Span>;
   }
 
@@ -192,7 +193,7 @@ export const RichTextToReact = (contents: Array<any>, options: any = {}) => {
     <>
       {contents.map((content: any, index: number) => {
         let type = content.type;
-        let annotations = options?.rawContent ? content.annotations : {};
+        let annotations = content?.plain_text ? content.annotations : {};
         if (content[type].link)
           return (
             <Link

@@ -2,7 +2,7 @@
 
 ![](https://img.shields.io/github/issues/howznguyen/howz.dev?color=0088ff)
 ![](https://img.shields.io/github/languages/top/howznguyen/howz.dev)
-![](https://img.shields.io/github/package-json/v/howznguyen/howz.dev)
+![](https://img.shields.io/github/manifest-json/v/howznguyen/howz.dev)
 ![](https://img.shields.io/github/discussions/howznguyen/howz.dev)
 
 💠 This is my personal website and blog, built using Next.js, TypeScript, Tailwind CSS, and Notion. The blog posts are managed in Notion, and the website pulls the content from the Notion API at build time.

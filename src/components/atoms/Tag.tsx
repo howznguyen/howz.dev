@@ -1,38 +1,21 @@
-import { Route } from "@/lib";
-import React from "react";
+import { Route } from '@/lib';
+import Link from 'next/link'
+import React from 'react'
 
 interface TagProps {
-  name: string;
-  color?: string;
+    name: string;
 }
 
-const Tag = ({ name, color }: TagProps) => {
-  let colors = {
-    "light-gray": "bg-gray-700 dark:bg-gray-700",
-    gray: "bg-gray-500 dark:bg-gray-200",
-    brown: "bg-brown-500 dark:bg-brown-200",
-    orange: "bg-orange-500 dark:bg-orange-200",
-    yellow: "bg-yellow-500 dark:bg-yellow-200",
-    green: "bg-green-500 dark:bg-green-200",
-    blue: "bg-blue-500 dark:bg-blue-200",
-    purple: "bg-purple-500 dark:bg-purple-200",
-    pink: "bg-pink-500 dark:bg-pink-200",
-    red: "bg-red-500 dark:bg-red-200",
-    default: "bg-gray-700 dark:bg-gray-200",
-  };
-
-  let index = color ?? "";
-
-  let _color = colors[index] ?? colors["default"];
-
+const Tag = ({name} : TagProps) => {
   return (
-    <a
-      className={`inline-block px-2 py-1 mr-2 text-base font-semibold rounded-full text-white dark:text-black ${_color}`}
-      href={Route.tag(name)}
+    <Link
+        href={Route.tag.get(name)}
+        className="bg-opacity-80 dark:!bg-opacity-60 inline-block rounded-md px-1.5 py-0.5 font-medium transition-colors bg-gray-100 text-gray-700 hover:text-black disabled:text-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:text-white dark:disabled:bg-gray-600 focus:outline-none mr-2"
+        tabIndex={-1}
     >
-      {name}
-    </a>
-  );
-};
+        {name}
+    </Link>
+  )
+}
 
-export default Tag;
+export default Tag

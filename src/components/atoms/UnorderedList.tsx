@@ -6,7 +6,7 @@ interface UnorderedListProps {
 
 const UnorderedList = ({ children } : UnorderedListProps) => {
   
-  return (<ul className="space-y-1 text-gray-800 list-disc list-inside dark:text-gray-400">
+  return (<ul className="space-y-1 font-medium text-gray-800 list-disc list-inside dark:text-gray-400">
             {children}
           </ul>)
 }
