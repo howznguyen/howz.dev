@@ -18,7 +18,7 @@ import {
   GISCUS_CATEGORY_ID,
 } from "@/lib/env";
 import { useRouter } from "next/router";
-import { Loading } from "@/components/organisms";
+import { LoadingSection } from "@/components/organisms";
 import { DateTime, Tag } from "@/components/atoms";
 
 interface PostPageProps {
@@ -47,7 +47,7 @@ const PostPage = ({
 
   return (
     <MainTemplate head={head} options={options}>
-      {router.isFallback && <Loading />}
+      {router.isFallback && <LoadingSection />}
       {post && (
         <main className="layout">
           <div className="pb-4 dark:border-gray-600">
