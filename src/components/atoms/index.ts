@@ -4,6 +4,7 @@ export { default as NavItem } from './NavItem';
 export { default as Logo } from './Logo';
 export { default as ThemeSwitcher } from './ThemeSwitcher';
 export { default as DateTime } from './DateTime';
+export { default as Loading} from './Loading';
 
 // Notion Content
 export { default as Heading } from './Heading';
@@ -19,3 +20,5 @@ export { default as Toggle } from './Toggle';
 export { default as Bookmark } from './Bookmark';
 export { default as Table } from './Table';
 export { default as Tag} from './Tag';
+export { default as Embed} from './Embed';
+export { default as Video} from './Video';
