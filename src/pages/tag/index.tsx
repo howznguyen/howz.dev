@@ -20,7 +20,7 @@ const TagPage = ({tags, head, options} : TagPageProps) => {
           <p className="text-gray-600 dark:text-gray-300 mt-2">
             Bạn có thể tìm các bài viết theo các tags dưới đây:
           </p>
-          <div className="mt-10 flex items-center justify-start w-full">
+          <div className="mt-10 flex items-center justify-start flex-wrap gap-y-2 w-full">
               {tags.map((tag: any, index: number) => <Tag key={index} name={tag} />)}
           </div>
 

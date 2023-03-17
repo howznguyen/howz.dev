@@ -59,8 +59,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
     let head = {
       url: Route.tag.index(true),
-      title: "Tags",
-      description: "Tags",
+      title: `Tags #${tag}`, 
+      description: `Những bài viết thuộc tag #${tag}`,
     };
 
     return {
