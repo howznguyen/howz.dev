@@ -33,9 +33,9 @@ const Toggle = ({ title, children }: ToggleProps) => {
             />
           </svg>
         </button>
-        <h3 className="ml-2 text-lg font-bold text-gray-800 dark:text-gray-100">
+        <span className="ml-2 text-lg font-bold text-gray-800 dark:text-gray-100">
           {title}
-        </h3>
+        </span>
       </div>
       <div
         className={`pl-10 mt-2 transition-all duration-100 ${

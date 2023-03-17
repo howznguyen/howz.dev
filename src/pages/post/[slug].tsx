@@ -5,7 +5,7 @@ import {
   PostList,
 } from "@/components/molecules";
 import { MainTemplate, PageNotFound } from "@/components/templates";
-import { Notion, Route } from "@/lib";
+import { Notion, Route, Image as ImageHelper } from "@/lib";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import React, { useEffect } from "react";
@@ -57,6 +57,12 @@ const PostPage = ({
                   src={post.cover}
                   alt={post.title}
                   fill
+                  sizes="(max-width: 768px) 50vw,
+                         (max-width: 1200px) 50vw,
+                          100vw"
+                  loading="lazy"
+                  placeholder="blur"
+                  blurDataURL={`data:image/svg+xml;base64,${ImageHelper.generaterImagePlaceholder()}`}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
               </div>
@@ -100,9 +106,9 @@ const PostPage = ({
             </div>
 
             <div className="md:col-span-2">
-              <h3 className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
+              <span className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
                 Những Bài Viết Liên Quan:
-              </h3>
+              </span>
               <PostList posts={relatedPosts} limit={3} />
             </div>
 

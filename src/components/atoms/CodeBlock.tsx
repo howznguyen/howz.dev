@@ -36,7 +36,7 @@ const CodeBlock = ({ children, language }: CodeBlockProps) => {
           setTimeout(() => setIsCopied(false), 1500);
         }}
       >
-        <button className="absolute top-2 right-2 hidden rounded border border-gray-600 p-2 text-lg transition-colors hover:bg-gray-700 md:block">
+        <button title="Copy Code" className="absolute top-2 right-2 hidden rounded border border-gray-600 p-2 text-lg transition-colors hover:bg-gray-700 md:block">
           {isCopied ? (
             <HiCheckCircle className="text-blue-400" />
           ) : (

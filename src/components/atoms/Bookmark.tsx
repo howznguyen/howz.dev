@@ -72,9 +72,9 @@ const Bookmark = ({ url }: BookmarkProps) => {
               />
             )}
             <div className="w-full md:w-auto flex flex-col justify-between p-4">
-              <h5 className="mb-2 text-sm md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white overflow-hidden leading-0 max-h-5 md:max-h-8">
+              <span className="mb-2 text-sm md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white overflow-hidden leading-0 max-h-5 md:max-h-8">
                 {dataUrl?.title}
-              </h5>
+              </span>
               <div className="mb-3 font-normal text-xs md:text-base text-gray-700 dark:text-gray-400 overflow-hidden leading-4 max-h-8 md:max-h-12 md:h-14">
                 {dataUrl?.description}
               </div>

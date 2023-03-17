@@ -23,6 +23,7 @@ const Navigation = ({navigation} : NavigationProps) => {
           <Button
             type="button"
             onClick={() => setIsShowMobileMenu(true)}
+            title="Open Navigation"
           >
             <HiBars3 />
           </Button>
@@ -41,6 +42,7 @@ const Navigation = ({navigation} : NavigationProps) => {
                     type="button"
                     className="ml-2"
                     onClick={() => setIsShowMobileMenu(false)}
+                    title="Close Navigation"
                   >
                     <HiXMark />
                   </Button>

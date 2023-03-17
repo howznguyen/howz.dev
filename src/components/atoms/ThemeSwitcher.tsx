@@ -11,6 +11,7 @@ const ThemeSwitcher = ({}: ThemeSwitcherProps) => {
   return (
     <Button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      title="Theme Switcher"
     >
       {theme === "dark" ? <BiMoon />  : <BiSun />}
     </Button>

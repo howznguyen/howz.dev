@@ -41,7 +41,7 @@ const EmbedBlock = ({url} : EmbedBlockProps) => {
         classNames = "max-w-[650px] max-h-[800px] md:h-[600px]"
       }
       const afterUrl = link.toString();
-      cpn = <Iframe className={`w-full h-[500px] ${classNames}`} url={afterUrl} sandbox={["allow-scripts", "allow-popups", "allow-top-navigation-by-user-activation", "allow-forms", "allow-same-origin", "allow-storage-access-by-user-activation"]} allowFullScreen={true} />
+      cpn = <Iframe title={`iFrame ${link.hostname}`} className={`w-full h-[500px] ${classNames}`} url={afterUrl} sandbox={["allow-scripts", "allow-popups", "allow-top-navigation-by-user-activation", "allow-forms", "allow-same-origin", "allow-storage-access-by-user-activation"]} allowFullScreen={true} />
     }
   }
 
