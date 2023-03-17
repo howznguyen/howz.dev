@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Route } from "@/lib";
+import { Route, Image as ImageHelper } from "@/lib";
 import { HiEye, HiOutlineClock } from "react-icons/hi";
 import { DateTime, Tag } from "../atoms";
 
@@ -21,6 +21,12 @@ const PostCard = ({ post }: PostCardProps) => {
               src={post.cover}
               alt={post.title}
               fill
+              sizes="(max-width: 768px) 100vw,
+                     (max-width: 1200px) 50vw,
+                      33vw"
+              loading="lazy"
+              placeholder="blur"
+              blurDataURL={`data:image/svg+xml;base64,${ImageHelper.generaterImagePlaceholder()}`}
               className="absolute inset-0 w-full h-full object-cover rounded-tl-md rounded-tr-md"
             />
           </figure>
@@ -31,7 +37,7 @@ const PostCard = ({ post }: PostCardProps) => {
           </div>
         </div>
         <div className="p-4">
-          <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100">{post.title}</h4>
+          <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{post.title}</span>
           <div className="mt-2 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
             <div className="flex items-center gap-1">
               <HiOutlineClock />

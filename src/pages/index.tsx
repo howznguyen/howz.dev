@@ -28,9 +28,9 @@ const HomePage = ({
 
           <section className="pb-5 md:pb-10 fade-in-start">
             <div data-fade="0" id="featured-post" className="scroll-mt-[70px]">
-              <h2 className="mb-2 text-4xl font-bold text-gray-800 dark:text-gray-100">
+              <span className="mb-2 text-4xl font-bold text-gray-800 dark:text-gray-100">
                 Bài Viết Đặc Sắc
-              </h2>
+              </span>
               <PostList posts={featuredPosts} limit={6} className="mt-3" />
               <Button className="mt-4 scale-100 hover:scale-[1.1] active:scale-[0.97] motion-safe:transform-gpu transition duration-100">
                 <Link href={Route.blog()}>Xem thêm</Link>
@@ -41,9 +41,9 @@ const HomePage = ({
           {categoriesPosts.map((category, index) => (
             <section key={index} className="py-5 md:py-10 fade-in-start">
               <div data-fade="0">
-                <h2 className="mb-2 text-4xl font-bold text-gray-800 dark:text-gray-100">
+                <span className="mb-2 text-4xl font-bold text-gray-800 dark:text-gray-100">
                   {category.name}
-                </h2>
+                </span>
                 <p className="mt-2 text-gray-600 dark:text-gray-300">
                   {category.description}
                 </p>

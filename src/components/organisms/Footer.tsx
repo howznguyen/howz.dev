@@ -26,19 +26,19 @@ const Footer = ({ data }: FooterProps) => {
         <p className="mt-12 font-medium text-gray-600 dark:text-gray-300">Tìm hiểu về mình</p>
 
         <div className="mt-2 flex space-x-4">
-          <Link href='mailto:duyntp2000@gmail.com'>
+          <Link href='mailto:duyntp2000@gmail.com' title='Mail'>
               <SiGmail className="text-2xl text-gray-600 dark:text-gray-300" />
           </Link>
-          <Link target='_blank' href='https://www.linkedin.com/in/duyntp2000/'>
+          <Link target='_blank' href='https://www.linkedin.com/in/duyntp2000/' title='Linkedin'>
              <SiLinkedin className="text-2xl text-gray-600 dark:text-gray-300" />
           </Link>
-          <Link target='_blank' href='https://github.com/howznguyen'>
+          <Link target='_blank' href='https://github.com/howznguyen' title='Github'>
               <SiGithub className="text-2xl text-gray-600 dark:text-gray-300" />
           </Link>
-          <Link target='_blank' href='https://gitlab.com/howznguyen'>
+          <Link target='_blank' href='https://gitlab.com/howznguyen' title='Gitlab'>
             <SiGitlab className="text-2xl text-gray-600 dark:text-gray-300" />
           </Link>
-          <Link target='_blank' href='https://www.facebook.com/howznguyen'>
+          <Link target='_blank' href='https://www.facebook.com/howznguyen' title='Facebook'>
             <SiFacebook className="text-2xl text-gray-600 dark:text-gray-300" />
           </Link>
 
