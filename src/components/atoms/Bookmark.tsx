@@ -41,7 +41,6 @@ const Bookmark = ({ url }: BookmarkProps) => {
       setDataUrl(data);
     }).catch((error) => {
       setIsLoading(false);
-      console.log(error);
     })
 
     return () => {

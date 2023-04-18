@@ -1,46 +1,35 @@
 import React from 'react'
-import { Link } from '../atoms'
-import { SiFacebook, SiGithub, SiGitlab, SiGmail, SiLinkedin } from "react-icons/si";
+import { Icon, Link } from '../atoms'
+import { useTrans } from '@/lib';
 
-interface FooterProps {
-  data?: Array<any>
-}
+interface FooterProps {}
 
-
-const Footer = ({ data }: FooterProps) => {
+const Footer = ({}: FooterProps) => {
+  const trans = useTrans();
+  
   return (
     <footer className="mt-4 pb-2">
       <main className="layout flex flex-col items-center border-t pt-6 dark:border-gray-600">
         <div className="flex flex-wrap justify-center gap-y-4 gap-x-8">
-            {data && data.map((link, index) => (
+            {trans.footer.links && trans.footer.links.map((item: any, i: number) => (
               <Link
                 target="_blank"
-                key={index}
-                href={link.url}
+                key={i}
+                href={item.link}
                 >
-                {link.title}
+                {item.title}
               </Link>
             ))}
         </div>
 
-        <p className="mt-12 font-medium text-gray-600 dark:text-gray-300">Tìm hiểu về mình</p>
+        <p className="mt-12 font-medium text-gray-600 dark:text-gray-300">{ trans.footer.about_me }</p>
 
         <div className="mt-2 flex space-x-4">
-          <Link href='mailto:duyntp2000@gmail.com' title='Mail'>
-              <SiGmail className="text-2xl text-gray-600 dark:text-gray-300" />
-          </Link>
-          <Link target='_blank' href='https://www.linkedin.com/in/duyntp2000/' title='Linkedin'>
-             <SiLinkedin className="text-2xl text-gray-600 dark:text-gray-300" />
-          </Link>
-          <Link target='_blank' href='https://github.com/howznguyen' title='Github'>
-              <SiGithub className="text-2xl text-gray-600 dark:text-gray-300" />
-          </Link>
-          <Link target='_blank' href='https://gitlab.com/howznguyen' title='Gitlab'>
-            <SiGitlab className="text-2xl text-gray-600 dark:text-gray-300" />
-          </Link>
-          <Link target='_blank' href='https://www.facebook.com/howznguyen' title='Facebook'>
-            <SiFacebook className="text-2xl text-gray-600 dark:text-gray-300" />
-          </Link>
+          {trans.footer.social_networks.map((item: any, i: number) => 
+            <Link href={item.link} title={item.title} key={i}>
+              <Icon icon={item.icon} className="text-2xl text-gray-600 dark:text-gray-300"/>
+            </Link>
+          )}
 
         </div>
 

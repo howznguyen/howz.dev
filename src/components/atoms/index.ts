@@ -5,6 +5,8 @@ export { default as Logo } from './Logo';
 export { default as ThemeSwitcher } from './ThemeSwitcher';
 export { default as DateTime } from './DateTime';
 export { default as Loading} from './Loading';
+export { default as Icon} from './Icon';
+export { default as LangugeSwither} from './LangugeSwither';
 
 // Notion Content
 export { default as Heading } from './Heading';

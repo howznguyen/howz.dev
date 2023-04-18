@@ -1,6 +1,6 @@
 import { Image ,Tag } from '@/components/atoms';
 import { MainTemplate } from '@/components/templates'
-import { Notion, Route } from '@/lib'
+import { Notion, Route, useTrans } from '@/lib'
 import { GetStaticProps } from 'next'
 import React from 'react'
 
@@ -11,14 +11,14 @@ interface TagPageProps {
 }
 
 const TagPage = ({tags, head, options} : TagPageProps) => {
-
+  const trans = useTrans();
 
   return (
     <MainTemplate options={options} head={head}>
         <div className="layout py-12">
-          <h1 className="text-3xl md:text-5xl font-semibold">Tags</h1>
+          <h1 className="text-3xl md:text-5xl font-semibold">{ trans.tag.tags }</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Bạn có thể tìm các bài viết theo các tags dưới đây:
+            { trans.tag.intro }
           </p>
           <div className="mt-10 flex items-center justify-start flex-wrap gap-y-2 w-full">
               {tags.map((tag: any, index: number) => <Tag key={index} name={tag} />)}

@@ -1,6 +1,6 @@
 import React from "react";
-import { NavItem, Logo, ThemeSwitcher, Button } from "@/components/atoms";
-import { HiBars3, HiXMark } from "react-icons/hi2";
+import { NavItem, Logo, ThemeSwitcher, Button, Icon } from "@/components/atoms";
+import { useTrans } from "@/lib";
 
 interface NavigationProps {
   navigation: Array<any>;
@@ -8,6 +8,8 @@ interface NavigationProps {
 
 const Navigation = ({navigation} : NavigationProps) => {
   const [isShowMobileMenu, setIsShowMobileMenu] = React.useState(false);
+  const trans = useTrans();
+  
   let nav = navigation || [];
   return (
     <>
@@ -23,9 +25,9 @@ const Navigation = ({navigation} : NavigationProps) => {
           <Button
             type="button"
             onClick={() => setIsShowMobileMenu(true)}
-            title="Open Navigation"
+            title={ trans.header.open_navigation }
           >
-            <HiBars3 />
+            <Icon icon="HiBars3"/>
           </Button>
         </div>
 
@@ -42,9 +44,9 @@ const Navigation = ({navigation} : NavigationProps) => {
                     type="button"
                     className="ml-2"
                     onClick={() => setIsShowMobileMenu(false)}
-                    title="Close Navigation"
+                    title={ trans.header.close_navigation }
                   >
-                    <HiXMark />
+                    <Icon icon="HiXMark"/>
                   </Button>
                 </div>
               </div>

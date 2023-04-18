@@ -11,7 +11,11 @@ const nextConfig = {
         hostname: "**",
       },
     ],
-},
+  },
+  i18n: {
+    locales: ['en','vi'],
+    defaultLocale: 'vi',
+  },
 }
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
