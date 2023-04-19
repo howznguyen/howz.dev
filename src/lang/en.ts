@@ -119,6 +119,7 @@ const en = {
     },
     tags: "Tags",
     relate_post: "Realted Posts:",
+    table_of_contents: "Table of Contents"
   },
   blog: {
     blog: "Blog",

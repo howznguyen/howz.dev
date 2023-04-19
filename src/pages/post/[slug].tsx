@@ -110,7 +110,7 @@ const PostPage = ({
               <TableOfContents data={post.contents} />
             </div>
 
-            <div className="md:col-span-2 mb-2">
+            <div className="md:col-span-2 mb-2 mt-4">
               <span className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
                 {trans.post.relate_post}
               </span>
