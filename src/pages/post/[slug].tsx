@@ -5,7 +5,7 @@ import {
   PostList,
 } from "@/components/molecules";
 import { MainTemplate, PageNotFound } from "@/components/templates";
-import { Notion, Route, Image as ImageHelper } from "@/lib";
+import { Notion, Route, Image as ImageHelper, useTrans } from "@/lib";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -18,7 +18,7 @@ import {
 } from "@/lib/env";
 import { useRouter } from "next/router";
 import { LoadingSection } from "@/components/organisms";
-import { DateTime, Icon, Tag } from "@/components/atoms";
+import { Icon, Tag } from "@/components/atoms";
 
 interface PostPageProps {
   slug: any;
@@ -38,16 +38,16 @@ const PostPage = ({
   options,
 }: PostPageProps) => {
   const router = useRouter();
+  const trans = useTrans();
   let [stateRelatedPosts, setStateRelatedPosts] = useState(relatedPosts);
+  let locale = router.locale ?? 'vi';
 
   useEffect(() => {
-    fetch(Route.api.post.updateViews(slug), { method: "POST" });
+    fetch(Route.api.post.updateViews(slug, locale), { method: "POST" });
     if(stateRelatedPosts !== relatedPosts) {
       setStateRelatedPosts(relatedPosts);
     }
-  }, [slug, stateRelatedPosts, relatedPosts]);
-
-
+  }, [slug,locale, stateRelatedPosts, relatedPosts]);
 
   if (!post) return <PageNotFound />;
 
@@ -78,17 +78,16 @@ const PostPage = ({
               {post.title}
             </h1>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-              Viết vào <DateTime value={post.published.start} />{" "}
-              bởi {post.authors[0].name}.
+              {trans.post.published_at_by(post.published.start, post.authors[0].name, locale)}
             </p>
             <div className="mt-6 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
               <div className="flex items-center gap-1">
                 <Icon icon="HiOutlineClock"/>
-                <span>{post.readingTime} phút đọc</span>
+                <span>{trans.post.reading_time(post.readingTime)}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Icon icon="HiEye"/>
-                <span>{post.views} lượt xem</span>
+                <span>{trans.post.reading_time(post.views)}</span>
               </div>
             </div>
           </div>
@@ -100,7 +99,7 @@ const PostPage = ({
               <NotionRender contents={post.contents} />
 
               <span>
-                Tags:{" "}
+                {trans.tag.tags}:{" "}
                 {post.tags.map((tag: any, index: number) => (
                   <Tag key={index} name={tag} />
                 ))}
@@ -113,7 +112,7 @@ const PostPage = ({
 
             <div className="md:col-span-2 mb-2">
               <span className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
-                Những Bài Viết Liên Quan:
+                {trans.post.relate_post}
               </span>
               <PostList posts={stateRelatedPosts} limit={3} />
             </div>
@@ -150,7 +149,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   let posts = await Notion.getPosts();
   let relatedPosts = [];
   try {
-    post = await Notion.getPostBySlug(slug as string);
+    post = await Notion.getPostBySlug(slug as string, locale as string);
   } catch (error) {}
 
   let giscus = {

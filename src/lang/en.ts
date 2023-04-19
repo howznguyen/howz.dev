@@ -1,3 +1,5 @@
+import moment from "moment";
+
 const en = {
   lang:[
     { value: "en", label: "Eng" },
@@ -101,8 +103,13 @@ const en = {
     ],
   },
   post: {
-    published_at_by: (datetime: any, author: any) => {
-      return `Published at ${datetime} by ${author}.`;
+    published_at_by: (datetime: any, author: any, locale: string) => {
+      moment.locale(locale);
+      const days = 5;
+      let raw = moment(datetime);
+      let duration = moment.duration(moment().diff(datetime));
+      const _datetime = (duration.asHours() > 24 * days) ? raw.format('DD/MM/YYYY HH:mm') : raw.fromNow();
+      return `Published at ${_datetime} by ${author}.`;
     },
     reading_time: (min: any) => {
       return `${min} min read`;

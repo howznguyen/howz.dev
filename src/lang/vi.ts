@@ -1,3 +1,5 @@
+import moment from "moment";
+
 const vi = {
   lang:[
     { value: "en", label: "Eng" },
@@ -97,8 +99,13 @@ const vi = {
     ],
   },
   post: {
-    published_at_by: (datetime: any, author: any) => {
-      return `Được đăng vào ${datetime} bởi ${author}.`;
+    published_at_by: (datetime: any, author: any, locale: string) => {
+      moment.locale(locale);
+      const days = 5;
+      let raw = moment(datetime);
+      let duration = moment.duration(moment().diff(datetime));
+      const _datetime = (duration.asHours() > 24 * days) ? raw.format('DD/MM/YYYY HH:mm') : raw.fromNow();
+      return `Được đăng vào ${_datetime} bởi ${author}.`;
     },
     reading_time: (min: any) => {
       return `${min} phút đọc`;

@@ -13,7 +13,7 @@ const Route = {
     // API
     api: {
         post: {
-            updateViews : (slug: string, includeDomain = false) => `${includeDomain ? BASE_URL : ''}/api/post/views?slug=${slug}`
+            updateViews : (slug: string, language: string, includeDomain = false) => `${includeDomain ? BASE_URL : ''}/api/post/views?slug=${slug}&language=${language}`
         }
     },
 
