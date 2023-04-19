@@ -43,11 +43,12 @@ const PostPage = ({
   let locale = router.locale ?? 'vi';
 
   useEffect(() => {
-    fetch(Route.api.post.updateViews(slug, locale), { method: "POST" });
+    // fetch(Route.api.post.updateViews(slug, locale), { method: "POST" });
     if(stateRelatedPosts !== relatedPosts) {
       setStateRelatedPosts(relatedPosts);
     }
-  }, [slug,locale, stateRelatedPosts, relatedPosts]);
+    // slug,locale, 
+  }, [stateRelatedPosts, relatedPosts]);
 
   if (!post) return <PageNotFound />;
 
