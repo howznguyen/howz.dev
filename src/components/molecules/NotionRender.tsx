@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Blockquote,
   Callout,
@@ -16,7 +15,6 @@ import {
   Embed,
   Video,
 } from "@/components/atoms";
-import ReactPlayer from 'react-player/lazy';
 import nl2br from "react-nl2br";
 interface NotionRenderProps {
   contents: Array<any>;

@@ -58,6 +58,12 @@ const Notion = {
             filter: {
                 and : [
                     {
+                        property: 'status',
+                        status: {
+                            equals: 'Published',
+                        }
+                    },
+                    {
                         property: 'published',
                         date: { before: new Date().toISOString() },
                     },
@@ -170,12 +176,10 @@ const Notion = {
     async getNotionOptions() {
         let settings = await this.getSettings();
         let navigation = await this.getNavigation();
-        let footer = await this.getFooter();
 
         return {
             settings,
             navigation,
-            footer,
         };
     },
 
@@ -246,32 +250,6 @@ const Notion = {
         return navigation;
     },
 
-    async getFooter() {
-        let response = await notion.databases.query({
-            database_id: FOOTER_DATABASE_ID,
-        });
-
-        let footer = response.results.sort((a : any, b : any) => {
-            let aIndex = this.getProperties(a.properties.index);
-            let bIndex = this.getProperties(b.properties.index);
-            return aIndex - bIndex;
-        }).map((item : any) => {
-            let id = item.id;
-            let title = this.getProperties(item.properties.title).content;
-            let index = this.getProperties(item.properties.index);
-            let url = this.getProperties(item.properties.url).content;
-
-            return {
-                id,
-                title,
-                index,
-                url,
-            };
-        });
-
-        return footer;
-    },
-
     async getChildern(id : string) {
         let _this = this;
         const response = await notion.blocks.children.list({
@@ -302,9 +280,9 @@ const Notion = {
 
             return {
                 id: post.id,
-                title: this.getProperties(post.properties.title).content,
-                cover: this.getProperties(post.cover).url,
-                published: this.getProperties(post.properties.published),
+                title: this.getProperties(post.properties.title)?.content ?? null,
+                cover: this.getProperties(post.cover)?.url ?? null,
+                published: this.getProperties(post.properties.published) ?? null,
                 slug: this.getProperties(post.properties.slug).content,
                 tags: this.getProperties(post.properties.tags, true).map((x:any) => x.name) || [],
                 authors: this.getProperties(post.properties.authors, true),
@@ -312,12 +290,15 @@ const Notion = {
                 featured: this.getProperties(post.properties.featured),
                 readingTime: Math.ceil(minutes),
                 views: this.getProperties(post.properties.views),
+                language: this.getProperties(post.properties.language)?.name,
             };
         }));
     },
 
     getProperties(param : any, isGetAllArray : boolean = false) : any{
-        if (param && param instanceof Object && 'object' in param && param.object === 'user') {
+        if (!param) {
+            return null;
+        } else if(param && param instanceof Object && 'object' in param && param.object === 'user') {
             return param;
         } else if(param && param instanceof Object && 'type' in param) {
             return this.getProperties(param[param.type], isGetAllArray);

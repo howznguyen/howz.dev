@@ -11,8 +11,7 @@ interface MainTemplateProps {
 }
 
 const MainTemplate = ({ children, head, options }: MainTemplateProps) => {
-  let { settings, navigation, footer } = options ?? {};
-
+  let { settings, navigation } = options ?? {};
   let headMeta = HeadMeta(options, head);
 
   return (
@@ -47,7 +46,7 @@ const MainTemplate = ({ children, head, options }: MainTemplateProps) => {
           </div>
       </div>
       {children}
-      <Footer data={footer} />
+      <Footer/>
     </>
   );
 };

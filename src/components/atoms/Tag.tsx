@@ -1,7 +1,5 @@
 import { Route } from '@/lib';
 import Link from 'next/link'
-import React from 'react'
-
 interface TagProps {
     name: string;
 }

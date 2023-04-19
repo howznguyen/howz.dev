@@ -1,9 +1,8 @@
-import { Image ,Tag } from '@/components/atoms';
 import { PostList } from '@/components/molecules';
 import { MainTemplate } from '@/components/templates'
-import { Notion, Route } from '@/lib'
+import { Notion, Route, useTrans } from '@/lib'
 import { GetStaticPaths, GetStaticProps } from 'next'
-import React from 'react'
+import { useEffect, useState } from 'react';
 
 interface TagPageProps {
   tag: any,
@@ -13,21 +12,28 @@ interface TagPageProps {
 }
 
 const TagPage = ({tag, posts, head, options} : TagPageProps) => {
-  posts = posts ?? [];
+  const trans = useTrans();
+  let [statePosts, setStatePosts] = useState(posts ?? []);
+
+  useEffect(() => {
+    if(statePosts !== posts) {
+      setStatePosts(posts ?? []);
+    }
+  }, [statePosts, posts]);
 
   return (
     <MainTemplate options={options} head={head}>
         <div className="layout py-12">
-          <h1 className="text-3xl md:text-5xl font-semibold">Tags #{tag}</h1>
+          <h1 className="text-3xl md:text-5xl font-semibold">{trans.tag.tag} #{tag}</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Các bài viết của tag:
+            {trans.tag.post_by_tag}
           </p>
 
           <div className="mt-4">
-            <PostList posts={posts} />
-            {posts.length === 0 && (
+            {statePosts.length > 0 && (<PostList posts={statePosts} />)}
+            {statePosts.length === 0 && (
               <h2 className="mt-8 text-center text-2xl dark:text-white font-bold">
-                {"Không có bài viết nào"}
+                {trans.tag.not_found_post}
               </h2>
             )}
           </div>
@@ -56,6 +62,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
     let tag = context.params?.tag ?? '';
     let posts = await Notion.getPostsByTag(tag as string);
     let options = await Notion.getNotionOptions();
+
+    posts = posts.filter((x) => context.locale === x.language);
 
     let head = {
       url: Route.tag.index(true),

@@ -1,7 +1,7 @@
-import React from "react";
+import { ReactNode } from "react";
 
 interface SpanProps {
-  children: React.ReactNode;
+  children: ReactNode;
   annotations: {
     bold?: boolean;
     italic?: boolean;

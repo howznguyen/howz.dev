@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import React from 'react'
+import { ReactNode } from 'react';
 
 interface LinkProps {
-    children?: React.ReactNode
+    children?: ReactNode
     href: string
     className?: string
     title?: string;

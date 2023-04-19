@@ -8,9 +8,8 @@ import { MainTemplate, PageNotFound } from "@/components/templates";
 import { Notion, Route, Image as ImageHelper } from "@/lib";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Zoom from "react-medium-image-zoom";
-import { HiEye, HiOutlineClock } from "react-icons/hi";
 import {
   GISCUS_REPO,
   GISCUS_REPO_ID,
@@ -19,7 +18,7 @@ import {
 } from "@/lib/env";
 import { useRouter } from "next/router";
 import { LoadingSection } from "@/components/organisms";
-import { DateTime, Tag } from "@/components/atoms";
+import { DateTime, Icon, Tag } from "@/components/atoms";
 
 interface PostPageProps {
   slug: any;
@@ -39,9 +38,16 @@ const PostPage = ({
   options,
 }: PostPageProps) => {
   const router = useRouter();
+  let [stateRelatedPosts, setStateRelatedPosts] = useState(relatedPosts);
+
   useEffect(() => {
     fetch(Route.api.post.updateViews(slug), { method: "POST" });
-  }, [slug]);
+    if(stateRelatedPosts !== relatedPosts) {
+      setStateRelatedPosts(relatedPosts);
+    }
+  }, [slug, stateRelatedPosts, relatedPosts]);
+
+
 
   if (!post) return <PageNotFound />;
 
@@ -77,11 +83,11 @@ const PostPage = ({
             </p>
             <div className="mt-6 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
               <div className="flex items-center gap-1">
-                <HiOutlineClock />
+                <Icon icon="HiOutlineClock"/>
                 <span>{post.readingTime} phút đọc</span>
               </div>
               <div className="flex items-center gap-1">
-                <HiEye />
+                <Icon icon="HiEye"/>
                 <span>{post.views} lượt xem</span>
               </div>
             </div>
@@ -105,11 +111,11 @@ const PostPage = ({
               <TableOfContents data={post.contents} />
             </div>
 
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 mb-2">
               <span className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
                 Những Bài Viết Liên Quan:
               </span>
-              <PostList posts={relatedPosts} limit={3} />
+              <PostList posts={stateRelatedPosts} limit={3} />
             </div>
 
             <CommentSection giscus={giscus} />
@@ -120,13 +126,14 @@ const PostPage = ({
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
   let posts = await Notion.getPosts();
 
   let paths = posts.map((post: any) => ({
     params: {
       slug: post.slug,
     },
+    locale: post.language
   }));
 
   return {
@@ -137,8 +144,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   let slug = context.params?.slug;
+  let locale = context.locale;
   let options = await Notion.getNotionOptions();
-  let post = null;
+  let post: any = null;
   let posts = await Notion.getPosts();
   let relatedPosts = [];
   try {
@@ -160,9 +168,14 @@ export const getStaticProps: GetStaticProps = async (context) => {
   };
 
   if (post) {
+    if (post.language !== locale) {
+      return {
+        notFound: true,
+      }
+    }
     let tags = post.tags;
     relatedPosts = [...posts]
-      .filter((x) => x.tags.some((y: any) => tags.includes(y)))
+      .filter((x) => x.tags.some((y: any) => tags.includes(y)) && x.id !== post.id && context.locale === x.language)
       .map((value) => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);

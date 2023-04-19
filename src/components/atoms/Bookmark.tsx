@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
@@ -41,7 +41,6 @@ const Bookmark = ({ url }: BookmarkProps) => {
       setDataUrl(data);
     }).catch((error) => {
       setIsLoading(false);
-      console.log(error);
     })
 
     return () => {
