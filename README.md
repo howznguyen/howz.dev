@@ -43,11 +43,16 @@ Once you have your own duplicate page, you can get the `NOTION_API_KEY` and data
 4. You'll now see your integration listed on the page. Click on the integration's name.
 5. You should now see your integration details page. You can find your `NOTION_API_KEY` under the "Internal Integration Tokens" section.
 
+To add your app into page, folow these steps:
+1. Open your duplicated database in Notion.
+2. Click on the three dots in the top-right corner of the page.
+3. Then you selecting "Add connections" and choosing your app name.
+
 To get the database IDs, follow these steps:
 
 1. Open your duplicated database in Notion.
 2. Click on the three dots in the top-right corner of the page.
-3. Click on "Properties."
+3. Click on "Copy link URL."
 4. You should see the database ID in the URL. It's the long string of characters between the last two forward slashes.
 
 Update the `.env` file with your `NOTION_API_KEY` and the database IDs for your settings, navigation, footer, and posts databases. Use the `.env.example` file as a guide.
