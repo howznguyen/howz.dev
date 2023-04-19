@@ -1,7 +1,7 @@
-import React from "react";
+import { ReactNode } from "react";
 
 interface UnorderedListProps {
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
 const UnorderedList = ({ children } : UnorderedListProps) => {

@@ -1,20 +1,23 @@
 import Link from 'next/link'
-import React from 'react'
+import { ReactNode } from 'react';
 
 interface LinkProps {
-    children?: React.ReactNode
+    children?: ReactNode
     href: string
     className?: string
+    title?: string;
     target?: "_blank" | "_self" | "_parent" | "_top"
 }
 
-const LinkAtoms = ({ children, href, className, target }: LinkProps) => {
-  let _target = target ?? "_self";
+const LinkAtoms = ({ children, href, className, title, target }: LinkProps) => {
+  const _target = target ?? "_self";
+  const _className = className ?? "";
   return (
     <Link
         target={target}
         href={href}
-        className={`${className} text-blue-500 hover:underline dark:text-blue-400 ${_target === "_blank" ? "cursor-newtab" : ""}`}
+        title={title}
+        className={`${_className} text-blue-600 hover:underline dark:text-blue-300 ${_target === "_blank" ? "cursor-newtab" : ""}`}
     >
         {children}
     </Link>

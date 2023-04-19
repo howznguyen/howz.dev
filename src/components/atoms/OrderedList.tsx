@@ -1,7 +1,7 @@
-import React from "react";
+import { ReactNode } from "react";
 
 interface OrderedListProps {
-    children: React.ReactNode;
+    children: ReactNode;
     number ?: number;
 }
 

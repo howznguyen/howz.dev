@@ -1,4 +1,3 @@
-import React from "react";
 import { RichTextToReact } from "../molecules/NotionRender";
 
 interface TableProps {

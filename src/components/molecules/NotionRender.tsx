@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Blockquote,
   Callout,
@@ -13,10 +12,10 @@ import {
   Bookmark,
   Table,
   Link,
+  Embed,
+  Video,
 } from "@/components/atoms";
 import nl2br from "react-nl2br";
-
-
 interface NotionRenderProps {
   contents: Array<any>;
 }
@@ -156,6 +155,24 @@ export const NotionElementToReact = (content: any, _index: number, contents: Arr
     if (type === "bookmark") {
       let url = content[type].url;
       component = <Bookmark key={_index} url={url} />;
+    }
+
+    // Embed
+    if (type === "embed") {
+      let url = content[type].url;
+      component = <div className="mb-4 h-auto w-full flex justify-center"><Embed url={url} /></div>
+    }
+
+    // Pdf
+    if (type === "pdf") {
+      let url = content[type].external.url;
+      component = <div className="mb-4 w-full flex justify-center aspect-[8/11]"><Embed url={url} /></div>
+    }
+
+    // Video
+    if (type === "video" && content[type].type === "external") {
+      let url = content[type].external.url;
+      component = <Video url={url} />
     }
 
     // Table

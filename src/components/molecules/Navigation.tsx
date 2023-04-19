@@ -1,13 +1,15 @@
-import React from "react";
-import { NavItem, Logo, ThemeSwitcher, Button } from "@/components/atoms";
-import { HiBars3, HiXMark } from "react-icons/hi2";
+import { NavItem, Logo, ThemeSwitcher, Button, Icon, LangugeSwither } from "@/components/atoms";
+import { useTrans } from "@/lib";
+import { useState } from "react";
 
 interface NavigationProps {
   navigation: Array<any>;
 }
 
 const Navigation = ({navigation} : NavigationProps) => {
-  const [isShowMobileMenu, setIsShowMobileMenu] = React.useState(false);
+  const [isShowMobileMenu, setIsShowMobileMenu] = useState(false);
+  const trans = useTrans();
+  
   let nav = navigation || [];
   return (
     <>
@@ -23,8 +25,9 @@ const Navigation = ({navigation} : NavigationProps) => {
           <Button
             type="button"
             onClick={() => setIsShowMobileMenu(true)}
+            title={ trans.header.open_navigation }
           >
-            <HiBars3 />
+            <Icon icon="HiBars3"/>
           </Button>
         </div>
 
@@ -35,14 +38,15 @@ const Navigation = ({navigation} : NavigationProps) => {
             <div className="px-5 pt-5 pb-6">
               <div className="flex items-center justify-between">
                 <Logo title={""} />
-                <div className="mr-2">
+                <div className="flex gap-x-2 mr-2">
+                <LangugeSwither />
                 <ThemeSwitcher />
                   <Button
                     type="button"
-                    className="ml-2"
                     onClick={() => setIsShowMobileMenu(false)}
+                    title={ trans.header.close_navigation }
                   >
-                    <HiXMark />
+                    <Icon icon="HiXMark"/>
                   </Button>
                 </div>
               </div>
