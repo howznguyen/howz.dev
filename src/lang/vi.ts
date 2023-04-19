@@ -115,6 +115,7 @@ const vi = {
     },
     tags: "Tags",
     relate_post: "Những Bài Viết Liên Quan:",
+    table_of_contents: "Mục Lục",
   },
   blog: {
     blog: "Blog",

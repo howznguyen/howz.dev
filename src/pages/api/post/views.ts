@@ -8,9 +8,10 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     }
         
     let slug = req.query.slug
+    let language = req.query.language
 
-    if (slug) {
-        let response = Notion.updateViewsBySlug(slug as string);
+    if (slug && language) {
+        let response = Notion.updateViewsBySlug(slug as string, language as string);
         res.status(200).json({message: 'Successful'});
     } else {
         res.status(404).json({message: 'Not Found'})
