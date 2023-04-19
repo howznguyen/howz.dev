@@ -20,7 +20,7 @@ const CommentSection = ({ giscus }: CommentSectionProps) => {
         category={giscus.GISCUS_CATEGORY}
         categoryId={giscus.GISCUS_CATEGORY_ID}
         mapping="pathname"
-        strict="0"
+        strict="1"
         reactionsEnabled="1"
         emitMetadata="0"
         inputPosition="top"
