@@ -1,5 +1,6 @@
 import Giscus from "@giscus/react";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/router";
 
 interface CommentSectionProps {
   giscus : any;
@@ -7,6 +8,7 @@ interface CommentSectionProps {
 
 
 const CommentSection = ({ giscus }: CommentSectionProps) => {
+  const { locale } = useRouter()
   let { theme } = useTheme();
 
   return (
@@ -25,7 +27,7 @@ const CommentSection = ({ giscus }: CommentSectionProps) => {
         loading="lazy"
         theme={theme === "dark" ? "dark" : "light"}
         host="https://giscus.app"
-        lang="vi"
+        lang={locale}
       />
     </div>
   );
