@@ -1,10 +1,6 @@
 {
   "name": "howz.dev",
-  "version": "0.0.2",
-  "scm": {
-    "remote": "git@github.com:howznguyen/howz.dev.git",
-    "branch": "Detached: 552db40622bb7a82d9c6d67d2d6bcf3694b47e30",
-    "commit": "552db40622bb7a82d9c6d67d2d6bcf3694b47e30"
-  },
-  "timestamp": "2023-02-20T20:54:30.124Z"
+  "version": "0.0.5",
+  "scm": {},
+  "timestamp": "2023-04-19T18:33:48.000Z"
 }

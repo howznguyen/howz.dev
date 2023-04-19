@@ -13,7 +13,6 @@ module.exports = {
                 allow: '/',
                 disallow: [
                     '/post/[slug]',
-                    '/post/',
                     '/tag/[tag]'
                 ]
             }
