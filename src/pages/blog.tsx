@@ -3,8 +3,7 @@ import { MainTemplate } from "@/components/templates";
 import { Notion, Route, useTrans } from "@/lib";
 import { GetStaticProps } from "next";
 import removeAccents from "remove-accents";
-import React, { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useState } from "react";
 
 interface BlogPageProps {
   posts: any[];
@@ -14,7 +13,10 @@ interface BlogPageProps {
 
 const BlogPage = ({ posts, head, options }: BlogPageProps) => {
   // const { locale } = useRouter();
-  let [filterPosts, setFilterPosts] = React.useState(posts);
+  let [filterPosts, setFilterPosts] = useState(posts);
+  if(filterPosts !== posts) {
+    setFilterPosts(posts);
+  }
   const trans = useTrans();
 
   const findPosts = (e: any) => {
