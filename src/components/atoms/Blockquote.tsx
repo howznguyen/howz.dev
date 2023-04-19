@@ -1,7 +1,7 @@
-import React from "react";
+import { ReactNode } from "react";
 
 interface BlockquoteProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const Blockquote = ({ children }: BlockquoteProps) => {

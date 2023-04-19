@@ -3,7 +3,7 @@ import { MainTemplate } from "@/components/templates";
 import { Notion, Route, useTrans } from "@/lib";
 import { GetStaticProps } from "next";
 import removeAccents from "remove-accents";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface BlogPageProps {
   posts: any[];
@@ -12,20 +12,22 @@ interface BlogPageProps {
 }
 
 const BlogPage = ({ posts, head, options }: BlogPageProps) => {
-  // const { locale } = useRouter();
-  let [filterPosts, setFilterPosts] = useState(posts);
-  if(filterPosts !== posts) {
-    setFilterPosts(posts);
-  }
   const trans = useTrans();
+  let [statePosts, setStatePosts] = useState(posts);
+
+  useEffect(() => {
+    if(statePosts !== posts) {
+      setStatePosts(posts);
+    }
+  }, [statePosts, posts])
 
   const findPosts = (e: any) => {
-    let filteredPosts = posts.filter((post: any) => {
+    let filteredPosts = statePosts.filter((post: any) => {
       return removeAccents(post.title.toLowerCase()).includes(
         removeAccents(e.target.value.toLowerCase())
       );
     });
-    setFilterPosts(filteredPosts);
+    setStatePosts(filteredPosts);
   };
 
   return (
@@ -48,8 +50,8 @@ const BlogPage = ({ posts, head, options }: BlogPageProps) => {
           <div className="mt-4">
             {/* Sort to Date */}
 
-            <PostList posts={filterPosts} />
-            {filterPosts.length === 0 && (
+            <PostList posts={statePosts} />
+            {statePosts.length === 0 && (
               <h2 className="mt-8 text-center text-2xl dark:text-white font-bold">
                 { trans.blog.not_found_post }
               </h2>

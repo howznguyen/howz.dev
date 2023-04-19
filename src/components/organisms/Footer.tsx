@@ -1,4 +1,3 @@
-import React from 'react'
 import { Icon, Link } from '../atoms'
 import { useTrans } from '@/lib';
 
@@ -34,7 +33,7 @@ const Footer = ({}: FooterProps) => {
         </div>
 
         <p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
-          © {new Date().getFullYear()} - Built with{" "}
+          © {new Date().getFullYear()} - {trans.footer.build_with}
           <Link href="https://nextjs.org/" target="_blank" >
             Next.js
           </Link>
@@ -52,15 +51,14 @@ const Footer = ({}: FooterProps) => {
           >
             Notion
           </Link>
-          . Developed by{" "}
+          . {trans.footer.develop_by}
           <Link
             href="https://github.com/howznguyen"
             target="_blank"
           >
             @howznguyen
           </Link>
-          {" "}
-          with ❤️
+          {trans.footer.with} ❤️
           .
         </p>
       </main>

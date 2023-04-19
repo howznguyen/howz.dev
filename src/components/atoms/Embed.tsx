@@ -1,5 +1,4 @@
 import { useTheme } from 'next-themes';
-import React from 'react'
 import Embed from 'react-embed';
 import Iframe from 'react-iframe';
 import { FacebookEmbed, InstagramEmbed, TikTokEmbed, TwitterEmbed } from 'react-social-media-embed';

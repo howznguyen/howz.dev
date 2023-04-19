@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode, createElement } from "react";
 
 interface HeadingProps {
   type?:
@@ -6,7 +6,7 @@ interface HeadingProps {
     | "heading_2"
     | "heading_3"
   id?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const Heading = ({ type, id, children }: HeadingProps) => {
@@ -22,7 +22,7 @@ const Heading = ({ type, id, children }: HeadingProps) => {
 
   return (
     <>
-      {React.createElement(
+      {createElement(
         HeadingComponent,
         { className: `${size} font-semibold dark:text-white my-2 scroll-mt-[70px]`, id: id },
         children

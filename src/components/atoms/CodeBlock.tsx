@@ -1,18 +1,18 @@
-import React, { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Prism from "prismjs";
 import "prismjs/components/prism-markup-templating.js";
 import Icon from "./Icon";
 
 interface CodeBlockProps {
-  children: React.ReactNode;
+  children: ReactNode;
   language?: string;
 }
 
 const CodeBlock = ({ children, language }: CodeBlockProps) => {
   let lang = language ? `language-${language}` : "language-markup";
   let textRef = useRef<HTMLDivElement>(null);
-  let [isCopied, setIsCopied] = React.useState(false);
+  let [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     const renderFunc = async () => {

@@ -1,7 +1,7 @@
 const en = {
   lang:[
-    { value: "en", label: "English" },
-    { value: "vi", label: "Tiếng Việt" },
+    { value: "en", label: "Eng" },
+    { value: "vi", label: "Vie" },
   ],
   header: {
     open_navigation : "Open Navigation",
@@ -44,7 +44,10 @@ const en = {
         link: "https://www.facebook.com/howznguyen",
       },
       
-    ]
+    ],
+    develop_by: "Developed by ",
+    build_with: "Built with ",
+    with: "with ",
   },
   home: {
     intro: {
@@ -118,10 +121,24 @@ const en = {
     not_found_post: "There are no posts yet",
   },
   tag: {
+    tag: "Tag",
     tags: "Tags",
     intro: "You can find articles under the tags below:",
     not_found_post: "There are no posts yet",
     post_by_tag: "Posts by tag:",
+  },
+  error_page: {
+    404 : {
+      title: "Page Not Found",
+      head: "Sorry, I can't find this page.",
+      desc: "But don't worry, you can find many more on your homepage.",
+      home_button: "Home"
+    }
+  },
+  common: {
+    error: "Error",
+    is_loading: "Loading...",
+    process_take_few_second: "This process may take a few seconds, please do not close this page.",
   }
 };
 

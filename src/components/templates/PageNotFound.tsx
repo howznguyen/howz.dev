@@ -1,15 +1,15 @@
 import { Button, ThemeSwitcher } from '@/components/atoms';
 import { NoNavTemplate } from '@/components/templates'
-import { Route } from '@/lib';
+import { Route, useTrans } from '@/lib';
 import Link from 'next/link';
-import React from 'react'
 
 interface PageNotFoundPros {
 }
 
 const PageNotFound = ({} : PageNotFoundPros ) => {
+  const trans = useTrans()
   let head = {
-    site: "Page Not Found",
+    site: trans.error_page[404].title,
   }
 
 
@@ -19,17 +19,17 @@ const PageNotFound = ({} : PageNotFoundPros ) => {
             <div className="container flex flex-col items-center justify-center px-5 mx-auto my-8">
                 <div className="max-w-md text-center">
                     <h2 className="mb-8 font-extrabold text-9xl dark:text-gray-600">
-                        <span className="sr-only">Error</span>404
+                        <span className="sr-only">{trans.common.error}</span>404
                     </h2>
                     <p className="text-2xl font-semibold md:text-3xl">
-                        {"Xin lỗi, mình không thể tìm thấy trang này."}
+                        {trans.error_page[404].head}
                     </p>
                     <p className="mt-4 mb-8 dark:text-gray-400">
-                        Nhưng đừng lo, bạn có thể tìm thấy nhiều thứ khác trên trang chủ của mình.
+                        {trans.error_page[404].desc}
                     </p>
                     <div className="flex gap-x-4 justify-center">
                         <Button >
-                            <Link href={Route.index()}>Trang Chủ</Link>
+                            <Link href={Route.index()}>{trans.error_page[404].home_button}</Link>
                         </Button>
                         <ThemeSwitcher />
                     </div>

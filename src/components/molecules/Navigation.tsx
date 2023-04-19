@@ -1,13 +1,13 @@
-import React from "react";
-import { NavItem, Logo, ThemeSwitcher, Button, Icon } from "@/components/atoms";
+import { NavItem, Logo, ThemeSwitcher, Button, Icon, LangugeSwither } from "@/components/atoms";
 import { useTrans } from "@/lib";
+import { useState } from "react";
 
 interface NavigationProps {
   navigation: Array<any>;
 }
 
 const Navigation = ({navigation} : NavigationProps) => {
-  const [isShowMobileMenu, setIsShowMobileMenu] = React.useState(false);
+  const [isShowMobileMenu, setIsShowMobileMenu] = useState(false);
   const trans = useTrans();
   
   let nav = navigation || [];
@@ -38,11 +38,11 @@ const Navigation = ({navigation} : NavigationProps) => {
             <div className="px-5 pt-5 pb-6">
               <div className="flex items-center justify-between">
                 <Logo title={""} />
-                <div className="mr-2">
+                <div className="flex gap-x-2 mr-2">
+                <LangugeSwither />
                 <ThemeSwitcher />
                   <Button
                     type="button"
-                    className="ml-2"
                     onClick={() => setIsShowMobileMenu(false)}
                     title={ trans.header.close_navigation }
                   >

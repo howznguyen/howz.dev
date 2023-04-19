@@ -1,4 +1,4 @@
-import React from "react";
+import { createElement } from "react";
 import * as ri_ci from "react-icons/ci";
 import * as ri_fa from "react-icons/fa";
 import * as ri_io from "react-icons/io";
@@ -64,7 +64,7 @@ interface IconProps {
 
 const Icon = ({ icon, className }: IconProps) => {
   const iconComponent = icons[icon] ?? icons.FaFileExcel;
-  return React.createElement(iconComponent, {
+  return createElement(iconComponent, {
     className: className,
   });
 };

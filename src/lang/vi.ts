@@ -1,7 +1,7 @@
 const vi = {
   lang:[
-    { value: "en", label: "English" },
-    { value: "vi", label: "Tiếng Việt" },
+    { value: "en", label: "Eng" },
+    { value: "vi", label: "Vie" },
   ],
   header: {
     open_navigation : "Open Navigation",
@@ -39,7 +39,10 @@ const vi = {
         link: "https://www.facebook.com/howznguyen",
       },
       
-    ]
+    ],
+    develop_by: "Phát triển bởi ",
+    build_with: "Xây dựng bằng ",
+    with: "bằng ",
   },
   home: {
     intro: {
@@ -113,11 +116,25 @@ const vi = {
     not_found_post: "Không có bài viết nào",
   },
   tag: {
+    tag: "Tag",
     tags: "Tags",
     intro: "Bạn có thể tìm các bài viết theo các tags dưới đây:",
     not_found_post: "Không có bài viết nào",
     post_by_tag: "Các bài viết của tag:",
   },
+  error_page: {
+    404 : {
+      title: "Trang Không Tồn Tại",
+      head: "Xin lỗi, mình không thể tìm thấy trang này.",
+      desc: "Nhưng đừng lo, bạn có thể tìm thấy nhiều thứ khác trên trang chủ của mình.",
+      home_button: "Trang Chủ"
+    }
+  },
+  common: {
+    error: "Lỗi",
+    is_loading: "Đang tải...",
+    process_take_few_second: "Quá trình này có thể mất vài giây, vui lòng không đóng trang này.",
+  }
 };
 
 export default vi;

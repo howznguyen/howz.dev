@@ -1,8 +1,8 @@
-import React from "react";
+import { ReactNode } from "react";
 
 interface CalloutProps {
   emoji: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const Callout = ({ emoji, children }: CalloutProps) => {

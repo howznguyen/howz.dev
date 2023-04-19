@@ -1,4 +1,3 @@
-import React from "react";
 import { NotionToHeading } from "@/components/molecules/NotionRender";
 import Scrollspy from "react-scrollspy";
 

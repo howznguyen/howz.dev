@@ -1,12 +1,12 @@
-import React from "react";
 import Zoom from "react-medium-image-zoom";
 import Image from "next/image";
 import { Image as ImageHelper } from "@/lib";
+import { ReactNode } from "react";
 
 interface ImageProps {
   src: string;
   alt: string;
-  caption?: React.ReactNode;
+  caption?: ReactNode;
 }
 
 const ImageBlock = ({ src, alt, caption }: ImageProps) => {

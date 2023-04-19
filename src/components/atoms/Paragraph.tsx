@@ -1,7 +1,7 @@
-import React from "react";
+import { ReactNode } from "react";
 
 interface ParagraphProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const Paragraph = ({ children }: ParagraphProps) => {

@@ -1,4 +1,3 @@
-import React from "react";
 import { Icon, Link } from "../atoms";
 import Image from "next/image";
 import { useTrans } from "@/lib";

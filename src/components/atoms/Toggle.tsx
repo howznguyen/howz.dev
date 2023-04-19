@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { ReactNode, useState } from "react";
 
 interface ToggleProps {
-  title: React.ReactNode;
-  children: React.ReactNode;
+  title: ReactNode;
+  children: ReactNode;
 }
 
 const Toggle = ({ title, children }: ToggleProps) => {

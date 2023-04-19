@@ -5,16 +5,14 @@ import { useRouter } from "next/router";
 
 interface NavItemProps {
     isMobile ?: boolean;
-    key: number;
     data ?: any;
 }
  
  
-const NavItem = ({isMobile, key, data}: NavItemProps) => {
+const NavItem = ({isMobile, data}: NavItemProps) => {
     const { locale } = useRouter();
     const [ isShowChildMenu, setShowChildMenu ] = React.useState(false);
     const children = data.children;
-
 
     return (isMobile ?
             <>

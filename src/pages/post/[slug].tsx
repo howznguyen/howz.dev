@@ -8,7 +8,7 @@ import { MainTemplate, PageNotFound } from "@/components/templates";
 import { Notion, Route, Image as ImageHelper } from "@/lib";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import {
   GISCUS_REPO,
@@ -38,9 +38,16 @@ const PostPage = ({
   options,
 }: PostPageProps) => {
   const router = useRouter();
+  let [stateRelatedPosts, setStateRelatedPosts] = useState(relatedPosts);
+
   useEffect(() => {
     fetch(Route.api.post.updateViews(slug), { method: "POST" });
-  }, [slug]);
+    if(stateRelatedPosts !== relatedPosts) {
+      setStateRelatedPosts(relatedPosts);
+    }
+  }, [slug, stateRelatedPosts, relatedPosts]);
+
+
 
   if (!post) return <PageNotFound />;
 
@@ -104,11 +111,11 @@ const PostPage = ({
               <TableOfContents data={post.contents} />
             </div>
 
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 mb-2">
               <span className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
                 Những Bài Viết Liên Quan:
               </span>
-              <PostList posts={relatedPosts} limit={3} />
+              <PostList posts={stateRelatedPosts} limit={3} />
             </div>
 
             <CommentSection giscus={giscus} />
@@ -168,7 +175,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
     let tags = post.tags;
     relatedPosts = [...posts]
-      .filter((x) => x.tags.some((y: any) => tags.includes(y)) && x.id !== post.id)
+      .filter((x) => x.tags.some((y: any) => tags.includes(y)) && x.id !== post.id && context.locale === x.language)
       .map((value) => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
