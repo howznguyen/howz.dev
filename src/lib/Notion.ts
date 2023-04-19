@@ -1,6 +1,7 @@
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown }  from "notion-to-md";
 import readingTime from 'reading-time';
+
 import { 
     NOTION_API_KEY, 
     SETTING_DATABASE_ID,
@@ -85,7 +86,7 @@ const Notion = {
     },
     
 
-    async getPostBySlug(slug : string) {
+    async getPostBySlug(slug : string, language: string = 'vi') {
         let post : any = {};
         const response = await notion.databases.query({
             database_id: POST_DATABASE_ID,
@@ -98,6 +99,10 @@ const Notion = {
                     {
                         property: 'slug',
                         rich_text: { equals: slug },
+                    },
+                    {
+                        property: 'language',
+                        select: { equals: language },
                     }
                 ]
             },
@@ -138,7 +143,7 @@ const Notion = {
         });
     },
 
-    async updateViewsBySlug(slug : string) {
+    async updateViewsBySlug(slug : string, language: string = 'vi') {
         const response = await notion.databases.query({
             database_id: POST_DATABASE_ID,
             filter: {
@@ -150,6 +155,10 @@ const Notion = {
                     {
                         property: 'slug',
                         rich_text: { equals: slug },
+                    },
+                    {
+                        property: 'language',
+                        select: { equals: language },
                     }
                 ]
             },
