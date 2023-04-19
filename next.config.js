@@ -16,6 +16,7 @@ const nextConfig = {
     locales: ['en','vi'],
     defaultLocale: 'vi',
   },
+  staticPageGenerationTimeout: 1000,
 }
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
