@@ -106,7 +106,7 @@ const PostPage = ({
               </div>
               <div className="flex items-center gap-1">
                 <Icon icon="HiEye"/>
-                <span>{trans.post.reading_time(post.views)}</span>
+                <span>{trans.post.views(post.views)}</span>
               </div>
             </div>
           </div>
