@@ -93,12 +93,12 @@ const en = {
         name: "Notion",
         description:
           "Articles with content about Notion and utilities around Notion.",
-        value: "notion",
+        value: ["notion"],
       },
       {
         name: "Other",
         description: "The posts are not related to technology topics.",
-        value: "other",
+        value: ["other"],
       },
     ],
   },
