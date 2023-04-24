@@ -89,12 +89,12 @@ const vi = {
         name: "Notion",
         description:
           "Các bài viết có nội dung về Notion và các tiện ích xung quanh Notion.",
-        value: "notion",
+        value: ["notion"],
       },
       {
         name: "Khác",
         description: "Các bài viết không thuộc chủ đề công nghệ.",
-        value: "other",
+        value: ["other"],
       },
     ],
   },
