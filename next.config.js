@@ -15,6 +15,7 @@ const nextConfig = {
   i18n: {
     locales: ['en','vi'],
     defaultLocale: 'vi',
+    localeDetection: false,
   },
   staticPageGenerationTimeout: 1000,
 }
