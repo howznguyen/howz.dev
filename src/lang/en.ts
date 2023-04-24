@@ -49,7 +49,7 @@ const en = {
     ],
     develop_by: "Developed by ",
     build_with: "Built with ",
-    with: "with ",
+    with: " with ",
   },
   home: {
     intro: {

@@ -44,7 +44,7 @@ const vi = {
     ],
     develop_by: "Phát triển bởi ",
     build_with: "Xây dựng bằng ",
-    with: "bằng ",
+    with: " bằng ",
   },
   home: {
     intro: {
