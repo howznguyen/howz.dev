@@ -5,11 +5,10 @@ import {
   PostList,
 } from "@/components/molecules";
 import { MainTemplate, PageNotFound } from "@/components/templates";
-import { Notion, Route, Image as ImageHelper, useTrans } from "@/lib";
+import { Notion, Route, Image as ImageHelper, useTrans, Constant } from "@/lib";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import Zoom from "react-medium-image-zoom";
+import { useCallback, useEffect, useState } from "react";
 import {
   GISCUS_REPO,
   GISCUS_REPO_ID,
@@ -19,6 +18,7 @@ import {
 import { useRouter } from "next/router";
 import { LoadingSection } from "@/components/organisms";
 import { Icon, Tag } from "@/components/atoms";
+import moment from "moment";
 
 interface PostPageProps {
   slug: any;
@@ -42,13 +42,33 @@ const PostPage = ({
   let [stateRelatedPosts, setStateRelatedPosts] = useState(relatedPosts);
   let locale = router.locale ?? 'vi';
 
+  const onScroll = useCallback(() => {
+    const pathname = location.pathname;
+    const postsLocal = JSON.parse(localStorage.getItem(Constant.LOCALSTORAGE_POSTS) ?? '{}');
+    const { scrollY } = window;
+    const { scrollHeight } = document.body;
+    
+    if(pathname in postsLocal && moment().diff(moment(postsLocal[pathname]), 'm', true) >= 15){
+        delete postsLocal[pathname]
+    }
+
+    if(scrollY >= scrollHeight * 0.4 && !(pathname in postsLocal)) {
+      fetch(Route.api.post.updateViews(slug, locale), { method: "POST" });
+      postsLocal[pathname] = moment().toISOString();
+      localStorage.setItem(Constant.LOCALSTORAGE_POSTS, JSON.stringify(postsLocal))
+    }
+  }, [locale, slug]);
+
   useEffect(() => {
-    // fetch(Route.api.post.updateViews(slug, locale), { method: "POST" });
     if(stateRelatedPosts !== relatedPosts) {
       setStateRelatedPosts(relatedPosts);
     }
-    // slug,locale, 
-  }, [stateRelatedPosts, relatedPosts]);
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+       window.removeEventListener("scroll", onScroll);
+    }
+  }, [stateRelatedPosts, relatedPosts, onScroll]);
 
   if (!post) return <PageNotFound />;
 
@@ -58,22 +78,20 @@ const PostPage = ({
       {post && (
         <main className="layout">
           <div className="pb-4 dark:border-gray-600">
-            <Zoom>
-              <div className="relative w-full aspect-[5/2] rounded-lg overflow-hidden">
-                <Image
-                  src={post.cover}
-                  alt={post.title}
-                  fill
-                  sizes="(max-width: 768px) 50vw,
-                         (max-width: 1200px) 50vw,
-                          100vw"
-                  loading="lazy"
-                  placeholder="blur"
-                  blurDataURL={`data:image/svg+xml;base64,${ImageHelper.generaterImagePlaceholder()}`}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              </div>
-            </Zoom>
+            <div className="relative w-full aspect-[5/2] rounded-lg overflow-hidden">
+              <Image
+                src={post.cover}
+                alt={post.title}
+                fill
+                sizes="(max-width: 768px) 50vw,
+                        (max-width: 1200px) 50vw,
+                        100vw"
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL={`data:image/svg+xml;base64,${ImageHelper.generaterImagePlaceholder()}`}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
 
             <h1 className="mt-4 text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-4xl dark:text-white">
               {post.title}
