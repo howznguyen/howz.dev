@@ -22,7 +22,7 @@ To get started with this project, follow these steps:
 
 To get started with this project, you can clone the repository and install the dependencies:
 ```bash
-git clone https://github.com/howznguyen/howz.dev.git
+git clone https://github.com/howznguyen/howz_blog_notion.git
 cd howz.dev
 npm install
 ```
@@ -36,6 +36,8 @@ cp .env .env.example
 You can duplicate the Notion page for database template [here](https://howznguyen.notion.site/Howz-Nguyen-Blog-Template-6085aaf78b84462bb137db0e8fea2676). 
 
 Once you have your own duplicate page, you can get the `NOTION_API_KEY` and database IDs needed to run the project. To get your `NOTION_API_KEY`, follow these steps:
+
+**Warning: Calling notion api in browser will leak your token to everyone who visit your blog website. And then they can write/delete your notion database. Be sure that your token is only granted with Read access.**
 
 1. Go to your [Notion integrations page](https://developers.notion.com/docs/getting-started#step-2-share-a-database-with-your-integration).
 2. Click on the "Create new integration" button.
