@@ -1,9 +1,9 @@
 # Howz.Dev - Personal Website and Blog
 
-![](https://img.shields.io/github/issues/howznguyen/howz.dev?color=0088ff)
-![](https://img.shields.io/github/languages/top/howznguyen/howz.dev)
-![](https://img.shields.io/github/manifest-json/v/howznguyen/howz.dev)
-![](https://img.shields.io/github/discussions/howznguyen/howz.dev)
+[![](https://img.shields.io/github/issues/howznguyen/howz.dev?color=0088ff)](https://github.com/howznguyen/howz.dev/issues)
+[![](https://img.shields.io/github/languages/top/howznguyen/howz.dev)](https://github.com/howznguyen/howz.dev)
+[![](https://img.shields.io/github/manifest-json/v/howznguyen/howz.dev)](https://github.com/howznguyen/howz.dev/releases)
+[![](https://img.shields.io/github/discussions/howznguyen/howz.dev)](https://github.com/howznguyen/howz.dev/discussions)
 
 💠 This is my personal website and blog, built using Next.js, TypeScript, Tailwind CSS, and Notion. The blog posts are managed in Notion, and the website pulls the content from the Notion API at build time.
 
@@ -59,7 +59,14 @@ To get the database IDs, follow these steps:
 
 Update the `.env` file with your `NOTION_API_KEY` and the database IDs for your settings, navigation, footer, and posts databases. Use the `.env.example` file as a guide.
 
-### Giscus Setup
+### Customization Language Content & Categories in Home Page (Optional)
+
+You can customize the language content and categories in folder `src/lang`
+In this folder, you can see 2 files `en.json` and `vi.json`. You can add more language file with the same format.
+
+If you want to customize the categories in home page, you can edit values in key `categories` in `en.ts` and `vi.ts` file.
+
+### Giscus Setup (Optional)
 
 To enable commenting functionality using Giscus, you need to set up a repository and obtain a repository ID. You can find more information on the [Giscus website](https://giscus.app/).
 
@@ -73,6 +80,19 @@ GISCUS_REPO=username/repository
 GISCUS_REPO_ID=repository-id
 GISCUS_CATEGORY=category-name
 GISCUS_CATEGORY_ID=category-id
+```
+
+### Google Analytics Setup (Optional)
+
+To enable Google Analytics, you need to set up a Google Analytics account and obtain a tracking ID. You can find more information on the [Google Analytics website](https://analytics.google.com/).
+
+1. Sign up for a Google Analytics account and create a new property.
+2. Choose the "Web" option as your platform.
+3. Configure your property by providing your website information.
+4. In your `.env` file, add the following variable with the value for your Google Analytics tracking ID:
+
+```env
+NEXT_PUBLIC_GA_TRACKING_ID=tracking-id
 ```
 
 ### Running the Project

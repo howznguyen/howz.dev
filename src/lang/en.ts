@@ -1,6 +1,7 @@
 import moment from "moment";
 
 const en = {
+  locale: "en",
   lang:[
     { value: "en", label: "Eng" },
     { value: "vi", label: "Vie" },
@@ -56,7 +57,7 @@ const en = {
       header: "Hi, I'm Howz Nguyen",
       description:
         "I am currently a Fullstack Developer. This is a website I created with the desire to share my knowledge to everyone. Thank you to everyone who visited. ❤️",
-      image: "/assets/images/orion-nebula.jpg",
+      image: "/assets/images/hwz.ngn.jpg",
       links: [
         {
           icon: "HiOutlineNewspaper",
