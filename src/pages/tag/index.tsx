@@ -2,7 +2,7 @@ import { Image ,Tag } from '@/components/atoms';
 import { MainTemplate } from '@/components/templates'
 import { Notion, Route, useTrans } from '@/lib'
 import { GetStaticProps } from 'next'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface TagPageProps {
   tags: any;
@@ -12,6 +12,10 @@ interface TagPageProps {
 
 const TagPage = ({tags, head, options} : TagPageProps) => {
   const trans = useTrans();
+
+  useEffect(() => {
+    localStorage.setItem("locale", trans.locale);
+  }, [trans]);
 
   return (
     <MainTemplate options={options} head={head}>

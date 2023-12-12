@@ -1,6 +1,7 @@
 import moment from "moment";
 
 const vi = {
+  locale: "vi",
   lang:[
     { value: "en", label: "Eng" },
     { value: "vi", label: "Vie" },
@@ -51,7 +52,7 @@ const vi = {
       header: "Xin chào, Mình là Howz Nguyễn",
       description:
         "Mình hiện tại đang là một Lập Trình Viên Fullstack. Đây là một website mình tạo ra với mong muốn được chia sẻ kiến thức của mình đến với mọi người. Cảm ơn mọi người đã ghé qua. ❤️",
-      image: "/assets/images/orion-nebula.jpg",
+      image: "/assets/images/hwz.ngn.jpg",
       links: [
         {
           icon: "HiOutlineNewspaper",
