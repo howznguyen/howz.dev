@@ -22,7 +22,7 @@ To get started with this project, follow these steps:
 
 To get started with this project, you can clone the repository and install the dependencies:
 ```bash
-git clone https://github.com/howznguyen/howz_blog_notion.git
+git clone https://github.com/howznguyen/howz.dev.git
 cd howz.dev
 npm install
 ```
