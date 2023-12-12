@@ -19,7 +19,8 @@ const TagPage = ({tag, posts, head, options} : TagPageProps) => {
     if(statePosts !== posts) {
       setStatePosts(posts ?? []);
     }
-  }, [statePosts, posts]);
+    localStorage.setItem("locale", trans.locale);
+  }, [statePosts, posts, trans]);
 
   return (
     <MainTemplate options={options} head={head}>
