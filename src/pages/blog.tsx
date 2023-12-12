@@ -11,18 +11,21 @@ interface BlogPageProps {
   options: any;
 }
 
+
 const BlogPage = ({ posts, head, options }: BlogPageProps) => {
   const trans = useTrans();
   let [statePosts, setStatePosts] = useState(posts);
 
   useEffect(() => {
-    if(statePosts !== posts) {
+    const localeStorage = localStorage.getItem("locale");
+    if(localeStorage != trans.locale) {
       setStatePosts(posts);
+      localStorage.setItem("locale", trans.locale);
     }
-  }, [statePosts, posts])
+  }, [statePosts, posts, trans])
 
   const findPosts = (e: any) => {
-    let filteredPosts = statePosts.filter((post: any) => {
+    let filteredPosts = posts.filter((post: any) => {
       return removeAccents(post.title.toLowerCase()).includes(
         removeAccents(e.target.value.toLowerCase())
       );

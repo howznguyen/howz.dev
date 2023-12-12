@@ -64,11 +64,13 @@ const PostPage = ({
       setStateRelatedPosts(relatedPosts);
     }
 
+    localStorage.setItem("locale", trans.locale);
+
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
        window.removeEventListener("scroll", onScroll);
     }
-  }, [stateRelatedPosts, relatedPosts, onScroll]);
+  }, [stateRelatedPosts, relatedPosts, onScroll,trans]);
 
   if (!post) return <PageNotFound />;
 

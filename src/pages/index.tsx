@@ -4,6 +4,7 @@ import { MainTemplate } from "@/components/templates";
 import { Notion, Route, getTransServer, useTrans } from "@/lib";
 import { GetStaticProps } from "next";
 import Link from "next/link";
+import { useEffect } from "react";
 
 interface HomePageProps {
   featuredPosts: any[];
@@ -19,6 +20,11 @@ const HomePage = ({
   options,
 }: HomePageProps) => {
   const trans = useTrans()
+  
+  useEffect(() => {
+    localStorage.setItem("locale", trans.locale);
+  }, [trans]);
+
   return (
     <>
       <MainTemplate head={head} options={options}>
