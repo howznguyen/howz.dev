@@ -1,7 +1,5 @@
-"use client";
-
-import React from "react";
-import ErrorBoundary from "../shared/ErrorBoundary";
+import React, { Fragment } from "react";
+import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import { Header, Footer } from "@/components/organisms";
 import Head from "next/head";
 import { PageMeta } from "@/types";
@@ -48,11 +46,11 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
             />
           )}
           {meta.tags && meta.tags.length > 0 && (
-            <>
+            <Fragment>
               {meta.tags.map((tag) => (
                 <meta key={tag} property="article:tag" content={tag} />
               ))}
-            </>
+            </Fragment>
           )}
         </Head>
       )}
@@ -156,10 +154,10 @@ export const PostLayout: React.FC<PostLayoutProps> = ({
 
 // HOC for adding layouts to pages
 export function withLayout<P extends object>(
-  LayoutComponent: React.ComponentType<any>,
+  LayoutComponent: React.FC<any>,
   layoutProps?: any
 ) {
-  return function WrappedComponent(PageComponent: React.ComponentType<P>) {
+  return function WrappedComponent(PageComponent: React.FC<P>) {
     const WithLayoutComponent = (props: P) => (
       <LayoutComponent {...layoutProps}>
         <PageComponent {...props} />

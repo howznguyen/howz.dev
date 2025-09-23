@@ -18,7 +18,7 @@ export const NotionVideo = ({ url }: NotionVideoProps) => {
     Object.entries(aspests).find(([key, value]: any) =>
       link.hostname.includes(key)
     )?.[1] ?? "";
-    
+
   return (
     <div className={`mb-4 w-full flex justify-center ${aspect}`}>
       <ReactPlayer

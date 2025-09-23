@@ -14,6 +14,10 @@ const nextConfig = {
     ],
   },
   staticPageGenerationTimeout: 1000,
+  // Suppress pages directory warning for App Router
+  experimental: {
+    suppressHydrationWarning: true,
+  },
 };
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
