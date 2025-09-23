@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    appDir: true,
-  },
   compiler: {
     styledComponents: true,
   },
@@ -17,6 +14,10 @@ const nextConfig = {
     ],
   },
   staticPageGenerationTimeout: 1000,
+  // Suppress pages directory warning for App Router
+  experimental: {
+    suppressHydrationWarning: true,
+  },
 };
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({

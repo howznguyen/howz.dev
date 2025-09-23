@@ -1,7 +1,6 @@
 "use client";
 
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import Prism from "prismjs";
 import "prismjs/components/prism-markup-templating.js";
 import Icon from "@/components/atoms/Icon";
@@ -33,24 +32,23 @@ export const NotionCode = ({ children, language }: NotionCodeProps) => {
 
   return (
     <pre className="relative rounded-lg md:code-block">
-      <CopyToClipboard
-        text={textRef?.current?.textContent ?? ""}
-        onCopy={() => {
-          setIsCopied(true);
-          setTimeout(() => setIsCopied(false), 1500);
+      <button
+        title="Copy Code"
+        className="absolute top-2 right-2 hidden rounded border border-gray-600 p-2 text-lg transition-colors hover:bg-gray-700 md:block"
+        onClick={() => {
+          if (textRef?.current?.textContent) {
+            navigator.clipboard.writeText(textRef.current.textContent);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 1500);
+          }
         }}
       >
-        <button
-          title="Copy Code"
-          className="absolute top-2 right-2 hidden rounded border border-gray-600 p-2 text-lg transition-colors hover:bg-gray-700 md:block"
-        >
-          {isCopied ? (
-            <Icon icon="HiCheckCircle" className="text-blue-400" />
-          ) : (
-            <Icon icon="HiClipboard" />
-          )}
-        </button>
-      </CopyToClipboard>
+        {isCopied ? (
+          <Icon icon="HiCheckCircle" className="text-blue-400" />
+        ) : (
+          <Icon icon="HiClipboard" />
+        )}
+      </button>
 
       <div className="absolute top-2 left-2 hidden rounded p-2 text-lg font-semibold md:flex select-none items-center">
         <span>{language}</span>

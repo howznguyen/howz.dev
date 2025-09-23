@@ -21,7 +21,7 @@ function blogPostToPost(blogPost: BlogPost): Post {
     description: blogPost.description,
     content: blogPost.content,
     published: blogPost.published_at,
-    status: blogPost.published ? 'Published' : 'Draft',
+    status: blogPost.published ? "Published" : "Draft",
     tags: blogPost.tags,
     featured: blogPost.featured,
     cover: blogPost.cover?.url,
@@ -38,11 +38,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
-    type: 'website',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://howz.dev',
+    type: "website",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://howz.dev",
   },
   twitter: {
-    card: 'summary_large_image',
+    card: "summary_large_image",
     title: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
   },
@@ -68,23 +68,25 @@ export default async function HomePage() {
   let blogPosts: BlogPost[] = await Promise.all(
     posts.map(async (post) => ({
       id: post.id,
-      slug: post.slug || '',
+      slug: post.slug || "",
       title: post.title,
-      description: post.description || '',
-      content: '',
-      excerpt: post.description || '',
+      description: post.description || "",
+      content: "",
+      excerpt: post.description || "",
       published: Boolean(post.published),
       published_at: post.published?.toISOString() || new Date().toISOString(),
       created_at: new Date(post.createdTime).toISOString(),
       updated_at: new Date(post.lastEditedTime).toISOString(),
       tags: post.tags,
-      category: 'Others',
-      author: 'Howz Nguyen',
+      category: "Others",
+      author: "Howz Nguyen",
       featured: post.featured,
-      cover: post.cover ? {
-        url: post.cover,
-        alt: post.title
-      } : undefined,
+      cover: post.cover
+        ? {
+            url: post.cover,
+            alt: post.title,
+          }
+        : undefined,
       reading_time: 5, // Default reading time for home page display
       views: post.views || 0,
     }))
@@ -92,8 +94,6 @@ export default async function HomePage() {
 
   // Convert to Post format for components
   let allPosts = blogPosts.map(blogPostToPost);
-
-  console.log("HomePage - allPosts:", allPosts);
 
   // Get featured posts using helper function
   let featuredPosts = allPosts
@@ -108,7 +108,10 @@ export default async function HomePage() {
   // If no featured posts, get most recent posts
   if (featuredPosts.length === 0) {
     featuredPosts = allPosts
-      .sort((a: Post, b: Post) => new Date(b.published).getTime() - new Date(a.published).getTime())
+      .sort(
+        (a: Post, b: Post) =>
+          new Date(b.published).getTime() - new Date(a.published).getTime()
+      )
       .slice(0, 6);
   }
 

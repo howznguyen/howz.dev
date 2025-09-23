@@ -10,6 +10,7 @@ import {
   TwitterEmbed,
 } from "react-social-media-embed";
 import ReactPlayer from "react-player";
+import { Fragment } from "react";
 
 interface NotionEmbedProps {
   url: string;
@@ -19,7 +20,7 @@ export const NotionEmbed = ({ url }: NotionEmbedProps) => {
   const { theme } = useTheme();
   const link = new URL(url);
   let cpn = <></>;
-  
+
   if (link.hostname.includes("facebook.com")) {
     cpn = <FacebookEmbed url={url} width={550} />;
   } else if (link.hostname.includes("instagram.com")) {
