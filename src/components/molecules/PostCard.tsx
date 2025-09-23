@@ -33,7 +33,7 @@ const PostCard = ({ post }: PostCardProps) => {
   };
 
   return (
-    <article className="overflow-hidden rounded-lg shadow transition hover:shadow-lg">
+    <article className="overflow-hidden rounded-lg shadow transition hover:shadow-lg bg-white dark:bg-gray-800 dark:hover:shadow-sky-900">
       <Link
         className="block overflow-hidden"
         href={Route.post(postInfo.slug || "")}
@@ -71,7 +71,7 @@ const PostCard = ({ post }: PostCardProps) => {
           </div>
         )}
 
-        <div className="bg-white p-4 dark:bg-gray-800">
+        <div className="p-4">
           <h3 className="text-lg font-medium text-gray-900 dark:text-white line-clamp-2">
             {postInfo.title}
           </h3>
