@@ -1,4 +1,6 @@
-import { LangugeSwither, Logo, ThemeSwitcher } from "@/components/atoms";
+"use client";
+
+import { Logo, ThemeSwitcher } from "@/components/atoms";
 import { Navigation } from "@/components/molecules";
 
 interface HeaderProps {
@@ -15,7 +17,6 @@ const Header = ({ settings, navigation }: HeaderProps) => {
       <div className="flex items-center">
         <Navigation navigation={navigation} />
         <div className="hidden md:flex items-center gap-x-2">
-          <LangugeSwither />
           <ThemeSwitcher />
         </div>
       </div>

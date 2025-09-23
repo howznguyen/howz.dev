@@ -1,12 +1,14 @@
-import Link from 'next/link'
-import { ReactNode } from 'react';
+"use client";
+
+import Link from "next/link";
+import { ReactNode } from "react";
 
 interface LinkProps {
-    children?: ReactNode
-    href: string
-    className?: string
-    title?: string;
-    target?: "_blank" | "_self" | "_parent" | "_top"
+  children?: ReactNode;
+  href: string;
+  className?: string;
+  title?: string;
+  target?: "_blank" | "_self" | "_parent" | "_top";
 }
 
 const LinkAtoms = ({ children, href, className, title, target }: LinkProps) => {
@@ -14,14 +16,16 @@ const LinkAtoms = ({ children, href, className, title, target }: LinkProps) => {
   const _className = className ?? "";
   return (
     <Link
-        target={target}
-        href={href}
-        title={title}
-        className={`${_className} text-blue-600 hover:underline dark:text-blue-300 ${_target === "_blank" ? "cursor-newtab" : ""}`}
+      target={target}
+      href={href}
+      title={title}
+      className={`${_className} text-blue-600 hover:underline dark:text-blue-300 ${
+        _target === "_blank" ? "cursor-newtab" : ""
+      }`}
     >
-        {children}
+      {children}
     </Link>
-  )
-}
+  );
+};
 
-export default LinkAtoms
+export default LinkAtoms;

@@ -1,66 +1,105 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { Route, Image as ImageHelper, useTrans } from "@/lib";
+import { Route, Image as ImageHelper } from "@/lib";
 import { DateTime, Icon, Tag } from "../atoms";
+import { ConvertedPost } from "@/services/notion/utils.service";
+import { Post } from "@/types";
+import postData from "@/datas/post";
+import Views from "./Views";
 
 interface PostCardProps {
-  post: any;
+  post: Post;
+}
+
+// Type guard to check if post is ConvertedPost
+function isConvertedPost(post: ConvertedPost | Post): post is ConvertedPost {
+  return "createdTime" in post && "lastEditedTime" in post;
 }
 
 const PostCard = ({ post }: PostCardProps) => {
-  const trans = useTrans();
-  
+  // Handle different post types
+  const postInfo = {
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    description: post.description,
+    cover: post.cover,
+    tags: post.tags,
+    published: post.published,
+    readingTime: post.readingTime || 0,
+    views: post.views || 0,
+  };
+
   return (
-    <div className="w-full rounded-md border border-gray-300 bg-white dark:border-gray-600 dark:bg-dark scale-100 hover:scale-[1.02] active:scale-[0.97] motion-safe:transform-gpu transition duration-100 motion-reduce:hover:scale-100 animate-shadow">
+    <article className="overflow-hidden rounded-lg shadow transition hover:shadow-lg">
       <Link
-        href={Route.post(post.slug)}
-        locale={post.language}
-        className="block h-full rounded-md focus:outline-none focus-visible:ring focus-visible:ring-primary-300"
+        className="block overflow-hidden"
+        href={Route.post(postInfo.slug || "")}
       >
         <div className="relative">
-          <figure className="w-full aspect-[5/2] rounded-tl-md rounded-tr-md overflow-hidden">
-            <Image
-              src={post.cover}
-              alt={post.title}
-              fill
-              sizes="(max-width: 768px) 100vw,
-                     (max-width: 1200px) 50vw,
-                      33vw"
-              loading="lazy"
-              placeholder="blur"
-              blurDataURL={`data:image/svg+xml;base64,${ImageHelper.generaterImagePlaceholder()}`}
-              className="absolute inset-0 w-full h-full object-cover rounded-tl-md rounded-tr-md"
-            />
-          </figure>
-          <div className="absolute bottom-0 w-full px-4 py-2 mt-2 flex flex-wrap-reverse justify-end gap-y-1 gap-x-1 text-sm text-black dark:text-gray-100">
-            {post.tags.map((tag: any, index: number) => (
+          {postInfo.cover && (
+            <div className="relative aspect-[16/9] bg-gray-200">
+              <Image
+                src={postInfo.cover}
+                alt={postInfo.title}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL={`data:image/svg+xml;base64,${ImageHelper.generaterImagePlaceholder()}`}
+                className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              />
+            </div>
+          )}
+
+          {postInfo.cover && postInfo.tags.length > 0 && (
+            <div className="absolute top-2 left-2 flex flex-wrap gap-1">
+              {postInfo.tags.map((tag: string, index: number) => (
+                <Tag key={index} name={tag} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {!postInfo.cover && postInfo.tags.length > 0 && (
+          <div className="p-4 pb-0 flex flex-wrap gap-1">
+            {postInfo.tags.map((tag: string, index: number) => (
               <Tag key={index} name={tag} />
             ))}
           </div>
-        </div>
-        <div className="p-4">
-          <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{post.title}</span>
-          <div className="mt-2 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-            <div className="flex items-center gap-1">
-              <Icon icon="HiOutlineClock"/>
-              <span>{ trans.post.reading_time(post.readingTime) }</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Icon icon="HiEye"/>
-              <span>{ trans.post.views(post.views) }</span>
-            </div>
+        )}
+
+        <div className="bg-white p-4 dark:bg-gray-800">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white line-clamp-2">
+            {postInfo.title}
+          </h3>
+
+          <div className="mt-2 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+            {postInfo.readingTime && (
+              <div className="flex items-center gap-1">
+                <Icon icon="HiOutlineClock" />
+                <span>{postData.reading_time(postInfo.readingTime)}</span>
+              </div>
+            )}
+            <Views views={postInfo.views} />
+            {postInfo.published && (
+              <div className="flex items-center gap-1">
+                <Icon icon="HiCalendar" />
+                <DateTime value={postInfo.published} />
+              </div>
+            )}
           </div>
-          <p className="mt-4 mb-2 text-sm text-gray-600 dark:text-gray-300">
-            <span className="font-bold text-gray-800 dark:text-gray-100">
-              <DateTime value={post.published.start} />
-            </span>
-          </p>
-          <p className="text-sm text-gray-700 dark:text-gray-300">
-            {post.description}
-          </p>
+
+          {postInfo.description && (
+            <p className="mt-2 line-clamp-3 text-sm text-gray-500 dark:text-gray-400">
+              {postInfo.description}
+            </p>
+          )}
         </div>
       </Link>
-    </div>
+    </article>
   );
 };
 
