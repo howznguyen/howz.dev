@@ -8,6 +8,7 @@ import {
   filterPostsByTags,
   searchPosts,
   getAllTags,
+  getTagsWithCounts,
   getPostsByTag,
   getPostBySlug,
   getRelatedPosts,
@@ -260,6 +261,19 @@ export class UnofficialNotionService {
     } catch (error) {
       console.error("Error in getTags:", error);
       throw new Error("Failed to fetch tags");
+    }
+  }
+
+  /**
+   * Get tags with counts using utils function
+   */
+  async getTagsWithCounts(): Promise<{ name: string; count: number }[]> {
+    try {
+      const allPosts = await this.getAllPosts();
+      return getTagsWithCounts(allPosts);
+    } catch (error) {
+      console.error("Error in getTagsWithCounts:", error);
+      return [];
     }
   }
 
