@@ -61,45 +61,29 @@ export class ErrorBoundary extends React.Component<
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return {
-      hasError: true,
-      error,
-    };
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
-
-    // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
-
-    // You can also log the error to an error reporting service
-    // Example: Sentry.captureException(error, { contexts: { react: errorInfo } });
-
-    this.setState({
-      error,
-      errorInfo,
-    });
+    this.setState({ error, errorInfo });
   }
 
-  handleRetry = () => {
+  private handleRetry = () => {
     this.setState({ hasError: false, error: undefined, errorInfo: undefined });
   };
 
-  render() {
+  render(): React.ReactNode {
     if (this.state.hasError) {
-      const FallbackComponent = this.props.fallback || DefaultErrorFallback;
-      return (
-        <FallbackComponent error={this.state.error} retry={this.handleRetry} />
-      );
+      const Fallback = this.props.fallback ?? DefaultErrorFallback;
+      return <Fallback error={this.state.error} retry={this.handleRetry} />;
     }
-
     return this.props.children;
   }
 }
 
-// Add type assertion to ensure TypeScript recognizes it as a valid JSX component
-export default ErrorBoundary as React.ComponentType<ErrorBoundaryProps>;
+export default ErrorBoundary;
 
 // Higher-order component for easier usage
 export function withErrorBoundary<P extends object>(
