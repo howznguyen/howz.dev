@@ -402,6 +402,18 @@ export class EnhancedNotionService extends UnofficialNotionService {
   }
 
   /**
+   * Get tags with counts
+   */
+  async getTagsWithCounts() {
+    try {
+      return await super.getTagsWithCounts();
+    } catch (error) {
+      console.error("Error in getTagsWithCounts:", error);
+      return [];
+    }
+  }
+
+  /**
    * Get posts by tag - compatible with old Notion.ts
    */
   async getPostsByTagLegacy(tag: string) {
@@ -625,6 +637,9 @@ export const Notion = {
     enhancedNotionService
   ),
   getTags: enhancedNotionService.getTagsLegacy.bind(enhancedNotionService),
+  getTagsWithCounts: enhancedNotionService.getTagsWithCounts.bind(
+    enhancedNotionService
+  ),
   getPostsByTag: enhancedNotionService.getPostsByTagLegacy.bind(
     enhancedNotionService
   ),
