@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
-import { Header, Footer } from '@/components/organisms';
-import Head from 'next/head';
-import { PageMeta } from '@/types';
+import React from "react";
+import ErrorBoundary from "../shared/ErrorBoundary";
+import { Header, Footer } from "@/components/organisms";
+import Head from "next/head";
+import { PageMeta } from "@/types";
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -19,7 +19,7 @@ interface BaseLayoutProps {
 export const BaseLayout: React.FC<BaseLayoutProps> = ({
   children,
   meta,
-  className = '',
+  className = "",
   showHeader = true,
   showFooter = true,
   navigation,
@@ -33,24 +33,30 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
           <meta name="description" content={meta.description} />
           {meta.image && <meta property="og:image" content={meta.image} />}
           {meta.url && <meta property="og:url" content={meta.url} />}
-          <meta property="og:type" content={meta.type || 'website'} />
+          <meta property="og:type" content={meta.type || "website"} />
           {meta.author && <meta name="author" content={meta.author} />}
           {meta.publishedTime && (
-            <meta property="article:published_time" content={meta.publishedTime} />
+            <meta
+              property="article:published_time"
+              content={meta.publishedTime}
+            />
           )}
           {meta.modifiedTime && (
-            <meta property="article:modified_time" content={meta.modifiedTime} />
+            <meta
+              property="article:modified_time"
+              content={meta.modifiedTime}
+            />
           )}
           {meta.tags && meta.tags.length > 0 && (
             <>
-              {meta.tags.map(tag => (
+              {meta.tags.map((tag) => (
                 <meta key={tag} property="article:tag" content={tag} />
               ))}
             </>
           )}
         </Head>
       )}
-      
+
       <div className={`min-h-screen bg-white dark:bg-dark ${className}`}>
         {showHeader && (
           <div className="w-full py-2 sticky top-0 z-50 transition-shadow shadow-sm bg-white dark:bg-dark mb-2">
@@ -59,32 +65,33 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
             </div>
           </div>
         )}
-        
+
         <ErrorBoundary>
-          <main className={showHeader ? '' : 'pt-0'}>
-            {children}
-          </main>
+          <main className={showHeader ? "" : "pt-0"}>{children}</main>
         </ErrorBoundary>
-        
+
         {showFooter && <Footer />}
       </div>
     </ErrorBoundary>
   );
 };
 
-interface MainLayoutProps extends Omit<BaseLayoutProps, 'showHeader' | 'showFooter'> {}
+interface MainLayoutProps
+  extends Omit<BaseLayoutProps, "showHeader" | "showFooter"> {}
 
 export const MainLayout: React.FC<MainLayoutProps> = (props) => (
   <BaseLayout {...props} showHeader={true} showFooter={true} />
 );
 
-interface NoNavLayoutProps extends Omit<BaseLayoutProps, 'showHeader' | 'navigation' | 'settings'> {}
+interface NoNavLayoutProps
+  extends Omit<BaseLayoutProps, "showHeader" | "navigation" | "settings"> {}
 
 export const NoNavLayout: React.FC<NoNavLayoutProps> = (props) => (
   <BaseLayout {...props} showHeader={false} showFooter={true} />
 );
 
-interface FullScreenLayoutProps extends Omit<BaseLayoutProps, 'showHeader' | 'showFooter'> {}
+interface FullScreenLayoutProps
+  extends Omit<BaseLayoutProps, "showHeader" | "showFooter"> {}
 
 export const FullScreenLayout: React.FC<FullScreenLayoutProps> = (props) => (
   <BaseLayout {...props} showHeader={false} showFooter={false} />
@@ -106,14 +113,10 @@ export const BlogLayout: React.FC<BlogLayoutProps> = ({
     <div className="layout">
       {showSidebar ? (
         <div className="grid lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-3">
-            {children}
-          </div>
+          <div className="lg:col-span-3">{children}</div>
           {sidebar && (
             <div className="lg:col-span-1">
-              <aside className="sticky top-20">
-                {sidebar}
-              </aside>
+              <aside className="sticky top-20">{sidebar}</aside>
             </div>
           )}
         </div>
@@ -163,8 +166,10 @@ export function withLayout<P extends object>(
       </LayoutComponent>
     );
 
-    WithLayoutComponent.displayName = `withLayout(${PageComponent.displayName || PageComponent.name})`;
-    
+    WithLayoutComponent.displayName = `withLayout(${
+      PageComponent.displayName || PageComponent.name
+    })`;
+
     return WithLayoutComponent;
   };
 }
@@ -172,7 +177,7 @@ export function withLayout<P extends object>(
 // Predefined layout HOCs
 export const withMainLayout = withLayout(MainLayout);
 export const withNoNavLayout = withLayout(NoNavLayout);
-export const withBlogLayout = (props?: Partial<BlogLayoutProps>) => 
+export const withBlogLayout = (props?: Partial<BlogLayoutProps>) =>
   withLayout(BlogLayout, props);
-export const withPostLayout = (props?: Partial<PostLayoutProps>) => 
+export const withPostLayout = (props?: Partial<PostLayoutProps>) =>
   withLayout(PostLayout, props);
