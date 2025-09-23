@@ -1,3 +1,5 @@
+"use client";
+
 import { createElement } from "react";
 import * as ri_ci from "react-icons/ci";
 import * as ri_fa from "react-icons/fa";

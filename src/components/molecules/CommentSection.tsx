@@ -1,15 +1,22 @@
+"use client";
+
 import Giscus from "@giscus/react";
 import { useTheme } from "next-themes";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
 interface CommentSectionProps {
-  giscus : any;
+  giscus: any;
+  slug?: string;
 }
 
-
-const CommentSection = ({ giscus }: CommentSectionProps) => {
-  const { locale } = useRouter()
+const CommentSection = ({ giscus, slug }: CommentSectionProps) => {
+  const pathname = usePathname();
   let { theme } = useTheme();
+
+  // Generate the correct term for Giscus based on our URL structure
+  const getGiscusTerm = () => {
+    return `/post/${slug}`;
+  };
 
   return (
     <div className="md:col-span-2 flex content-center">
@@ -20,6 +27,7 @@ const CommentSection = ({ giscus }: CommentSectionProps) => {
         category={giscus.GISCUS_CATEGORY}
         categoryId={giscus.GISCUS_CATEGORY_ID}
         mapping="pathname"
+        term={getGiscusTerm()}
         strict="1"
         reactionsEnabled="1"
         emitMetadata="0"
@@ -27,7 +35,7 @@ const CommentSection = ({ giscus }: CommentSectionProps) => {
         loading="lazy"
         theme={theme === "dark" ? "dark" : "light"}
         host="https://giscus.app"
-        lang={locale}
+        lang="en"
       />
     </div>
   );

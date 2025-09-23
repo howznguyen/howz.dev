@@ -1,0 +1,192 @@
+import { Button } from "@/components/atoms";
+import { IntroCard, PostList } from "@/components/molecules";
+import { MainTemplate } from "@/components/templates";
+import { Route } from "@/lib";
+import { Notion } from "@/services/notion/enhanced.service";
+import type { BlogPost } from "@/types/notion";
+import type { Post } from "@/types";
+import { SITE_CONFIG } from "@/lib/constants";
+import { categories } from "@/datas/categories";
+import navigation from "@/datas/navigation";
+import home from "@/datas/home";
+import Link from "next/link";
+import type { Metadata } from "next/types";
+
+// Helper function to convert BlogPost to Post
+function blogPostToPost(blogPost: BlogPost): Post {
+  return {
+    id: blogPost.id,
+    title: blogPost.title,
+    slug: blogPost.slug,
+    description: blogPost.description,
+    content: blogPost.content,
+    published: blogPost.published_at,
+    status: blogPost.published ? 'Published' : 'Draft',
+    tags: blogPost.tags,
+    featured: blogPost.featured,
+    cover: blogPost.cover?.url,
+    author: blogPost.author,
+    readingTime: blogPost.reading_time || 5,
+    views: blogPost.views || 0,
+  };
+}
+
+// Generate metadata for SEO
+export const metadata: Metadata = {
+  title: `${SITE_CONFIG.name} | ${SITE_CONFIG.description}`,
+  description: SITE_CONFIG.description,
+  openGraph: {
+    title: SITE_CONFIG.name,
+    description: SITE_CONFIG.description,
+    type: 'website',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://howz.dev',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_CONFIG.name,
+    description: SITE_CONFIG.description,
+  },
+};
+
+// Enable ISR with 1 hour revalidation
+export const revalidate = 3600;
+
+interface HomePageProps {
+  featuredPosts: Post[];
+  categoriesPosts: any[];
+  head: any;
+  options: any;
+}
+
+export default async function HomePage() {
+  // Use new enhanced service with caching
+  let posts = await Notion.getAllPosts({
+    limit: 50, // Get more posts for better categorization
+  });
+
+  // Convert to BlogPost format for consistency
+  let blogPosts: BlogPost[] = await Promise.all(
+    posts.map(async (post) => ({
+      id: post.id,
+      slug: post.slug || '',
+      title: post.title,
+      description: post.description || '',
+      content: '',
+      excerpt: post.description || '',
+      published: Boolean(post.published),
+      published_at: post.published?.toISOString() || new Date().toISOString(),
+      created_at: new Date(post.createdTime).toISOString(),
+      updated_at: new Date(post.lastEditedTime).toISOString(),
+      tags: post.tags,
+      category: 'Others',
+      author: 'Howz Nguyen',
+      featured: post.featured,
+      cover: post.cover ? {
+        url: post.cover,
+        alt: post.title
+      } : undefined,
+      reading_time: 5, // Default reading time for home page display
+      views: post.views || 0,
+    }))
+  );
+
+  // Convert to Post format for components
+  let allPosts = blogPosts.map(blogPostToPost);
+
+  console.log("HomePage - allPosts:", allPosts);
+
+  // Get featured posts using helper function
+  let featuredPosts = allPosts
+    .filter((post: Post) => post.featured)
+    .sort((a: Post, b: Post) => {
+      const aReadingTime = a.readingTime || 0;
+      const bReadingTime = b.readingTime || 0;
+      return bReadingTime - aReadingTime;
+    })
+    .slice(0, 6);
+
+  // If no featured posts, get most recent posts
+  if (featuredPosts.length === 0) {
+    featuredPosts = allPosts
+      .sort((a: Post, b: Post) => new Date(b.published).getTime() - new Date(a.published).getTime())
+      .slice(0, 6);
+  }
+
+  let categoriesPosts = categories.map((c: any) => {
+    c.posts = allPosts
+      .filter((post: Post) => {
+        if (Array.isArray(c.value)) {
+          return post.tags.some((tag: string) => c.value.includes(tag));
+        } else {
+          return post.tags.includes(c.value);
+        }
+      })
+      .slice(0, 6); // Limit to 6 posts per category
+    return c;
+  });
+
+  let head = {
+    url: Route.index(true),
+  };
+
+  return (
+    <MainTemplate
+      options={{
+        settings: {
+          site_name: SITE_CONFIG.name,
+          site_description: SITE_CONFIG.description,
+          author: SITE_CONFIG.author,
+          categories,
+        },
+        navigation,
+      }}
+    >
+      <div className="layout mt-2">
+        <section className="fade-in-start">
+          <IntroCard />
+        </section>
+
+        {featuredPosts.length > 0 && (
+          <section className="pb-5 md:pb-10 fade-in-start">
+            <div data-fade="0" id="featured-post" className="scroll-mt-[70px]">
+              <span className="mb-2 text-4xl font-bold text-gray-800 dark:text-gray-100">
+                {home.featured_posts}
+              </span>
+              <PostList posts={featuredPosts} limit={6} className="mt-3" />
+              <Button className="mt-4 scale-100 hover:scale-[1.1] active:scale-[0.97] motion-safe:transform-gpu transition duration-100">
+                <Link href={Route.blog()}>{home.read_more}</Link>
+              </Button>
+            </div>
+          </section>
+        )}
+
+        {categoriesPosts
+          .filter((category: any) => category.posts.length > 0)
+          .map((category: any, index: number) => (
+            <section key={index} className="py-5 md:py-10 fade-in-start">
+              <div data-fade="0">
+                <span className="mb-2 text-4xl font-bold text-gray-800 dark:text-gray-100">
+                  {category.name}
+                </span>
+                <p className="mt-2 text-gray-600 dark:text-gray-300">
+                  {category.description}
+                </p>
+                <PostList posts={category.posts} limit={6} className="mt-3" />
+                {category.posts.length > 6 && (
+                  <Button className="mt-4 scale-100 hover:scale-[1.1] active:scale-[0.97] motion-safe:transform-gpu transition duration-100">
+                    <Link
+                      href={`${Route.blog()}?tag=${encodeURIComponent(
+                        category.value
+                      )}`}
+                    >
+                      {home.read_more}
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </section>
+          ))}
+      </div>
+    </MainTemplate>
+  );
+}

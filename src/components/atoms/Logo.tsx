@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 
@@ -5,7 +7,7 @@ interface LogoProps {
   title: string;
 }
 
-const Logo = ({title}: LogoProps) => {
+const Logo = ({ title }: LogoProps) => {
   return (
     <Link href="/" className="flex items-center mr-10">
       <div className="flex items-center justify-center p-2 bg-gray-900 rounded-lg mr-2">

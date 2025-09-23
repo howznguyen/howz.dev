@@ -9,19 +9,15 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "**",
+        pathname: "/**",
       },
     ],
   },
-  i18n: {
-    locales: ['en','vi'],
-    defaultLocale: 'vi',
-    localeDetection: false,
-  },
   staticPageGenerationTimeout: 1000,
-}
+};
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
 
-module.exports = withBundleAnalyzer(nextConfig)
+module.exports = withBundleAnalyzer(nextConfig);

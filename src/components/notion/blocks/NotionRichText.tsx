@@ -1,0 +1,1 @@
+export { RichText as NotionRichText } from './RichText';
