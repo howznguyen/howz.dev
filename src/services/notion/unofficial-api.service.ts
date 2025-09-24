@@ -183,7 +183,7 @@ export class UnofficialNotionService {
       // Get views data from Umami
       let views = 0;
       try {
-        const viewsMap = await umamiService.getUrlPageviews(slug);
+        const viewsMap = await umamiService.getViewsByPostSlug(slug);
         views = viewsMap;
       } catch (error) {
         console.error("Error fetching views for post:", slug, error);

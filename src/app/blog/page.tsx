@@ -20,7 +20,7 @@ function blogPostToPost(blogPost: BlogPost): Post {
     description: blogPost.description,
     content: blogPost.content,
     published: blogPost.published_at,
-    status: blogPost.published ? 'Published' : 'Draft',
+    status: blogPost.published ? "Published" : "Draft",
     tags: blogPost.tags,
     featured: blogPost.featured,
     cover: blogPost.cover?.url,
@@ -37,44 +37,46 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${blog.blog} | Howz.dev`,
     description: blog.intro,
-    type: 'website',
+    type: "website",
   },
   twitter: {
-    card: 'summary',
+    card: "summary",
     title: `${blog.blog} | Howz.dev`,
     description: blog.intro,
   },
 };
 
-// Enable ISR with 30 minutes revalidation
-export const revalidate = 1800;
+// Enable ISR with 2 minutes revalidation
+export const revalidate = 120;
 
 export default async function BlogPage() {
   try {
     // Get all posts sorted by views for ISR
-    const posts = await Notion.getAllPosts({ sortBy: 'views' });
-    const convertedPosts = posts.map((post) => blogPostToPost({
-      id: post.id,
-      title: post.title,
-      slug: post.slug || '',
-      description: post.description || '',
-      content: '',
-      excerpt: post.description || '',
-      published: true,
-      published_at: post.published?.toISOString() || new Date().toISOString(),
-      created_at: new Date(post.createdTime).toISOString(),
-      updated_at: new Date(post.lastEditedTime).toISOString(),
-      tags: post.tags,
-      category: 'Others',
-      author: 'Howz Nguyen',
-      featured: post.featured,
-      cover: post.cover ? { url: post.cover, alt: post.title } : undefined,
-      reading_time: post.readingTime || 5,
-      views: post.views || 0, // Views data from Umami
-    }));
+    const posts = await Notion.getAllPosts({ sortBy: "views" });
+    const convertedPosts = posts.map((post) =>
+      blogPostToPost({
+        id: post.id,
+        title: post.title,
+        slug: post.slug || "",
+        description: post.description || "",
+        content: "",
+        excerpt: post.description || "",
+        published: true,
+        published_at: post.published?.toISOString() || new Date().toISOString(),
+        created_at: new Date(post.createdTime).toISOString(),
+        updated_at: new Date(post.lastEditedTime).toISOString(),
+        tags: post.tags,
+        category: "Others",
+        author: "Howz Nguyen",
+        featured: post.featured,
+        cover: post.cover ? { url: post.cover, alt: post.title } : undefined,
+        reading_time: post.readingTime || 5,
+        views: post.views || 0, // Views data from Umami
+      })
+    );
 
     return (
-      <MainTemplate 
+      <MainTemplate
         options={{
           settings: {
             site_name: SITE_CONFIG.name,
@@ -86,12 +88,8 @@ export default async function BlogPage() {
         }}
       >
         <div className="layout py-12">
-          <h1 className="text-3xl md:text-5xl font-semibold">
-            {blog.blog}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
-            {blog.intro}
-          </p>
+          <h1 className="text-3xl md:text-5xl font-semibold">{blog.blog}</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">{blog.intro}</p>
 
           {/* Client-side search and filtering */}
           <BlogPageClient initialPosts={convertedPosts} />
@@ -99,9 +97,9 @@ export default async function BlogPage() {
       </MainTemplate>
     );
   } catch (error) {
-    console.error('Error in BlogPage:', error);
+    console.error("Error in BlogPage:", error);
     return (
-      <MainTemplate 
+      <MainTemplate
         options={{
           settings: {
             site_name: SITE_CONFIG.name,
@@ -113,9 +111,7 @@ export default async function BlogPage() {
         }}
       >
         <div className="layout py-12">
-          <h1 className="text-3xl md:text-5xl font-semibold">
-            {blog.blog}
-          </h1>
+          <h1 className="text-3xl md:text-5xl font-semibold">{blog.blog}</h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
             Error loading posts. Please try again later.
           </p>

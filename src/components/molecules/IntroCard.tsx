@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon, Link } from "../atoms";
+import { Icon, LinkAtoms } from "../atoms";
 import Image from "next/image";
 import home from "@/datas/home";
 
@@ -26,7 +26,7 @@ const IntroCard = ({}: IntroCard) => {
             <p className="mb-5">{home.intro.description}</p>
             <div className="mt-4 flex flex-wrap gap-4 gap-y-2 md:mt-8">
               {home.intro.links.map((item: any, i: number) => (
-                <Link
+                <LinkAtoms
                   href={item.link}
                   target="_blank"
                   className="flex items-center"
@@ -34,7 +34,7 @@ const IntroCard = ({}: IntroCard) => {
                 >
                   <Icon icon={item.icon} className="mr-1" />
                   {item.title}
-                </Link>
+                </LinkAtoms>
               ))}
             </div>
           </div>

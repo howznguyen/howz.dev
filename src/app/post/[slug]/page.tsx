@@ -30,7 +30,7 @@ export async function generateMetadata({
   const { slug } = await params;
 
   try {
-    const blogPost = await Notion.getPostBySlug(slug);
+    const blogPost = await Notion.getEnhancedPostBySlug(slug);
     if (!blogPost) {
       return {
         title: "Post Not Found",
@@ -48,7 +48,7 @@ export async function generateMetadata({
         images: blogPost.cover
           ? [
               {
-                url: blogPost.cover,
+                url: blogPost.cover.url,
                 width: 800,
                 height: 400,
                 alt: blogPost.title,
@@ -56,7 +56,7 @@ export async function generateMetadata({
             ]
           : [],
         type: "article",
-        publishedTime: blogPost.published,
+        publishedTime: blogPost.published_at,
         authors: ["Howz Nguyen"],
         tags: blogPost.tags,
       },
@@ -75,7 +75,7 @@ export async function generateMetadata({
     };
   }
 }
-import { Icon, Tag } from "@/components/atoms";
+import { Icon, LinkAtoms, Tag } from "@/components/atoms";
 import moment from "moment";
 import postData from "@/datas/post";
 
@@ -98,8 +98,8 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   }
 }
 
-// Enable ISR with 1 hour revalidation
-export const revalidate = 3600;
+// Enable ISR with 5 minutes revalidation
+export const revalidate = 300;
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
@@ -232,7 +232,7 @@ export default async function PostPage({ params }: PostPageProps) {
               <span className="text-sm text-gray-600 dark:text-gray-300">
                 Share:
               </span>
-              <a
+              <LinkAtoms
                 href={socialUrls.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -240,8 +240,8 @@ export default async function PostPage({ params }: PostPageProps) {
                 aria-label="Share on Twitter"
               >
                 <Icon icon="FaTwitter" />
-              </a>
-              <a
+              </LinkAtoms>
+              <LinkAtoms
                 href={socialUrls.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -249,8 +249,8 @@ export default async function PostPage({ params }: PostPageProps) {
                 aria-label="Share on Facebook"
               >
                 <Icon icon="FaFacebook" />
-              </a>
-              <a
+              </LinkAtoms>
+              <LinkAtoms
                 href={socialUrls.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -258,14 +258,14 @@ export default async function PostPage({ params }: PostPageProps) {
                 aria-label="Share on LinkedIn"
               >
                 <Icon icon="FaLinkedin" />
-              </a>
+              </LinkAtoms>
             </div>
           </div>
 
           <hr className="dark:border-gray-600" />
 
           <div className="lg:grid lg:grid-cols-[auto,250px] lg:gap-4 mt-4">
-            <section className="md:mr-6 leading-7 text-justify w-auto">
+            <section className="md:mr-6 leading-7 text-justify w-auto min-w-0 overflow-hidden">
               {/* Render content using NotionRenderer with render blocks */}
               {pageContent.apiBlocks && pageContent.apiBlocks.length > 0 ? (
                 <NotionRenderer
@@ -294,14 +294,14 @@ export default async function PostPage({ params }: PostPageProps) {
               <TableOfContents data={toc} />
             </div>
 
-            <div className="md:col-span-2 mb-2 mt-4">
-              <span className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
-                {postData.relate_post}
-              </span>
-              {relatedPosts && relatedPosts.length > 0 && (
+            {relatedPosts && relatedPosts.length > 0 && (
+              <div className="md:col-span-2 mb-2 mt-4">
+                <span className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
+                  {postData.relate_post}
+                </span>
                 <PostList posts={relatedPosts} limit={3} />
-              )}
-            </div>
+              </div>
+            )}
 
             <CommentSection giscus={giscus} slug={slug} />
           </div>
