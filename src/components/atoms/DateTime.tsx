@@ -1,25 +1,31 @@
 "use client";
 
-import moment from "moment";
-import "moment/locale/vi";
-import { usePathname } from "next/navigation";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/en";
+import Icon from "./Icon";
+
+dayjs.extend(relativeTime);
 
 interface DateTimeProps {
   value: any;
 }
 
 const DateTime = ({ value }: DateTimeProps) => {
-  const pathname = usePathname();
-  const locale = pathname.split("/")[1] || "vi";
-  moment.locale(locale);
+  dayjs.locale("en");
   const days = 5;
-  let raw = moment(value);
-  let duration = moment.duration(moment().diff(value));
+  let raw = dayjs(value);
+  let duration = dayjs().diff(dayjs(value), "hour");
   const datetime =
-    duration.asHours() > 24 * days
-      ? raw.format("DD/MM/YYYY HH:mm")
-      : raw.fromNow();
-  return <>{datetime}</>;
+    duration > 24 * days ? raw.format("DD/MM/YYYY HH:mm") : raw.fromNow();
+  return (
+    <>
+      <div className="flex items-center gap-1">
+        <Icon icon="HiCalendar" />
+        {datetime}
+      </div>
+    </>
+  );
 };
 
 export default DateTime;

@@ -79,7 +79,7 @@
   }
 
   .cursor-newtab {
-    cursor: url(/assets/images/new-tab.png) 10 10, pointer;
+    cursor: url(/assets/images/new-tab-small.png) 10 10, pointer;
   }
 }
 

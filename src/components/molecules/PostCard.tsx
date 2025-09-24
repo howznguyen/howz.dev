@@ -4,18 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Route, Image as ImageHelper } from "@/lib";
 import { DateTime, Icon, Tag } from "../atoms";
-import { ConvertedPost } from "@/services/notion/utils.service";
 import { Post } from "@/types";
 import postData from "@/datas/post";
 import Views from "./Views";
 
 interface PostCardProps {
   post: Post;
-}
-
-// Type guard to check if post is ConvertedPost
-function isConvertedPost(post: ConvertedPost | Post): post is ConvertedPost {
-  return "createdTime" in post && "lastEditedTime" in post;
 }
 
 const PostCard = ({ post }: PostCardProps) => {
@@ -84,12 +78,7 @@ const PostCard = ({ post }: PostCardProps) => {
               </div>
             )}
             <Views views={postInfo.views} />
-            {postInfo.published && (
-              <div className="flex items-center gap-1">
-                <Icon icon="HiCalendar" />
-                <DateTime value={postInfo.published} />
-              </div>
-            )}
+            {postInfo.published && <DateTime value={postInfo.published} />}
           </div>
 
           {postInfo.description && (
