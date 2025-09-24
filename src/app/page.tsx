@@ -48,8 +48,8 @@ export const metadata: Metadata = {
   },
 };
 
-// Enable ISR with 1 hour revalidation
-export const revalidate = 3600;
+// Enable ISR with 5 minutes revalidation
+export const revalidate = 300;
 
 interface HomePageProps {
   featuredPosts: Post[];
