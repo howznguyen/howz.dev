@@ -75,8 +75,7 @@ export async function generateMetadata({
     };
   }
 }
-import { Icon, LinkAtoms, Tag } from "@/components/atoms";
-import moment from "moment";
+import { DateTime, Icon, LinkAtoms, Tag } from "@/components/atoms";
 import postData from "@/datas/post";
 
 interface PostPageProps {
@@ -214,10 +213,8 @@ export default async function PostPage({ params }: PostPageProps) {
             <h1 className="text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-4xl dark:text-white">
               {post.title}
             </h1>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-              {postData.published_at(post.published)}
-            </p>
             <div className="mt-6 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+              <DateTime value={post.published} />
               <div className="flex items-center gap-1">
                 <Icon icon="HiOutlineClock" />
                 <span>{postData.reading_time(post.readingTime)}</span>
