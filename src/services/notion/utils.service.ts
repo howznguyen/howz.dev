@@ -1,5 +1,11 @@
 import { CollectionInstance, Block } from "notion-types";
 import { cleanText } from "@/lib/helpers";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 // Types for NotionAPI blocks conversion
 type AnyRecord = Record<string, any>;
@@ -535,12 +541,12 @@ function getDate(prop: any): Date | null {
           const time = datetimeData.start_time as string | undefined;
           const timezone = datetimeData.time_zone as string | undefined;
 
-          if (date) {
-            let isoString = date;
-            if (time) {
-              isoString += `T${time}`;
-            }
-            return new Date(isoString);
+          const datetimeStr = `${date} ${time}`;
+
+          const localTime = dayjs.tz(datetimeStr, "YYYY-MM-DD HH:mm", timezone);
+
+          if (localTime.isValid()) {
+            return localTime.toDate();
           }
         }
       }
