@@ -9,6 +9,7 @@ import navigation from "@/datas/navigation";
 import { SITE_CONFIG } from "@/lib/constants";
 import { categories } from "@/datas/categories";
 import type { Metadata } from "next/types";
+import { LinkAtoms } from "@/components/atoms";
 
 // Helper function to convert BlogPost to Post
 function blogPostToPost(blogPost: BlogPost): Post {
@@ -166,12 +167,12 @@ export default async function TagPage({ params }: TagPageProps) {
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
                   No posts found for tag &quot;{tag}&quot;
                 </p>
-                <a
+                <LinkAtoms
                   href="/blog"
                   className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Browse All Posts
-                </a>
+                </LinkAtoms>
               </div>
             )}
           </div>

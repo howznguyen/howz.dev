@@ -25,9 +25,46 @@ export const notionX = new NotionAPI({
 });
 
 export async function getPage(pageId: string) {
-  const recordMap = await notionX.getPage(pageId);
-  const newRecordMap = await fixMissingBlocks(recordMap);
-  return newRecordMap;
+  try {
+    const recordMap = await notionX.getPage(pageId);
+    const newRecordMap = await fixMissingBlocks(recordMap);
+    return newRecordMap;
+  } catch (error: any) {
+    console.error("NotionAPI getPage error:", error);
+
+    // Handle specific Notion API errors
+    if (
+      error.message?.includes("getSignedfileUrls") ||
+      error.message?.includes("502") ||
+      error.message?.includes("Bad Gateway")
+    ) {
+      console.log("Notion API error detected, retrying...");
+
+      // Wait before retry
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      try {
+        const recordMap = await notionX.getPage(pageId);
+        const newRecordMap = await fixMissingBlocks(recordMap);
+        return newRecordMap;
+      } catch (retryError) {
+        console.error("NotionAPI retry failed:", retryError);
+
+        // If retry fails, return empty recordMap to prevent build failure
+        console.log("Returning empty recordMap to prevent build failure");
+        return {
+          block: {},
+          collection: {},
+          collection_view: {},
+          notion_user: {},
+          signed_urls: {},
+          preview_images: {},
+        };
+      }
+    }
+
+    throw error;
+  }
 }
 
 async function fixMissingBlocks(

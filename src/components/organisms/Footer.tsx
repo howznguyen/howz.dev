@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon, Link } from "../atoms";
+import { Icon, LinkAtoms } from "../atoms";
 import footer from "@/datas/footer";
 import { SITE_CONFIG } from "@/lib/constants";
 
@@ -13,9 +13,9 @@ const Footer = ({}: FooterProps) => {
         <div className="flex flex-wrap justify-center gap-y-4 gap-x-8">
           {footer.links &&
             footer.links.map((item: any, i: number) => (
-              <Link target="_blank" key={i} href={item.link}>
+              <LinkAtoms target="_blank" key={i} href={item.link}>
                 {item.title}
-              </Link>
+              </LinkAtoms>
             ))}
         </div>
 
@@ -25,32 +25,32 @@ const Footer = ({}: FooterProps) => {
 
         <div className="mt-2 flex space-x-4">
           {footer.social_networks.map((item: any, i: number) => (
-            <Link href={item.link} title={item.title} key={i}>
+            <LinkAtoms href={item.link} title={item.title} key={i}>
               <Icon
                 icon={item.icon}
                 className="text-2xl text-gray-600 dark:text-gray-300"
               />
-            </Link>
+            </LinkAtoms>
           ))}
         </div>
 
         <p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
           © {new Date().getFullYear()} - {footer.build_with}
-          <Link href="https://nextjs.org/" target="_blank">
+          <LinkAtoms href="https://nextjs.org/" target="_blank">
             Next.js
-          </Link>
+          </LinkAtoms>
           ,{" "}
-          <Link href="https://tailwindcss.com/" target="_blank">
+          <LinkAtoms href="https://tailwindcss.com/" target="_blank">
             Tailwind CSS
-          </Link>
+          </LinkAtoms>
           ,{" "}
-          <Link href="https://notion.so/" target="_blank">
+          <LinkAtoms href="https://notion.so/" target="_blank">
             Notion
-          </Link>
+          </LinkAtoms>
           . {footer.develop_by}
-          <Link href="https://github.com/howznguyen" target="_blank">
+          <LinkAtoms href="https://github.com/howznguyen" target="_blank">
             @howznguyen
-          </Link>
+          </LinkAtoms>
           {footer.with} ❤️ .
         </p>
       </main>
