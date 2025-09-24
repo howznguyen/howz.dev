@@ -19,7 +19,7 @@ function blogPostToPost(blogPost: BlogPost): Post {
     description: blogPost.description,
     content: blogPost.content,
     published: blogPost.published_at,
-    status: blogPost.published ? 'Published' : 'Draft',
+    status: blogPost.published ? "Published" : "Draft",
     tags: blogPost.tags,
     featured: blogPost.featured,
     cover: blogPost.cover?.url,
@@ -39,15 +39,17 @@ export async function generateMetadata({
   params,
 }: TagPageProps): Promise<Metadata> {
   const { tag } = await params;
-  
+
   try {
     const allTags = await Notion.getTags();
-    const currentTag = allTags.find((t: string) => t.toLowerCase() === tag.toLowerCase());
-    
-    const title = currentTag 
+    const currentTag = allTags.find(
+      (t: string) => t.toLowerCase() === tag.toLowerCase()
+    );
+
+    const title = currentTag
       ? `Posts tagged with "${currentTag}" | Howz.dev`
       : `Posts tagged with "${tag}" | Howz.dev`;
-    
+
     const description = `All posts tagged with ${currentTag || tag}`;
 
     return {
@@ -56,10 +58,10 @@ export async function generateMetadata({
       openGraph: {
         title,
         description,
-        type: 'website',
+        type: "website",
       },
       twitter: {
-        card: 'summary',
+        card: "summary",
         title,
         description,
       },
@@ -80,13 +82,13 @@ export async function generateStaticParams(): Promise<Array<{ tag: string }>> {
       tag: tagName.toLowerCase(),
     }));
   } catch (error) {
-    console.error('Error generating static params for tags:', error);
+    console.error("Error generating static params for tags:", error);
     return [];
   }
 }
 
-// Enable ISR with 1 hour revalidation
-export const revalidate = 3600;
+// Enable ISR with 5 minutes revalidation
+export const revalidate = 300;
 
 export default async function TagPage({ params }: TagPageProps) {
   const { tag } = await params;
@@ -94,36 +96,40 @@ export default async function TagPage({ params }: TagPageProps) {
   try {
     // Get posts by tag using enhanced service
     const fetchedBlogPosts = await Notion.getPostsByTag(tag);
-    const posts = fetchedBlogPosts.map((post: any) => blogPostToPost({
-      id: post.id,
-      title: post.title,
-      slug: post.slug,
-      description: post.description,
-      content: '',
-      excerpt: post.description,
-      published: true,
-      published_at: post.published,
-      created_at: post.published,
-      updated_at: post.published,
-      tags: post.tags,
-      category: 'Others',
-      author: 'Howz Nguyen',
-      featured: post.featured,
-      cover: post.cover ? { url: post.cover, alt: post.title } : undefined,
-      reading_time: post.readingTime || 5,
-      views: post.views || 0,
-    }));
+    const posts = fetchedBlogPosts.map((post: any) =>
+      blogPostToPost({
+        id: post.id,
+        title: post.title,
+        slug: post.slug,
+        description: post.description,
+        content: "",
+        excerpt: post.description,
+        published: true,
+        published_at: post.published,
+        created_at: post.published,
+        updated_at: post.published,
+        tags: post.tags,
+        category: "Others",
+        author: "Howz Nguyen",
+        featured: post.featured,
+        cover: post.cover ? { url: post.cover, alt: post.title } : undefined,
+        reading_time: post.readingTime || 5,
+        views: post.views || 0,
+      })
+    );
 
     // Get all tags for additional info
     const allTags = await Notion.getTags();
-    const currentTag = allTags.find((t: string) => t.toLowerCase() === tag.toLowerCase());
+    const currentTag = allTags.find(
+      (t: string) => t.toLowerCase() === tag.toLowerCase()
+    );
 
     if (!currentTag && posts.length === 0) {
       return <PageNotFound />;
     }
 
     return (
-      <MainTemplate 
+      <MainTemplate
         options={{
           settings: {
             site_name: SITE_CONFIG.name,
@@ -141,11 +147,11 @@ export default async function TagPage({ params }: TagPageProps) {
           <p className="text-gray-600 dark:text-gray-300 mt-2">
             {tags.post_by_tag}
           </p>
-          
+
           {currentTag && (
             <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                {posts.length} {posts.length === 1 ? 'post' : 'posts'} found
+                {posts.length} {posts.length === 1 ? "post" : "posts"} found
               </p>
             </div>
           )}
@@ -160,8 +166,8 @@ export default async function TagPage({ params }: TagPageProps) {
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
                   No posts found for tag &quot;{tag}&quot;
                 </p>
-                <a 
-                  href="/blog" 
+                <a
+                  href="/blog"
                   className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Browse All Posts
@@ -173,7 +179,7 @@ export default async function TagPage({ params }: TagPageProps) {
       </MainTemplate>
     );
   } catch (error) {
-    console.error('Error in TagPage:', error);
+    console.error("Error in TagPage:", error);
     return <PageNotFound />;
   }
 }
