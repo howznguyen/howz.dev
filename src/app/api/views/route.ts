@@ -12,7 +12,6 @@ export async function GET(req: Request) {
     return NextResponse.json({
       slug,
       total: views,
-      url: pageUrl,
     });
   } catch (error) {
     console.error("Error fetching Umami data:", error);
