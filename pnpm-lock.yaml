@@ -114,7 +114,7 @@ importers:
         specifier: ^2.12.0
         version: 2.16.1(react@18.2.0)
       react-social-media-embed:
-        specifier: ^2.3.4
+        specifier: ^2.5.18
         version: 2.5.18(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-use:
         specifier: ^17.6.0
