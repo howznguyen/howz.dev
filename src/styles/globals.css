@@ -1,20 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
-
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 @layer base {
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     /* @apply bg-gray-200; */
   }
 
   :root {
-    --gap : 3.2rem;
-    --container-width : 1200px;
-    --content-width : 720px;
+    --gap: 3.2rem;
+    --container-width: 1200px;
+    --content-width: 720px;
     --tw-clr-primary-200: 219 255 0;
     --tw-clr-primary-300: 0 232 135;
     --tw-clr-primary-400: 0 224 243;
@@ -45,7 +44,6 @@
     @apply transform rotate-180;
   }
 
-
   div[data-rmiz-modal-overlay="visible"] {
     @apply bg-gray-900 bg-opacity-80;
   }
@@ -71,26 +69,111 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
   }
-  
 
   .list-decimal > li > * {
     @apply pl-2 !important;
   }
 
   .border-blockquote {
-    border-image: linear-gradient(0deg,#00ff94,#00e0f3,#00c4fd) 1
+    border-image: linear-gradient(0deg, #00ff94, #00e0f3, #00c4fd) 1;
   }
 
   .cursor-newtab {
-      cursor: url(/assets/images/new-tab.png) 10 10,pointer
+    cursor: url(/assets/images/new-tab.png) 10 10, pointer;
   }
-
 }
 
 @media (min-width: 768px) {
   .md\:code-block {
     @apply pt-14 !important;
   }
+}
+
+/* Code block horizontal scroll - safe for layout */
+.code-block-horizontal-scroll {
+  @apply overflow-x-auto;
+  @apply max-w-full;
+  @apply block;
+  @apply w-full;
+  @apply box-border;
+  @apply break-words;
+  @apply break-all;
+  min-height: 2rem !important;
+  scrollbar-width: thin;
+  scrollbar-color: #4a5568 #2d3748;
+}
+
+.code-block-horizontal-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.code-block-horizontal-scroll::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+  @apply rounded;
+}
+
+.code-block-horizontal-scroll::-webkit-scrollbar-thumb {
+  @apply bg-gray-600;
+  @apply rounded;
+}
+
+.code-block-horizontal-scroll::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* Ensure code block stays within container */
+.code-block-horizontal-scroll pre {
+  @apply max-w-full;
+  @apply overflow-x-auto;
+  @apply whitespace-pre;
+  @apply break-words;
+  @apply break-all;
+}
+
+.code-block-horizontal-scroll code {
+  @apply max-w-full;
+  @apply overflow-x-auto;
+  @apply whitespace-pre;
+  @apply break-words;
+  @apply break-all;
+}
+
+/* Grid layout specific fixes */
+.lg\:grid .code-block-horizontal-scroll {
+  @apply min-w-0;
+  @apply w-full;
+  @apply max-w-none;
+}
+
+.lg\:grid .code-block-horizontal-scroll pre {
+  @apply min-w-0;
+  @apply w-full;
+  @apply max-w-none;
+  @apply overflow-x-auto;
+}
+
+.lg\:grid .code-block-horizontal-scroll code {
+  @apply min-w-0;
+  @apply w-full;
+  @apply max-w-none;
+  @apply overflow-x-auto;
+}
+
+/* Specific fix for post layout grid */
+.lg\:grid-cols-\[auto\,250px\] .code-block-horizontal-scroll {
+  @apply min-w-0;
+  @apply w-full;
+  @apply max-w-full;
+  @apply overflow-x-auto;
+}
+
+.lg\:grid-cols-\[auto\,250px\] section {
+  @apply min-w-0;
+  @apply overflow-hidden;
+}
+
+.lg\:grid-cols-\[auto\,250px\] section * {
+  @apply max-w-full;
 }
 
 @media (min-width: 992px) {
@@ -105,60 +188,72 @@
 
 [data-fade] {
   --tw-translate-y: 2.5rem;
-  transform: translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   opacity: 0;
-  transition-property: color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;
-  transition-property: color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;
-  transition-property: color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;
-  transition-timing-function: cubic-bezier(.4,0,.2,1);
-  transition-duration: .4s;
-  transition-timing-function: cubic-bezier(0,0,.2,1)
+  transition-property: color, background-color, border-color, outline-color,
+    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
+    -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, outline-color,
+    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
+    backdrop-filter;
+  transition-property: color, background-color, border-color, outline-color,
+    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
+    backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.4s;
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
-@media (prefers-reduced-motion:reduce) {
+@media (prefers-reduced-motion: reduce) {
   [data-fade] {
-      --tw-translate-y: 0px;
-      transform: translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-      opacity: 1
+    --tw-translate-y: 0px;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+      rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+      scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+    opacity: 1;
   }
 }
 
 .fade-in-start [data-fade] {
   --tw-translate-y: 0px;
-  transform: translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   opacity: 1;
 }
 
 .fade-in-start [data-fade="1"] {
-  transition-delay: .1s
+  transition-delay: 0.1s;
 }
 
 .fade-in-start [data-fade="2"] {
-  transition-delay: .2s
+  transition-delay: 0.2s;
 }
 
 .fade-in-start [data-fade="3"] {
-  transition-delay: .3s
+  transition-delay: 0.3s;
 }
 
 .fade-in-start [data-fade="4"] {
-  transition-delay: .4s
+  transition-delay: 0.4s;
 }
 
 .fade-in-start [data-fade="5"] {
-  transition-delay: .5s
+  transition-delay: 0.5s;
 }
 
 .fade-in-start [data-fade="6"] {
-  transition-delay: .6s
+  transition-delay: 0.6s;
 }
 
 .fade-in-start [data-fade="7"] {
-  transition-delay: .7s
+  transition-delay: 0.7s;
 }
 
 .fade-in-start [data-fade="8"] {
-  transition-delay: .8s
+  transition-delay: 0.8s;
 }
 
 .introduce-img {
@@ -172,25 +267,25 @@
 }
 
 .loader {
-	border-top-color: #3498db;
-	-webkit-animation: spinner 1.5s linear infinite;
-	animation: spinner 1.5s linear infinite;
+  border-top-color: #3498db;
+  -webkit-animation: spinner 1.5s linear infinite;
+  animation: spinner 1.5s linear infinite;
 }
 
 @-webkit-keyframes spinner {
-	0% {
-		-webkit-transform: rotate(0deg);
-	}
-	100% {
-		-webkit-transform: rotate(360deg);
-	}
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
 
 @keyframes spinner {
-	0% {
-		transform: rotate(0deg);
-	}
-	100% {
-		transform: rotate(360deg);
-	}
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

@@ -71,7 +71,7 @@ export class EnhancedNotionService extends UnofficialNotionService {
         apiBlocks: pageContent.apiBlocks,
         renderBlocks: pageContent.renderBlocks,
         headings: pageContent.headings,
-        views: post.views || 0,
+        views: post.views,
       } as BlogPost & {
         recordMap: any;
         blocks: any[];
@@ -622,6 +622,9 @@ export const enhancedNotionService = new EnhancedNotionService();
 export const Notion = {
   getPosts: enhancedNotionService.getPostsLegacy.bind(enhancedNotionService),
   getPostBySlug: enhancedNotionService.getPostBySlugLegacy.bind(
+    enhancedNotionService
+  ),
+  getEnhancedPostBySlug: enhancedNotionService.getEnhancedPostBySlug.bind(
     enhancedNotionService
   ),
   getPage: enhancedNotionService.getPageLegacy.bind(enhancedNotionService),

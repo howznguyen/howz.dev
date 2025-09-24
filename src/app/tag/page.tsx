@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   description: "Browse all tags on the blog",
 };
 
-// Enable ISR with 1 hour revalidation
-export const revalidate = 3600;
+// Enable ISR with 5 minutes revalidation
+export const revalidate = 300;
 
 export default async function TagsPage() {
   try {

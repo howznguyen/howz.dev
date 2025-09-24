@@ -7,10 +7,9 @@ import {
   FacebookEmbed,
   InstagramEmbed,
   TikTokEmbed,
-  TwitterEmbed,
+  XEmbed,
 } from "react-social-media-embed";
 import ReactPlayer from "react-player";
-import { Fragment } from "react";
 
 interface NotionEmbedProps {
   url: string;
@@ -26,7 +25,7 @@ export const NotionEmbed = ({ url }: NotionEmbedProps) => {
   } else if (link.hostname.includes("instagram.com")) {
     cpn = <InstagramEmbed url={url} width={550} />;
   } else if (link.hostname.includes("twitter.com")) {
-    cpn = <TwitterEmbed url={url} width={550} />;
+    cpn = <XEmbed url={url} width={550} />;
   } else if (link.hostname.includes("tiktok.com")) {
     cpn = <TikTokEmbed url={url} width={550} />;
   } else {

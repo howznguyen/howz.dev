@@ -14,6 +14,7 @@ const ThemeSwitcher = ({}: ThemeSwitcherProps) => {
     <Button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       title={header.theme_switcher}
+      className="!p-2"
     >
       {theme === "dark" ? <Icon icon="BiMoon" /> : <Icon icon="BiSun" />}
     </Button>

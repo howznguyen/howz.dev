@@ -20,9 +20,9 @@ export class UmamiService {
   private token: string;
 
   constructor() {
-    this.baseUrl = process.env.UMAMI_HOST || '';
-    this.websiteId = process.env.UMAMI_WEBSITE_ID || '';
-    this.token = process.env.UMAMI_TOKEN || '';
+    this.baseUrl = process.env.UMAMI_HOST || "";
+    this.websiteId = process.env.UMAMI_WEBSITE_ID || "";
+    this.token = process.env.UMAMI_TOKEN || "";
   }
 
   /**
@@ -35,9 +35,12 @@ export class UmamiService {
   /**
    * Get pageviews for multiple URLs in a single request
    */
-  async getUrlMetrics(timeRange?: { startAt?: number; endAt?: number }): Promise<UmamiUrlMetric[]> {
+  async getUrlMetrics(timeRange?: {
+    startAt?: number;
+    endAt?: number;
+  }): Promise<UmamiUrlMetric[]> {
     if (!this.isConfigured()) {
-      console.warn('Umami not configured, returning empty metrics');
+      console.warn("Umami not configured, returning empty metrics");
       return [];
     }
 
@@ -46,40 +49,51 @@ export class UmamiService {
     const endAt = timeRange?.endAt || now.getTime();
 
     try {
-      const url = `${this.baseUrl}/websites/${this.websiteId}/metrics?` +
+      const url =
+        `${this.baseUrl}/websites/${this.websiteId}/metrics?` +
         new URLSearchParams({
           startAt: String(startAt),
           endAt: String(endAt),
-          type: 'url',
-          limit: '1000', // Get up to 1000 URLs
+          type: "url",
+          limit: "1000", // Get up to 1000 URLs
         });
-
 
       const response = await fetch(url, {
         headers: {
-            'x-umami-api-key': this.token,
-            'Content-Type': 'application/json',
+          "x-umami-api-key": this.token,
+          "Content-Type": "application/json",
         },
       });
-      
 
       if (!response.ok) {
-        console.error('Umami API error:', response.status, await response.text());
+        console.error(
+          "Umami API error:",
+          response.status,
+          await response.text()
+        );
         return [];
       }
 
       const data: UmamiUrlMetric[] = await response.json();
       return data || [];
     } catch (error) {
-      console.error('Error fetching Umami URL metrics:', error);
+      console.error("Error fetching Umami URL metrics:", error);
       return [];
     }
+  }
+
+  async getViewsByPostSlug(slug: string): Promise<number> {
+    const url = `/post/${slug}`;
+    return this.getUrlPageviews(url);
   }
 
   /**
    * Get pageviews for a specific URL
    */
-  async getUrlPageviews(url: string, timeRange?: { startAt?: number; endAt?: number }): Promise<number> {
+  async getUrlPageviews(
+    url: string,
+    timeRange?: { startAt?: number; endAt?: number }
+  ): Promise<number> {
     if (!this.isConfigured()) {
       return 0;
     }
@@ -89,25 +103,26 @@ export class UmamiService {
     const endAt = timeRange?.endAt || now.getTime();
 
     try {
-      const apiUrl = `${this.baseUrl}/websites/${this.websiteId}/pageviews?` +
+      const apiUrl =
+        `${this.baseUrl}/websites/${this.websiteId}/pageviews?` +
         new URLSearchParams({
           startAt: String(startAt),
           endAt: String(endAt),
           url: url,
-          unit: 'day',
-          timezone: 'Asia/Ho_Chi_Minh',
+          unit: "day",
+          timezone: "Asia/Ho_Chi_Minh",
         });
 
       const response = await fetch(apiUrl, {
         headers: {
-            'x-umami-api-key': this.token,
-            'Content-Type': 'application/json',
+          "x-umami-api-key": this.token,
+          "Content-Type": "application/json",
         },
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Umami API error:', response.status, errorText);
+        console.error("Umami API error:", response.status, errorText);
         return 0;
       }
 
@@ -116,20 +131,26 @@ export class UmamiService {
       // Handle the actual response format from Umami v1 API
       if (data?.sessions && Array.isArray(data.pageviews)) {
         // Sum up pageviews from array of daily data: [{ x: '2025-08-31T17:00:00Z', y: 10 }]
-        return data.sessions.reduce((sum: number, item: any) => sum + (item.y || 0), 0);
+        return data.sessions.reduce(
+          (sum: number, item: any) => sum + (item.y || 0),
+          0
+        );
       } else if (Array.isArray(data)) {
         // Fallback: if data is directly an array
-        return data.reduce((sum: number, item: any) => sum + (item.y || item.value || 0), 0);
+        return data.reduce(
+          (sum: number, item: any) => sum + (item.y || item.value || 0),
+          0
+        );
       } else if (data?.sessions?.value) {
         // Handle stats response format (legacy)
         return data.sessions.value;
-      } else if (typeof data === 'number') {
+      } else if (typeof data === "number") {
         return data;
       }
-      
+
       return 0;
     } catch (error) {
-      console.error('Error fetching Umami pageviews:', error);
+      console.error("Error fetching Umami pageviews:", error);
       return 0;
     }
   }
@@ -141,7 +162,7 @@ export class UmamiService {
     const metrics = await this.getUrlMetrics();
     const viewsMap = new Map<string, number>();
 
-    metrics.forEach(metric => {
+    metrics.forEach((metric) => {
       // Extract slug from URL path (e.g., "/post/my-slug" -> "my-slug")
       const match = metric.x.match(/\/post\/([^/?]+)/);
       if (match) {
