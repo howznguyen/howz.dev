@@ -263,6 +263,8 @@ export class EnhancedNotionService extends UnofficialNotionService {
         id: post.id,
         title: post.title,
         cover: post.cover?.url || null,
+        created_at: post.created_at,
+        updated_at: post.updated_at,
         published: post.published_at,
         slug: post.slug,
         tags: post.tags,

@@ -78,7 +78,12 @@ const PostCard = ({ post }: PostCardProps) => {
               </div>
             )}
             <Views views={postInfo.views} />
-            {postInfo.published && <DateTime value={postInfo.published} />}
+            {postInfo.published && (
+              <div className="flex items-center gap-1">
+                <Icon icon="HiOutlineCalendar" />
+                <DateTime value={postInfo.published} />
+              </div>
+            )}
           </div>
 
           {postInfo.description && (
