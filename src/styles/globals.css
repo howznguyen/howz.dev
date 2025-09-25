@@ -5,6 +5,10 @@
 @import "tailwindcss/utilities";
 
 @layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
   body {
     font-family: "Inter", sans-serif;
     /* @apply bg-gray-200; */

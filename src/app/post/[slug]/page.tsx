@@ -213,8 +213,26 @@ export default async function PostPage({ params }: PostPageProps) {
             <h1 className="text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-4xl dark:text-white">
               {post.title}
             </h1>
+
             <div className="mt-6 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
-              <DateTime value={post.published} />
+              <div className="flex items-center gap-1">
+                <Icon icon="HiOutlineCalendar" />
+                <span>Created: </span>
+                <DateTime value={blogPost.created_at} />
+              </div>
+              <div className="flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-md border border-blue-200 dark:border-blue-800">
+                <Icon
+                  icon="HiOutlinePencil"
+                  className="text-blue-600 dark:text-blue-400"
+                />
+                <span className="text-blue-700 dark:text-blue-300 font-medium">
+                  Updated:{" "}
+                </span>
+                <DateTime
+                  value={blogPost.updated_at}
+                  className="text-blue-700 dark:text-blue-300"
+                />
+              </div>
               <div className="flex items-center gap-1">
                 <Icon icon="HiOutlineClock" />
                 <span>{postData.reading_time(post.readingTime)}</span>
@@ -224,38 +242,20 @@ export default async function PostPage({ params }: PostPageProps) {
               </div>
             </div>
 
-            {/* Social sharing buttons */}
             <div className="mt-4 flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-300">
-                Share:
-              </span>
-              <LinkAtoms
-                href={socialUrls.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:text-blue-600 transition-colors"
-                aria-label="Share on Twitter"
-              >
-                <Icon icon="FaTwitter" />
-              </LinkAtoms>
-              <LinkAtoms
-                href={socialUrls.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-700 transition-colors"
-                aria-label="Share on Facebook"
-              >
-                <Icon icon="FaFacebook" />
-              </LinkAtoms>
-              <LinkAtoms
-                href={socialUrls.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-700 hover:text-blue-800 transition-colors"
-                aria-label="Share on LinkedIn"
-              >
-                <Icon icon="FaLinkedin" />
-              </LinkAtoms>
+              <div className="flex items-center gap-1">
+                <Icon
+                  icon="HiOutlineTag"
+                  className="text-gray-500 dark:text-gray-400"
+                />
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  Tags:{" "}
+                </span>
+                {post.tags &&
+                  post.tags.map((tag: any, index: number) => (
+                    <Tag key={index} name={tag} />
+                  ))}
+              </div>
             </div>
           </div>
 
@@ -276,14 +276,6 @@ export default async function PostPage({ params }: PostPageProps) {
                   {pageContent.textContent?.substring(0, 200)}...
                 </div>
               )}
-
-              <span>
-                {tags.tags}:{" "}
-                {post.tags &&
-                  post.tags.map((tag: any, index: number) => (
-                    <Tag key={index} name={tag} />
-                  ))}
-              </span>
             </section>
 
             <div className="relative">
