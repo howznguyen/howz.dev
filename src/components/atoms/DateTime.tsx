@@ -3,29 +3,22 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/en";
-import Icon from "./Icon";
 
 dayjs.extend(relativeTime);
 
 interface DateTimeProps {
   value: any;
+  className?: string;
 }
 
-const DateTime = ({ value }: DateTimeProps) => {
+const DateTime = ({ value, className }: DateTimeProps) => {
   dayjs.locale("en");
   const days = 5;
   let raw = dayjs(value);
   let duration = dayjs().diff(dayjs(value), "hour");
   const datetime =
     duration > 24 * days ? raw.format("DD/MM/YYYY HH:mm") : raw.fromNow();
-  return (
-    <>
-      <div className="flex items-center gap-1">
-        <Icon icon="HiCalendar" />
-        {datetime}
-      </div>
-    </>
-  );
+  return <span className={className}>{datetime}</span>;
 };
 
 export default DateTime;
