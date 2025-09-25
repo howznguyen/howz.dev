@@ -320,17 +320,10 @@ export const NotionCode = ({ children, language }: NotionCodeProps) => {
     if (finalLanguage === "text") {
       finalLanguage = detectLanguage(codeString);
     }
-    console.log("getFinalLanguage:", {
-      language,
-      finalLanguage,
-      codeString: codeString.substring(0, 50),
-    });
     return finalLanguage;
   };
 
   const finalLanguage = getFinalLanguage();
-
-  console.log("finalLanguage", language, finalLanguage);
 
   // Check if code has only one line
   const isSingleLine = codeString.split("\n").length === 1;
