@@ -17,15 +17,18 @@ export function convertToPost(convertedPost: ConvertedPost): Post | null {
     content: Array.isArray(convertedPost.content)
       ? convertedPost.content.join("\n")
       : convertedPost.content || undefined,
-    published: convertedPost.published
-      ? convertedPost.published.toISOString()
-      : new Date().toISOString(),
     status: convertedPost.status as "Published" | "Draft" | "Archived",
     tags: convertedPost.tags,
     featured: convertedPost.featured,
     cover: convertedPost.cover || undefined,
     author: "Howz Nguyen", // Default author since not in ConvertedPost
     readingTime: convertedPost.readingTime,
+    createdAt: convertedPost.createdTime
+      ? new Date(convertedPost.createdTime).toISOString()
+      : undefined,
+    updatedAt: convertedPost.lastEditedTime
+      ? new Date(convertedPost.lastEditedTime).toISOString()
+      : undefined,
   };
 }
 

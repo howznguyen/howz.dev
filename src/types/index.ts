@@ -6,14 +6,15 @@ export interface Post {
   slug: string;
   description?: string;
   content?: string;
-  published: string;
-  status: 'Published' | 'Draft' | 'Archived';
+  status: "Published" | "Draft" | "In progress";
   tags: string[];
   featured: boolean;
   cover?: string;
   author?: string;
   readingTime?: number;
   views?: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Tag {
@@ -92,16 +93,16 @@ export interface BaseComponentProps {
 export interface LinkProps extends BaseComponentProps {
   href: string;
   title?: string;
-  target?: '_blank' | '_self' | '_parent' | '_top';
+  target?: "_blank" | "_self" | "_parent" | "_top";
 }
 
 export interface ButtonProps extends BaseComponentProps {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary" | "ghost" | "danger";
+  size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
   onClick?: () => void;
-  type?: 'button' | 'submit' | 'reset';
+  type?: "button" | "submit" | "reset";
 }
 
 export interface IconProps {
@@ -111,7 +112,7 @@ export interface IconProps {
 }
 
 // Theme types
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = "light" | "dark" | "system";
 
 // Error types
 export interface AppError {

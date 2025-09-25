@@ -56,7 +56,7 @@ export async function generateMetadata({
             ]
           : [],
         type: "article",
-        publishedTime: blogPost.published_at,
+        publishedTime: blogPost.created_at,
         authors: ["Howz Nguyen"],
         tags: blogPost.tags,
       },
@@ -159,7 +159,7 @@ export default async function PostPage({ params }: PostPageProps) {
         "@type": "Person",
         name: "Howz Nguyen",
       },
-      datePublished: blogPost.published,
+      datePublished: blogPost.created_at,
       url: postUrl,
       mainEntityOfPage: postUrl,
     };
@@ -214,7 +214,7 @@ export default async function PostPage({ params }: PostPageProps) {
               {post.title}
             </h1>
 
-            <div className="mt-6 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
+            <div className="md:mt-6 mt-2 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 flex-wrap">
               <div className="flex items-center gap-1">
                 <Icon icon="HiOutlineCalendar" />
                 <span>Created: </span>
@@ -243,18 +243,22 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
 
             <div className="mt-4 flex items-center gap-2">
-              <div className="flex items-center gap-1">
-                <Icon
-                  icon="HiOutlineTag"
-                  className="text-gray-500 dark:text-gray-400"
-                />
-                <span className="text-sm text-gray-600 dark:text-gray-300">
-                  Tags:{" "}
-                </span>
-                {post.tags &&
-                  post.tags.map((tag: any, index: number) => (
-                    <Tag key={index} name={tag} />
-                  ))}
+              <div className="flex md:items-center gap-2 md:gap-1 md:flex-row flex-col items-start">
+                <div className="flex items-center gap-1 flex-row">
+                  <Icon
+                    icon="HiOutlineTag"
+                    className="text-gray-500 dark:text-gray-400"
+                  />
+                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                    Tags:{" "}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 flex-wrap">
+                  {post.tags &&
+                    post.tags.map((tag: any, index: number) => (
+                      <Tag key={index} name={tag} />
+                    ))}
+                </div>
               </div>
             </div>
           </div>
@@ -285,9 +289,9 @@ export default async function PostPage({ params }: PostPageProps) {
 
             {relatedPosts && relatedPosts.length > 0 && (
               <div className="md:col-span-2 mb-2 mt-4">
-                <span className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
-                  {postData.relate_post}
-                </span>
+                <div className="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-100">
+                  <span>{postData.relate_post}</span>
+                </div>
                 <PostList posts={relatedPosts} limit={3} />
               </div>
             )}

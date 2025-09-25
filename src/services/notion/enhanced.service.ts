@@ -65,7 +65,6 @@ export class EnhancedNotionService extends UnofficialNotionService {
         ...post,
         content: pageContent.textContent,
         reading_time: readingTime,
-        // Add NotionX specific data
         recordMap: pageContent.recordMap,
         blocks: pageContent.blocks,
         apiBlocks: pageContent.apiBlocks,
@@ -141,7 +140,7 @@ export class EnhancedNotionService extends UnofficialNotionService {
       return posts.map((post) => ({
         slug: post.slug || "",
         lastModified: new Date(post.lastEditedTime).toISOString(),
-        published: post.published?.toISOString() || new Date().toISOString(),
+        createdAt: new Date(post.createdTime).toISOString(),
       }));
     } catch (error) {
       console.error("Error in getPostsForSitemap:", error);
@@ -163,7 +162,6 @@ export class EnhancedNotionService extends UnofficialNotionService {
             title: blogPost.title,
             description: blogPost.description,
             url: `/post/${blogPost.slug}`,
-            date: blogPost.published_at,
             content: blogPost.description, // Use description for RSS
           };
         })
@@ -213,7 +211,8 @@ export class EnhancedNotionService extends UnofficialNotionService {
             id: post.id,
             title: post.title,
             cover: post.cover || null,
-            published: post.published,
+            createdAt: new Date(post.createdTime).toISOString(),
+            updatedAt: new Date(post.lastEditedTime).toISOString(),
             slug: post.slug,
             tags: post.tags,
             description: post.description,
@@ -265,7 +264,6 @@ export class EnhancedNotionService extends UnofficialNotionService {
         cover: post.cover?.url || null,
         created_at: post.created_at,
         updated_at: post.updated_at,
-        published: post.published_at,
         slug: post.slug,
         tags: post.tags,
         description: post.description,
@@ -337,7 +335,6 @@ export class EnhancedNotionService extends UnofficialNotionService {
         id: post.id,
         title: post.title,
         cover: post.cover?.url || null,
-        published: post.published_at,
         slug: post.slug,
         tags: post.tags,
         description: post.description,
@@ -375,12 +372,13 @@ export class EnhancedNotionService extends UnofficialNotionService {
             id: post.id,
             title: post.title,
             cover: post.cover?.url || null,
-            published: post.published_at,
             slug: post.slug,
             tags: post.tags,
             description: post.description,
             featured: post.featured,
             readingTime: post.reading_time,
+            createdAt: post.created_at,
+            updatedAt: post.updated_at,
           };
         })
       );
@@ -444,7 +442,6 @@ export class EnhancedNotionService extends UnofficialNotionService {
             id: post.id,
             title: post.title,
             cover: post.cover?.url || null,
-            published: post.published_at,
             slug: post.slug,
             tags: post.tags,
             description: post.description,
@@ -471,7 +468,6 @@ export class EnhancedNotionService extends UnofficialNotionService {
         id: result.id,
         title: result.title,
         cover: null,
-        published: result.published_at,
         slug: result.slug,
         tags: result.tags,
         description: result.description,
@@ -553,8 +549,7 @@ export class EnhancedNotionService extends UnofficialNotionService {
       description: post.description || "",
       content: "", // Will be loaded separately when needed
       excerpt: post.description || "",
-      published: Boolean(post.published),
-      published_at: post.published?.toISOString() || new Date().toISOString(),
+      status: post.status,
       created_at: new Date(post.createdTime).toISOString(),
       updated_at: new Date(post.lastEditedTime).toISOString(),
       tags: post.tags,

@@ -291,12 +291,6 @@ const languageMap: Record<string, string> = {
 const detectLanguage = (code: string): string => {
   try {
     const result = hljs.highlightAuto(code);
-    console.log(
-      "hljs.highlightAuto result:",
-      code,
-      result.language,
-      result.relevance
-    );
     return result.language || "text";
   } catch (error) {
     console.error("Language detection failed:", error);

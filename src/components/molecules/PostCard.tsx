@@ -21,7 +21,8 @@ const PostCard = ({ post }: PostCardProps) => {
     description: post.description,
     cover: post.cover,
     tags: post.tags,
-    published: post.published,
+    createdAt: post.createdAt,
+    updatedAt: post.updatedAt,
     readingTime: post.readingTime || 0,
     views: post.views || 0,
   };
@@ -78,10 +79,10 @@ const PostCard = ({ post }: PostCardProps) => {
               </div>
             )}
             <Views views={postInfo.views} />
-            {postInfo.published && (
+            {postInfo.createdAt && (
               <div className="flex items-center gap-1">
                 <Icon icon="HiOutlineCalendar" />
-                <DateTime value={postInfo.published} />
+                <DateTime value={postInfo.createdAt} />
               </div>
             )}
           </div>

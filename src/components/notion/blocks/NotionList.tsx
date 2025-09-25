@@ -8,12 +8,16 @@ interface NotionListProps {
   number?: number;
 }
 
-export const NotionList = ({ children, ordered = false, number }: NotionListProps) => {
+export const NotionList = ({
+  children,
+  ordered = false,
+  number,
+}: NotionListProps) => {
   if (ordered) {
     return (
       <ol
         start={number ?? 1}
-        className="space-y-1 font-medium text-gray-800 list-decimal list-inside dark:text-gray-400"
+        className="space-y-1 font-medium text-gray-800 list-decimal list-inside dark:text-gray-400 text-left"
       >
         {children}
       </ol>
@@ -21,7 +25,7 @@ export const NotionList = ({ children, ordered = false, number }: NotionListProp
   }
 
   return (
-    <ul className="space-y-1 font-medium text-gray-800 list-disc list-inside dark:text-gray-400">
+    <ul className="space-y-1 font-medium text-gray-800 list-disc list-inside dark:text-gray-400 text-left">
       {children}
     </ul>
   );

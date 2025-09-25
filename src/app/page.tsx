@@ -20,8 +20,9 @@ function blogPostToPost(blogPost: BlogPost): Post {
     slug: blogPost.slug,
     description: blogPost.description,
     content: blogPost.content,
-    published: blogPost.published_at,
-    status: blogPost.published ? "Published" : "Draft",
+    createdAt: blogPost.created_at,
+    updatedAt: blogPost.updated_at,
+    status: blogPost.status as "Published" | "Draft" | "In progress",
     tags: blogPost.tags,
     featured: blogPost.featured,
     cover: blogPost.cover?.url,
@@ -73,8 +74,6 @@ export default async function HomePage() {
       description: post.description || "",
       content: "",
       excerpt: post.description || "",
-      published: Boolean(post.published),
-      published_at: post.published?.toISOString() || new Date().toISOString(),
       created_at: new Date(post.createdTime).toISOString(),
       updated_at: new Date(post.lastEditedTime).toISOString(),
       tags: post.tags,
@@ -110,7 +109,7 @@ export default async function HomePage() {
     featuredPosts = allPosts
       .sort(
         (a: Post, b: Post) =>
-          new Date(b.published).getTime() - new Date(a.published).getTime()
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       )
       .slice(0, 6);
   }

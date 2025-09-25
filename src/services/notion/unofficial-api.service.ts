@@ -196,8 +196,6 @@ export class UnofficialNotionService {
         description: post.description || "",
         content: pageContent.textContent,
         excerpt: post.description || "",
-        published: Boolean(post.published),
-        published_at: post.published?.toISOString() || new Date().toISOString(),
         created_at: new Date(post.createdTime).toISOString(),
         updated_at: new Date(post.lastEditedTime).toISOString(),
         tags: post.tags,
@@ -310,7 +308,6 @@ export class UnofficialNotionService {
         description: post.description || "",
         excerpt: post.description || "",
         relevance: this.calculateRelevance(post, query),
-        published_at: post.published?.toISOString(),
         tags: post.tags,
         category: "Others",
       }));
@@ -370,8 +367,7 @@ export class UnofficialNotionService {
       description: post.description || "",
       content: "", // Will be loaded separately when needed
       excerpt: post.description || "",
-      published: Boolean(post.published),
-      published_at: post.published?.toISOString() || new Date().toISOString(),
+      status: post.status,
       created_at: new Date(post.createdTime).toISOString(),
       updated_at: new Date(post.lastEditedTime).toISOString(),
       tags: post.tags,

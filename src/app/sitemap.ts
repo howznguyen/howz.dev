@@ -9,10 +9,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const tags = await notionService.getTags();
 
     // Convert posts to sitemap format
-    const postsForSitemap = posts.map(post => ({
-      slug: post.slug || '',
+    const postsForSitemap = posts.map((post) => ({
+      slug: post.slug || "",
       lastModified: new Date(post.lastEditedTime).toISOString(),
-      published: post.published?.toISOString() || new Date().toISOString(),
+      published: new Date(post.createdTime).toISOString(),
     }));
 
     // Static pages

@@ -438,7 +438,6 @@ export interface ConvertedPost {
   slug: string | null;
   description: string | null;
   tags: string[];
-  published: Date | null;
   status: string | null;
   featured: boolean;
   createdTime: number;
@@ -599,7 +598,6 @@ export function convertNotionResponseToPosts(
     const tagsArr = getTags(getProp("tags"));
     const statusText = getPlainText(getProp("status"));
     const viewsNum = getNumber(getProp("views"));
-    const publishedText = getDate(getProp("published"));
     const featuredBool = getBoolean(getProp("featured"));
 
     // Get cover image
@@ -614,7 +612,6 @@ export function convertNotionResponseToPosts(
       slug: slugText ? cleanText(slugText) : null,
       description: descText ? cleanText(descText) : null,
       tags: tagsArr,
-      published: publishedText,
       status: statusText || null,
       featured: featuredBool,
       createdTime: block.value.created_time || 0,
@@ -645,15 +642,11 @@ export function filterPostsByTags(
 }
 
 /**
- * Sort posts by published date (newest first)
+ * Sort posts by created date (newest first)
  */
 export function sortPostsByDate(posts: ConvertedPost[]): ConvertedPost[] {
   return posts.sort((a, b) => {
-    if (!a.published && !b.published) return 0;
-    if (!a.published) return 1;
-    if (!b.published) return -1;
-
-    return b.published.getTime() - a.published.getTime();
+    return b.createdTime - a.createdTime;
   });
 }
 
@@ -870,12 +863,14 @@ export function convertRecordMapToApiBlocks(
     }
 
     if (type === "callout") {
+      console.log(raw);
       const richText = convertRichTextToNotionText(props?.title);
       const emoji = fmt?.page_icon;
       const callout: CalloutBlock["callout"] = { rich_text: richText };
       if (emoji && typeof emoji === "string") {
         callout.icon = { type: "emoji", emoji };
       }
+
       const out: CalloutBlock = {
         object: "block",
         id,
@@ -885,7 +880,9 @@ export function convertRecordMapToApiBlocks(
         has_children: hasChildren,
         callout,
       };
+      console.log("hasChildren", hasChildren);
       if (hasChildren) out.children = convertChildren(content);
+      console.log("out.children", out.children);
       return out;
     }
 
