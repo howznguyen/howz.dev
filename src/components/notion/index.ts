@@ -1,2 +1,1 @@
-export { NotionRenderer } from './NotionRenderer';
-export * from './blocks';
+export { NotionRenderer } from "./NotionRenderer";

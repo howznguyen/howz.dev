@@ -2,8 +2,7 @@ import { Button } from "@/components/atoms";
 import { IntroCard, PostList } from "@/components/molecules";
 import { MainTemplate } from "@/components/templates";
 import { Route } from "@/lib";
-import { Notion } from "@/services/notion/enhanced.service";
-import type { BlogPost } from "@/types/notion";
+import Notion from "@/services/notion";
 import type { Post } from "@/types";
 import { SITE_CONFIG } from "@/lib/constants";
 import { categories } from "@/datas/categories";
@@ -11,25 +10,6 @@ import navigation from "@/datas/navigation";
 import home from "@/datas/home";
 import Link from "next/link";
 import type { Metadata } from "next/types";
-
-// Helper function to convert BlogPost to Post
-function blogPostToPost(blogPost: BlogPost): Post {
-  return {
-    id: blogPost.id,
-    title: blogPost.title,
-    slug: blogPost.slug,
-    description: blogPost.description,
-    content: blogPost.content,
-    published: blogPost.published_at,
-    status: blogPost.published ? "Published" : "Draft",
-    tags: blogPost.tags,
-    featured: blogPost.featured,
-    cover: blogPost.cover?.url,
-    author: blogPost.author,
-    readingTime: blogPost.reading_time || 5,
-    views: blogPost.views || 0,
-  };
-}
 
 // Generate metadata for SEO
 export const metadata: Metadata = {
@@ -59,41 +39,10 @@ interface HomePageProps {
 }
 
 export default async function HomePage() {
-  // Use new enhanced service with caching
-  let posts = await Notion.getAllPosts({
+  // Get all posts as Post[] directly (no conversion needed)
+  let allPosts = await Notion.getAllPosts({
     limit: 50, // Get more posts for better categorization
   });
-
-  // Convert to BlogPost format for consistency
-  let blogPosts: BlogPost[] = await Promise.all(
-    posts.map(async (post) => ({
-      id: post.id,
-      slug: post.slug || "",
-      title: post.title,
-      description: post.description || "",
-      content: "",
-      excerpt: post.description || "",
-      published: Boolean(post.published),
-      published_at: post.published?.toISOString() || new Date().toISOString(),
-      created_at: new Date(post.createdTime).toISOString(),
-      updated_at: new Date(post.lastEditedTime).toISOString(),
-      tags: post.tags,
-      category: "Others",
-      author: "Howz Nguyen",
-      featured: post.featured,
-      cover: post.cover
-        ? {
-            url: post.cover,
-            alt: post.title,
-          }
-        : undefined,
-      reading_time: 5, // Default reading time for home page display
-      views: post.views || 0,
-    }))
-  );
-
-  // Convert to Post format for components
-  let allPosts = blogPosts.map(blogPostToPost);
 
   // Get featured posts using helper function
   let featuredPosts = allPosts
@@ -110,7 +59,7 @@ export default async function HomePage() {
     featuredPosts = allPosts
       .sort(
         (a: Post, b: Post) =>
-          new Date(b.published).getTime() - new Date(a.published).getTime()
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       )
       .slice(0, 6);
   }

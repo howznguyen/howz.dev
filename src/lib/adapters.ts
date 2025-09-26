@@ -1,4 +1,4 @@
-import { Post, Tag } from "@/types";
+import { Post, Tag, BasePost } from "@/types";
 import { ConvertedPost } from "@/services/notion/utils.service";
 
 /**
@@ -9,7 +9,7 @@ export function convertToPost(convertedPost: ConvertedPost): Post | null {
     return null;
   }
 
-  return {
+  const basePost: BasePost = {
     id: convertedPost.id,
     title: convertedPost.title,
     slug: convertedPost.slug,
@@ -17,15 +17,38 @@ export function convertToPost(convertedPost: ConvertedPost): Post | null {
     content: Array.isArray(convertedPost.content)
       ? convertedPost.content.join("\n")
       : convertedPost.content || undefined,
-    published: convertedPost.published
-      ? convertedPost.published.toISOString()
-      : new Date().toISOString(),
-    status: convertedPost.status as "Published" | "Draft" | "Archived",
+    status: convertedPost.status || "Draft",
     tags: convertedPost.tags,
     featured: convertedPost.featured,
     cover: convertedPost.cover || undefined,
     author: "Howz Nguyen", // Default author since not in ConvertedPost
     readingTime: convertedPost.readingTime,
+    createdAt: new Date(convertedPost.createdTime).toISOString(),
+    updatedAt: new Date(convertedPost.lastEditedTime).toISOString(),
+  };
+
+  return basePost;
+}
+
+/**
+ * Convert BlogPost to Post interface
+ */
+export function convertBlogPostToPost(blogPost: any): Post {
+  return {
+    id: blogPost.id,
+    title: blogPost.title,
+    slug: blogPost.slug,
+    description: blogPost.description,
+    content: blogPost.content,
+    status: blogPost.status,
+    tags: blogPost.tags,
+    featured: blogPost.featured,
+    cover: blogPost.cover?.url || blogPost.cover,
+    author: blogPost.author,
+    readingTime: blogPost.reading_time || blogPost.readingTime,
+    views: blogPost.views,
+    createdAt: blogPost.created_at,
+    updatedAt: blogPost.updated_at,
   };
 }
 
