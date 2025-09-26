@@ -69,7 +69,6 @@ export const NotionRenderer: React.FC<NotionRendererProps> = ({
     () => ({
       // Override Block component to handle all custom block rendering
       Block: ExtendedBlock,
-      Equation,
       Text: NotionRichText, // Custom text rendering
       // Empty Collection component to suppress warnings
       Collection: () => null,

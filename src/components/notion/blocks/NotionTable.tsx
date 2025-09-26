@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { Block, ExtendedRecordMap } from "notion-types";
-import { RichText } from "./RichText";
+import { NotionRichText } from "./NotionRichText";
 import { NotionRenderService } from "@/services/notion/render.service";
 
 interface NotionTableProps {
@@ -12,7 +12,12 @@ interface NotionTableProps {
   options?: any;
 }
 
-export const NotionTable: React.FC<NotionTableProps> = ({ block, recordMap, data: propData, options: propOptions }) => {
+export const NotionTable: React.FC<NotionTableProps> = ({
+  block,
+  recordMap,
+  data: propData,
+  options: propOptions,
+}) => {
   // Extract table data from block or use provided props
   const data = propData || [];
   const options = propOptions || block.format;

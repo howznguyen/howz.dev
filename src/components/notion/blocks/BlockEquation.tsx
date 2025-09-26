@@ -20,13 +20,13 @@ export default function BlockEquation(props: {
   math?: string;
   inline?: boolean;
   className?: string;
-  updatedBlock?: React.JSX.Element;
+  updatedBlock?: React.ReactElement;
   blurBlockClassName?: string;
 }) {
   const { block, math, inline = false, className } = props;
   const { recordMap } = useNotionContext();
   const blockEquation =
-    math ?? (!!block ? getBlockTitle(block, recordMap) : null);
+    math ?? (!!block && recordMap ? getBlockTitle(block, recordMap) : null);
   if (!blockEquation) return null;
 
   return (

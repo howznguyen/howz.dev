@@ -59,22 +59,23 @@ export const Block: React.FC<BlockProps> = ({
 
     case "callout":
       return (
-        <NotionCallout
-          block={block}
-          className={className}
-          children={children}
-        />
+        <NotionCallout block={block} className={className}>
+          {children}
+        </NotionCallout>
       );
 
     case "code":
       return (
-        <NotionCode block={block} recordMap={recordMap!} children={children} />
+        <NotionCode block={block} recordMap={recordMap!}>
+          {children}
+        </NotionCode>
       );
 
     case "text":
-      console.log("Text block:", block);
       return (
-        <NotionText block={block} className={className} children={children} />
+        <NotionText block={block} className={className}>
+          {children}
+        </NotionText>
       );
 
     case "header":
@@ -88,10 +89,11 @@ export const Block: React.FC<BlockProps> = ({
             text={
               <NotionHeading
                 block={block}
-                recordMap={recordMap}
-                children={children}
+                recordMap={recordMap!}
                 isChild={true}
-              />
+              >
+                {children}
+              </NotionHeading>
             }
             color={block.format?.block_color}
           >
@@ -101,11 +103,9 @@ export const Block: React.FC<BlockProps> = ({
       }
 
       return (
-        <NotionHeading
-          block={block}
-          recordMap={recordMap}
-          children={children}
-        />
+        <NotionHeading block={block} recordMap={recordMap!}>
+          {children}
+        </NotionHeading>
       );
 
     case "text": {
@@ -113,7 +113,6 @@ export const Block: React.FC<BlockProps> = ({
         return <div className={cn("notion-blank", block.id)}>&nbsp;</div>;
       }
       const blockColor = block.format?.block_color;
-      const textColor = block.format?.text_color;
       const classNameStr = cn(
         "notion-text",
         block.id,
@@ -121,17 +120,17 @@ export const Block: React.FC<BlockProps> = ({
         "abc"
       );
       return (
-        <NotionText
-          block={block}
-          className={classNameStr}
-          children={children}
-        />
+        <NotionText block={block} className={classNameStr}>
+          {children}
+        </NotionText>
       );
     }
 
     case "image":
       return (
-        <NotionImage block={block} recordMap={recordMap} children={children} />
+        <NotionImage block={block} recordMap={recordMap!}>
+          {children}
+        </NotionImage>
       );
 
     case "bulleted_list":
@@ -139,32 +138,30 @@ export const Block: React.FC<BlockProps> = ({
       return (
         <NotionList
           block={block}
-          recordMap={recordMap}
+          recordMap={recordMap!}
           ordered={block.type === "numbered_list"}
-          number={block.properties?.number}
-          children={children}
-        />
+        >
+          {children}
+        </NotionList>
       );
     }
 
     case "equation":
       // For now, render as a simple math block
-      return (
-        <BlockEquation
-          block={block}
-          recordMap={recordMap}
-          children={children}
-        />
-      );
+      return <BlockEquation block={block} />;
 
     case "to_do":
       return (
-        <NotionTodo block={block} className={className} children={children} />
+        <NotionTodo block={block} className={className}>
+          {children}
+        </NotionTodo>
       );
 
     case "quote":
       return (
-        <NotionQuote block={block} className={className} children={children} />
+        <NotionQuote block={block} className={className}>
+          {children}
+        </NotionQuote>
       );
 
     case "table":
@@ -185,43 +182,33 @@ export const Block: React.FC<BlockProps> = ({
 
     case "column_list":
       return (
-        <NotionColumnList
-          block={block}
-          className={className}
-          children={children}
-        />
+        <NotionColumnList block={block} className={className}>
+          {children}
+        </NotionColumnList>
       );
 
     case "bookmark":
-      return (
-        <NotionBookmark
-          block={block}
-          recordMap={recordMap}
-          children={children}
-        />
-      );
+      return <NotionBookmark block={block} recordMap={recordMap!} />;
 
     case "embed":
     case "replit":
-      return (
-        <NotionEmbed block={block} recordMap={recordMap} children={children} />
-      );
+      return <NotionEmbed block={block} recordMap={recordMap!} />;
 
     case "video":
-      return (
-        <NotionVideo block={block} recordMap={recordMap} children={children} />
-      );
+      return <NotionVideo block={block} recordMap={recordMap!} />;
 
     case "file":
       return <div className={className}>{children}</div>;
 
     case "column":
       return (
-        <NotionColumn block={block} className={className} children={children} />
+        <NotionColumn block={block} className={className}>
+          {children}
+        </NotionColumn>
       );
 
     case "divider":
-      return <NotionDivider block={block} recordMap={recordMap} />;
+      return <NotionDivider block={block} recordMap={recordMap!} />;
 
     case "collection_view_page":
     case "transclusion_reference":
