@@ -1,5 +1,6 @@
 import { NotionAPI } from "notion-client";
 import { ExtendedRecordMap } from "notion-types";
+import fs from "fs";
 
 export const notionX = new NotionAPI({
   activeUser: process.env.NOTION_ACTIVE_USER,
@@ -45,6 +46,10 @@ export async function getPage(pageId: string) {
 
       try {
         const recordMap = await notionX.getPage(pageId);
+        await fs.writeFileSync(
+          `blocks.json`,
+          JSON.stringify(recordMap, null, 2)
+        );
         const newRecordMap = await fixMissingBlocks(recordMap);
         return newRecordMap;
       } catch (retryError) {
@@ -56,6 +61,7 @@ export async function getPage(pageId: string) {
           block: {},
           collection: {},
           collection_view: {},
+          collection_query: {},
           notion_user: {},
           signed_urls: {},
           preview_images: {},

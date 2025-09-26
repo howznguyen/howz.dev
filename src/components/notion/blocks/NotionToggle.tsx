@@ -1,14 +1,87 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import React, { useState } from "react";
+import type { Block, ExtendedRecordMap } from "notion-types";
+import { NotionRichText } from "./NotionRichText";
+import { useNotionContext } from "../NotionContext";
 
 interface NotionToggleProps {
-  title: ReactNode;
-  children: ReactNode;
+  block: Block;
+  children?: React.ReactNode;
+  title?: React.ReactNode;
+  className?: string;
+  [key: string]: any; // Allow other props from react-notion-x
 }
 
-export const NotionToggle = ({ title, children }: NotionToggleProps) => {
+export const NotionToggle: React.FC<NotionToggleProps> = ({
+  block,
+  children,
+  title: propTitle,
+  className,
+  ...props
+}) => {
+  console.log("NotionToggle component called!", { blockType: block.type, blockId: block.id });
+
   const [isShow, setShow] = useState(false);
+
+  // Get recordMap from context
+  const { recordMap } = useNotionContext();
+
+  // Extract title from block properties or use provided title/children
+  const renderTitle = () => {
+    if (propTitle) {
+      return propTitle;
+    }
+
+    if (block.properties?.title && block.properties.title.length > 0) {
+      return <NotionRichText value={block.properties.title} block={block} />;
+    }
+
+    if (children) {
+      return children;
+    }
+
+    return "Toggle";
+  };
+
+  // Render toggle content - similar to callout approach
+  const renderContent = () => {
+    // React-notion-x should pass rendered children - this is the primary content
+    if (children) {
+      return children;
+    }
+
+    // Try to manually render child blocks if recordMap is available
+    if (recordMap && block.content && block.content.length > 0) {
+      const childContent = block.content.map((childId: string) => {
+        const childBlock = recordMap.block?.[childId]?.value;
+        if (childBlock) {
+          // Try to render different child block types
+          if (childBlock.type === 'text' && childBlock.properties?.title) {
+            return (
+              <div key={childId} className="mb-2">
+                <NotionRichText value={childBlock.properties.title} block={childBlock} />
+              </div>
+            );
+          }
+
+          // Handle other block types as needed
+          return (
+            <div key={childId} className="text-sm text-gray-600 mb-2">
+              {childBlock.type} block (not implemented)
+            </div>
+          );
+        }
+        return null;
+      }).filter(Boolean);
+
+      if (childContent.length > 0) {
+        return childContent;
+      }
+    }
+
+    return <div className="text-gray-500 text-sm italic">No content available</div>;
+  };
 
   return (
     <div className="mb-4">
@@ -36,7 +109,7 @@ export const NotionToggle = ({ title, children }: NotionToggleProps) => {
           </svg>
         </button>
         <span className="ml-2 text-lg font-bold text-gray-800 dark:text-gray-100">
-          {title}
+          {renderTitle()}
         </span>
       </div>
       <div
@@ -44,7 +117,7 @@ export const NotionToggle = ({ title, children }: NotionToggleProps) => {
           isShow ? "max-h-[100000px]" : "max-h-0"
         } overflow-hidden`}
       >
-        {children}
+        {renderContent()}
       </div>
     </div>
   );

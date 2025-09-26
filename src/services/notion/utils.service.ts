@@ -3,6 +3,7 @@ import { cleanText } from "@/lib/helpers";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { Post } from ".";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -438,7 +439,6 @@ export interface ConvertedPost {
   slug: string | null;
   description: string | null;
   tags: string[];
-  published: Date | null;
   status: string | null;
   featured: boolean;
   createdTime: number;
@@ -571,7 +571,7 @@ function getBoolean(prop: any): boolean {
  */
 export function convertNotionResponseToPosts(
   rawResponse: CollectionInstance
-): ConvertedPost[] {
+): Post[] {
   if (!rawResponse?.recordMap?.block) {
     return [];
   }
@@ -580,7 +580,7 @@ export function convertNotionResponseToPosts(
   const blocks =
     rawResponse.result?.reducerResults?.collection_group_results?.blockIds ??
     [];
-  const results: ConvertedPost[] = [];
+  const results: Post[] = [];
 
   for (const blockId of blocks) {
     const block = rawResponse.recordMap.block[blockId];
@@ -599,7 +599,6 @@ export function convertNotionResponseToPosts(
     const tagsArr = getTags(getProp("tags"));
     const statusText = getPlainText(getProp("status"));
     const viewsNum = getNumber(getProp("views"));
-    const publishedText = getDate(getProp("published"));
     const featuredBool = getBoolean(getProp("featured"));
 
     // Get cover image
@@ -608,19 +607,36 @@ export function convertNotionResponseToPosts(
       ? defaultMapImageUrl(coverUrl, block.value)
       : null;
 
+    // Calculate reading time from content
+    const contentText = Array.isArray(block.value.content)
+      ? block.value.content.join(" ")
+      : "";
+
+    // Ensure we have some content for reading time calculation
+    const textForReadingTime =
+      contentText ||
+      titleText ||
+      "Default content for reading time calculation";
+    const readingTime = Math.max(
+      1,
+      Math.ceil(textForReadingTime.split(/\s+/).length / 200)
+    );
+
     results.push({
       id: block.value.id,
       title: cleanText(titleText),
-      slug: slugText ? cleanText(slugText) : null,
-      description: descText ? cleanText(descText) : null,
+      slug: slugText ? cleanText(slugText) : generateSlug(titleText),
+      description: descText ? cleanText(descText) : "",
+      content: contentText,
+      status: statusText || "Draft",
       tags: tagsArr,
-      published: publishedText,
-      status: statusText || null,
       featured: featuredBool,
-      createdTime: block.value.created_time || 0,
-      lastEditedTime: block.value.last_edited_time || 0,
-      content: block.value.content || [],
-      cover: mappedCoverUrl,
+      cover: mappedCoverUrl || undefined,
+      author: "Howz Nguyen",
+      readingTime: readingTime,
+      views: viewsNum || 0,
+      createdAt: new Date(block.value.created_time || 0).toISOString(),
+      updatedAt: new Date(block.value.last_edited_time || 0).toISOString(),
     });
   }
 
@@ -645,15 +661,11 @@ export function filterPostsByTags(
 }
 
 /**
- * Sort posts by published date (newest first)
+ * Sort posts by created date (newest first)
  */
 export function sortPostsByDate(posts: ConvertedPost[]): ConvertedPost[] {
   return posts.sort((a, b) => {
-    if (!a.published && !b.published) return 0;
-    if (!a.published) return 1;
-    if (!b.published) return -1;
-
-    return b.published.getTime() - a.published.getTime();
+    return b.createdTime - a.createdTime;
   });
 }
 
@@ -876,6 +888,7 @@ export function convertRecordMapToApiBlocks(
       if (emoji && typeof emoji === "string") {
         callout.icon = { type: "emoji", emoji };
       }
+
       const out: CalloutBlock = {
         object: "block",
         id,
@@ -1104,3 +1117,17 @@ export const defaultMapImageUrl = (
 
   return url;
 };
+
+/**
+ * Generate slug from text
+ */
+function generateSlug(text: string): string {
+  if (!text) return "untitled";
+
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}

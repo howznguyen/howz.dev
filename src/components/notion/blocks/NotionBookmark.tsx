@@ -1,30 +1,32 @@
 "use client";
 
+import React, { useState } from "react";
+import type { Block, ExtendedRecordMap } from "notion-types";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import cn from "classnames";
 
 interface NotionBookmarkProps {
-  block: {
-    type: string;
-    bookmark: {
-      url: string;
-      title?: string;
-      description?: string;
-      cover?: string;
-      icon?: string;
-    };
-  };
+  block: Block;
+  recordMap: ExtendedRecordMap;
 }
 
-// New component for NotionAPI bookmark blocks
-export const NotionBookmark = ({ block }: NotionBookmarkProps) => {
+export const NotionBookmark: React.FC<NotionBookmarkProps> = ({
+  block,
+  recordMap,
+}: NotionBookmarkProps) => {
   const [coverError, setCoverError] = useState(false);
   const [iconError, setIconError] = useState(false);
-  
+
   if (block.type !== "bookmark") return null;
 
-  const { url, title, description, cover, icon } = block.bookmark;
+  const url = block.properties?.link?.[0]?.[0] || "";
+  const title = block.properties?.title?.[0]?.[0] || "";
+  const description = block.properties?.description?.[0]?.[0] || "";
+  const cover = block.format?.bookmark_cover || "";
+  const icon = block.format?.bookmark_icon || "";
+
+  if (!url) return null;
 
   return (
     <div className="mb-4 rounded-lg bg-white border border-gray-200 shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors">
@@ -32,11 +34,12 @@ export const NotionBookmark = ({ block }: NotionBookmarkProps) => {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`${
+        className={cn(
+          "cursor-newtab relative",
           cover && !coverError
             ? "md:max-h-32 flex flex-col items-center md:flex-row"
             : "flex flex-col"
-        } relative`}
+        )}
       >
         {cover && !coverError && (
           <Image
@@ -54,11 +57,11 @@ export const NotionBookmark = ({ block }: NotionBookmarkProps) => {
             cover && !coverError ? "md:w-auto" : ""
           } flex flex-col justify-between p-4`}
         >
-          <span className="mb-2 text-sm md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white overflow-hidden leading-0 max-h-5 md:max-h-8">
+          <span className="mb-2 text-left text-sm md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white overflow-hidden leading-0 max-h-5 md:max-h-8">
             {title || url}
           </span>
           {description && (
-            <div className="mb-3 font-normal text-xs md:text-base text-gray-700 dark:text-gray-400 overflow-hidden leading-4 max-h-8 md:max-h-12 md:h-14">
+            <div className="mb-3 font-normal text-xs md:text-base text-gray-700 dark:text-gray-400 overflow-hidden leading-4 max-h-8 md:max-h-12 md:h-14 text-left">
               {description}
             </div>
           )}
@@ -88,7 +91,7 @@ export const NotionBookmark = ({ block }: NotionBookmarkProps) => {
                 />
               </svg>
             )}
-            <span className="py-1 truncate">{url}</span>
+            <span className="py-1 truncate text-left">{url}</span>
           </div>
         </div>
       </Link>

@@ -1,23 +1,34 @@
 "use client";
 
-import { RichText } from "./RichText";
+import React from "react";
+import type { Block, ExtendedRecordMap } from "notion-types";
+import { NotionRichText } from "./NotionRichText";
 import { NotionRenderService } from "@/services/notion/render.service";
 
 interface NotionTableProps {
-  data: any[][];
+  block: Block;
+  recordMap: ExtendedRecordMap;
+  data?: any[][];
   options?: any;
 }
 
-export const NotionTable = ({ data, options }: NotionTableProps) => {
+export const NotionTable: React.FC<NotionTableProps> = ({
+  block,
+  recordMap,
+  data: propData,
+  options: propOptions,
+}) => {
+  // Extract table data from block or use provided props
+  const data = propData || [];
+  const options = propOptions || block.format;
   const hasHeader = options?.has_column_header;
 
   const renderCell = (cell: any) => {
-    // Convert cell data to rich text format for rendering
+    // Simple cell rendering
     if (Array.isArray(cell)) {
-      const richTextData = NotionRenderService.richTextToReactData(cell);
-      return <RichText richText={richTextData} />;
+      return cell.join("");
     }
-    return cell;
+    return cell || "";
   };
 
   return (

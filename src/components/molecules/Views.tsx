@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon } from '../atoms';
+import { Icon } from "../atoms";
 
 interface ViewsProps {
   views?: number; // Direct views count
@@ -9,7 +9,7 @@ interface ViewsProps {
 
 export default function Views({ views, className = "" }: ViewsProps) {
   // If views prop is provided, use it directly
-  if (typeof views === 'number') {
+  if (typeof views === "number") {
     return (
       <div className={`flex items-center gap-1 ${className}`}>
         <Icon icon="HiEye" />
