@@ -1,6 +1,6 @@
 import { MainTemplate } from "@/components/templates";
 import { Tag } from "@/components/atoms";
-import { Notion } from "@/services/notion/enhanced.service";
+import Notion from "@/services/notion";
 import { SITE_CONFIG } from "@/lib/constants";
 import navigation from "@/datas/navigation";
 import { categories } from "@/datas/categories";

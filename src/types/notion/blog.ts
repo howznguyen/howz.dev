@@ -1,19 +1,9 @@
 // Post Types for Blog
-export interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  content: string;
+import { BasePost, Post } from "@/types";
+
+export interface BlogPost extends BasePost {
   excerpt: string;
-  published: boolean;
-  published_at: string;
-  created_at: string;
-  updated_at: string;
-  tags: string[];
   category: string;
-  author: string;
-  featured: boolean;
   cover?: {
     url: string;
     alt?: string;
@@ -25,7 +15,6 @@ export interface BlogPost {
     og_image?: string;
   };
   reading_time?: number;
-  views?: number;
   likes?: number;
 }
 
@@ -78,7 +67,7 @@ export interface Comment {
   author_email: string;
   author_website?: string;
   content: string;
-  status: 'pending' | 'approved' | 'spam';
+  status: "pending" | "approved" | "spam";
   parent_id?: string;
   created_at: string;
   updated_at: string;
@@ -88,13 +77,12 @@ export interface Comment {
 // Search Types
 export interface SearchResult {
   id: string;
-  type: 'post' | 'tag' | 'category';
+  type: "post" | "tag" | "category";
   title: string;
   slug: string;
   description?: string;
   excerpt?: string;
   relevance: number;
-  published_at?: string;
   tags?: string[];
   category?: string;
 }
@@ -102,16 +90,16 @@ export interface SearchResult {
 export interface SearchQuery {
   query: string;
   filters?: {
-    type?: 'post' | 'tag' | 'category';
+    type?: "post" | "tag" | "category";
     tags?: string[];
     category?: string;
-    published?: boolean;
+    status?: string;
     date_from?: string;
     date_to?: string;
   };
   sort?: {
-    field: 'relevance' | 'published_at' | 'title' | 'views';
-    order: 'asc' | 'desc';
+    field: "relevance" | "title" | "views";
+    order: "asc" | "desc";
   };
   limit?: number;
   offset?: number;
@@ -119,7 +107,7 @@ export interface SearchQuery {
 
 // API Response Types
 export interface PostsResponse {
-  posts: BlogPost[];
+  posts: Post[];
   total: number;
   page: number;
   per_page: number;
@@ -170,7 +158,7 @@ export interface PaginationMeta {
 
 // Filter Types
 export interface PostFilter {
-  published?: boolean;
+  status?: string;
   featured?: boolean;
   tags?: string[];
   category?: string;
@@ -181,8 +169,8 @@ export interface PostFilter {
 }
 
 export interface PostSort {
-  field: 'published_at' | 'created_at' | 'updated_at' | 'title' | 'views' | 'likes';
-  order: 'asc' | 'desc';
+  field: "created_at" | "updated_at" | "title" | "views" | "likes";
+  order: "asc" | "desc";
 }
 
 // Table of Contents Types
@@ -206,7 +194,7 @@ export interface ReadingProgress {
 
 // Social Share Types
 export interface SocialShare {
-  platform: 'twitter' | 'facebook' | 'linkedin' | 'reddit' | 'copy';
+  platform: "twitter" | "facebook" | "linkedin" | "reddit" | "copy";
   url: string;
   text?: string;
   hashtags?: string[];

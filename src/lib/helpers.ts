@@ -1,3 +1,5 @@
+import slugify from "slugify";
+
 export const defaultBlurData = {
   url: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==",
   width: 1,
@@ -24,9 +26,14 @@ export function idToUuid(id: string): string {
 }
 
 export function makeSlugText(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  return slugify(text, { lower: true, strict: true, locale: "vi" });
+}
+
+export function createSlugFromTitleAndUuid(
+  title: string,
+  uuid: string
+): string {
+  const slugFromTitle = makeSlugText(title);
+  const uuidPrefix = uuid.replace(/-/g, "").substring(0, 8);
+  return `${slugFromTitle}-${uuidPrefix}`;
 }
