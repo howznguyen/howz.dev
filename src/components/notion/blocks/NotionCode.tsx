@@ -1,16 +1,16 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import React, { useState } from "react";
+import type { Block, ExtendedRecordMap } from "notion-types";
 import { ShikiHighlighter } from "react-shiki";
 import { useCopyToClipboard } from "react-use";
 import Icon from "@/components/atoms/Icon";
 import hljs from "highlight.js";
 
-// Runs preferably in a server-like environment
-
 interface NotionCodeProps {
-  children: ReactNode;
-  language?: string;
+  block: Block;
+  recordMap: ExtendedRecordMap;
+  children?: React.ReactNode;
 }
 
 // Language mapping for Shiki supported languages (222 languages)
@@ -298,10 +298,17 @@ const detectLanguage = (code: string): string => {
   }
 };
 
-export const NotionCode = ({ children, language }: NotionCodeProps) => {
+export const NotionCode: React.FC<NotionCodeProps> = ({
+  block,
+  recordMap,
+  children,
+}) => {
   const [isCopied, setIsCopied] = useState(false);
   const [state, copyToClipboard] = useCopyToClipboard();
-  const codeString = typeof children === "string" ? children : String(children);
+
+  // Extract code content from block
+  const codeString = block.properties?.title?.[0]?.[0] || "";
+  const language = block.properties?.language?.[0]?.[0] || "";
 
   const getFinalLanguage = (): string => {
     let finalLanguage = "text";
@@ -329,20 +336,20 @@ export const NotionCode = ({ children, language }: NotionCodeProps) => {
   };
 
   return (
-    <div className="pb-4">
-      <div className="relative group">
+    <div className="pb-4 w-full max-w-none">
+      <div className="relative group w-full max-w-none">
         <ShikiHighlighter
           language={finalLanguage}
           theme="github-dark"
           showLineNumbers
-          className="bg-gray-900 rounded-xl shadow-lg"
+          className="bg-gray-900 rounded-xl shadow-lg w-full max-w-none text-sm"
         >
           {codeString}
         </ShikiHighlighter>
 
         {/* Copy Button */}
         <button
-          className="absolute top-2 right-2 bg-gray-900 rounded border border-gray-600 p-2 text-sm transition-colors hover:bg-gray-700"
+          className="absolute bottom-2 right-2 bg-gray-900 rounded border border-gray-600 p-2 text-sm transition-colors hover:bg-gray-700"
           onClick={copyCode}
         >
           {isCopied ? (
@@ -351,13 +358,6 @@ export const NotionCode = ({ children, language }: NotionCodeProps) => {
             <Icon icon="HiClipboard" className="text-white" />
           )}
         </button>
-
-        {/* Language Label - only show for multi-line code */}
-        {!isSingleLine && (
-          <div className="absolute bottom-4 right-2 text-sm bg-gray-700 rounded-lg text-gray-400 p-2 text-right lowercase select-none">
-            {finalLanguage}
-          </div>
-        )}
       </div>
     </div>
   );

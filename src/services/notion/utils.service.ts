@@ -3,6 +3,7 @@ import { cleanText } from "@/lib/helpers";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { Post } from ".";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -570,7 +571,7 @@ function getBoolean(prop: any): boolean {
  */
 export function convertNotionResponseToPosts(
   rawResponse: CollectionInstance
-): ConvertedPost[] {
+): Post[] {
   if (!rawResponse?.recordMap?.block) {
     return [];
   }
@@ -579,7 +580,7 @@ export function convertNotionResponseToPosts(
   const blocks =
     rawResponse.result?.reducerResults?.collection_group_results?.blockIds ??
     [];
-  const results: ConvertedPost[] = [];
+  const results: Post[] = [];
 
   for (const blockId of blocks) {
     const block = rawResponse.recordMap.block[blockId];
@@ -606,18 +607,36 @@ export function convertNotionResponseToPosts(
       ? defaultMapImageUrl(coverUrl, block.value)
       : null;
 
+    // Calculate reading time from content
+    const contentText = Array.isArray(block.value.content)
+      ? block.value.content.join(" ")
+      : "";
+
+    // Ensure we have some content for reading time calculation
+    const textForReadingTime =
+      contentText ||
+      titleText ||
+      "Default content for reading time calculation";
+    const readingTime = Math.max(
+      1,
+      Math.ceil(textForReadingTime.split(/\s+/).length / 200)
+    );
+
     results.push({
       id: block.value.id,
       title: cleanText(titleText),
-      slug: slugText ? cleanText(slugText) : null,
-      description: descText ? cleanText(descText) : null,
+      slug: slugText ? cleanText(slugText) : generateSlug(titleText),
+      description: descText ? cleanText(descText) : "",
+      content: contentText,
+      status: statusText || "Draft",
       tags: tagsArr,
-      status: statusText || null,
       featured: featuredBool,
-      createdTime: block.value.created_time || 0,
-      lastEditedTime: block.value.last_edited_time || 0,
-      content: block.value.content || [],
-      cover: mappedCoverUrl,
+      cover: mappedCoverUrl || undefined,
+      author: "Howz Nguyen",
+      readingTime: readingTime,
+      views: viewsNum || 0,
+      createdAt: new Date(block.value.created_time || 0).toISOString(),
+      updatedAt: new Date(block.value.last_edited_time || 0).toISOString(),
     });
   }
 
@@ -863,7 +882,6 @@ export function convertRecordMapToApiBlocks(
     }
 
     if (type === "callout") {
-      console.log(raw);
       const richText = convertRichTextToNotionText(props?.title);
       const emoji = fmt?.page_icon;
       const callout: CalloutBlock["callout"] = { rich_text: richText };
@@ -880,9 +898,7 @@ export function convertRecordMapToApiBlocks(
         has_children: hasChildren,
         callout,
       };
-      console.log("hasChildren", hasChildren);
       if (hasChildren) out.children = convertChildren(content);
-      console.log("out.children", out.children);
       return out;
     }
 
@@ -1101,3 +1117,17 @@ export const defaultMapImageUrl = (
 
   return url;
 };
+
+/**
+ * Generate slug from text
+ */
+function generateSlug(text: string): string {
+  if (!text) return "untitled";
+
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}

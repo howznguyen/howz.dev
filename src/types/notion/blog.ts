@@ -1,18 +1,9 @@
 // Post Types for Blog
-export interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  content: string;
+import { BasePost, Post } from "@/types";
+
+export interface BlogPost extends BasePost {
   excerpt: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  tags: string[];
   category: string;
-  author: string;
-  featured: boolean;
   cover?: {
     url: string;
     alt?: string;
@@ -24,7 +15,6 @@ export interface BlogPost {
     og_image?: string;
   };
   reading_time?: number;
-  views?: number;
   likes?: number;
 }
 
@@ -117,7 +107,7 @@ export interface SearchQuery {
 
 // API Response Types
 export interface PostsResponse {
-  posts: BlogPost[];
+  posts: Post[];
   total: number;
   page: number;
   per_page: number;

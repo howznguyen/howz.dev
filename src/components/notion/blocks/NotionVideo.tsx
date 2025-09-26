@@ -1,12 +1,19 @@
 "use client";
 
+import React from "react";
+import type { Block, ExtendedRecordMap } from "notion-types";
 import ReactPlayer from "react-player/lazy";
 
 interface NotionVideoProps {
-  url: string;
+  block: Block;
+  recordMap: ExtendedRecordMap;
+  url?: string;
 }
 
-export const NotionVideo = ({ url }: NotionVideoProps) => {
+export const NotionVideo: React.FC<NotionVideoProps> = ({ block, recordMap, url: propUrl }) => {
+  const url = propUrl || block.properties?.source?.[0]?.[0] || "";
+
+  if (!url) return null;
   const link = new URL(url);
   const aspests = {
     youtube: "aspect-[16/9]",

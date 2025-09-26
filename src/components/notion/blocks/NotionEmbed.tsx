@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+import type { Block, ExtendedRecordMap } from "notion-types";
 import { useTheme } from "next-themes";
 import Embed from "react-embed";
 import Iframe from "react-iframe";
@@ -12,11 +14,20 @@ import {
 import ReactPlayer from "react-player";
 
 interface NotionEmbedProps {
-  url: string;
+  block: Block;
+  recordMap: ExtendedRecordMap;
+  url?: string;
 }
 
-export const NotionEmbed = ({ url }: NotionEmbedProps) => {
+export const NotionEmbed: React.FC<NotionEmbedProps> = ({
+  block,
+  recordMap,
+  url: propUrl,
+}) => {
   const { theme } = useTheme();
+  const url = propUrl || block.properties?.source?.[0]?.[0] || "";
+
+  if (!url) return null;
   const link = new URL(url);
   let cpn = <></>;
 
@@ -62,6 +73,7 @@ export const NotionEmbed = ({ url }: NotionEmbedProps) => {
           title={`iFrame ${link.hostname}`}
           className={`w-full h-[500px] ${classNames}`}
           url={afterUrl}
+          loading="lazy"
           sandbox={[
             "allow-scripts",
             "allow-popups",

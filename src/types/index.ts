@@ -1,20 +1,38 @@
 // Common types used across the application
 
-export interface Post {
+// Base Post interface - thống nhất cho tất cả Post types
+export interface BasePost {
   id: string;
   title: string;
   slug: string;
   description?: string;
   content?: string;
-  status: "Published" | "Draft" | "In progress";
+  status: string;
   tags: string[];
   featured: boolean;
-  cover?: string;
+  cover?: string | { url: string; alt?: string };
   author?: string;
   readingTime?: number;
   views?: number;
   createdAt: string;
   updatedAt: string;
+  contents?: any[];
+}
+
+// Main Post interface for UI components
+export interface Post extends BasePost {}
+
+// BlogPost interface for Notion API (extends BasePost with additional fields)
+export interface BlogPost extends BasePost {
+  excerpt: string;
+  category: string;
+  seo?: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    og_image?: string;
+  };
+  likes?: number;
 }
 
 export interface Tag {

@@ -1,185 +1,252 @@
 "use client";
 
-import { NotionRenderBlock } from "@/services/notion/render.service";
-import {
-  NotionHeading,
-  NotionParagraph,
-  NotionBlockquote,
-  NotionCallout,
-  NotionCode,
-  NotionImage,
-  NotionList,
-  NotionToggle,
-  NotionBookmark,
-  NotionTable,
-  NotionEmbed,
-  NotionVideo,
-  NotionDivider,
-} from "./index";
-import { RichText } from "./RichText";
+import React from "react";
+import type { Block as BlockType } from "notion-types";
+import { BlockToggle } from "./BlockToggle";
+import { NotionRichText } from "./NotionRichText";
+import { NotionCallout } from "./NotionCallout";
+import { NotionCode } from "./NotionCode";
+import { NotionParagraph } from "./NotionParagraph";
+import { NotionHeading } from "./NotionHeading";
+import { NotionImage } from "./NotionImage";
+import { NotionList } from "./NotionList";
+import { NotionTodo } from "./NotionTodo";
+import { NotionQuote } from "./NotionQuote";
+import { NotionColumn, NotionColumnList } from "./NotionColumn";
+import { NotionText } from "./NotionText";
+import { useNotionContext } from "../NotionContext";
+import BlockEquation from "./BlockEquation";
+import cn from "classnames";
+import { NotionDivider } from "./NotionDivider";
+import { NotionEmbed } from "./NotionEmbed";
+import { NotionVideo } from "./NotionVideo";
+import { NotionBookmark } from "./NotionBookmark";
 
 interface BlockProps {
-  block: NotionRenderBlock;
-  isChild?: boolean;
+  block: BlockType;
+  level: number;
+  className?: string;
+  children?: React.ReactNode;
 }
 
-export const Block = ({ block, isChild = false }: BlockProps) => {
-  const { type, key } = block;
+export const Block: React.FC<BlockProps> = ({
+  block,
+  level,
+  className,
+  children,
+}) => {
+  const { recordMap } = useNotionContext();
 
-  switch (type) {
-    case "paragraph":
-      if (isChild) {
-        return <RichText richText={block.richText || []} />;
-      } else
-        return (
-          <NotionParagraph key={key}>
-            <RichText richText={block.richText || []} />
-          </NotionParagraph>
-        );
-
-    case "heading_1":
-    case "heading_2":
-    case "heading_3":
+  // Switch case to handle different block types
+  switch (block.type) {
+    case "toggle":
+      console.log("Toggle block:", block);
       return (
-        <NotionHeading key={key} type={type} id={block.id}>
-          <RichText richText={block.richText || []} />
-        </NotionHeading>
-      );
-
-    case "blockquote":
-      return (
-        <NotionBlockquote key={key}>
-          {block.hasChildren && block.children && (
-            <div>
-              {block.children.map((child, index) => (
-                <Block key={index} block={child} isChild={true} />
-              ))}
-            </div>
-          )}
-        </NotionBlockquote>
+        <BlockToggle
+          className={className}
+          text={
+            block.properties?.title ? (
+              <NotionRichText value={block.properties.title} block={block} />
+            ) : (
+              "Toggle"
+            )
+          }
+          color={block.format?.block_color}
+        >
+          {children}
+        </BlockToggle>
       );
 
     case "callout":
-      console.log(block);
       return (
-        <NotionCallout key={key} emoji={block.emoji || "💡"}>
-          {block.hasChildren && block.children && (
-            <div>
-              {block.children.map((child, index) => (
-                <Block key={index} block={child} isChild={true} />
-              ))}
-            </div>
-          )}
-        </NotionCallout>
+        <NotionCallout
+          block={block}
+          className={className}
+          children={children}
+        />
       );
 
     case "code":
       return (
-        <NotionCode key={key} language={block.language}>
-          {block.content || ""}
-        </NotionCode>
+        <NotionCode block={block} recordMap={recordMap!} children={children} />
       );
 
-    case "image":
-      if (!block.url) return null;
+    case "text":
+      console.log("Text block:", block);
       return (
-        <NotionImage
-          key={key}
-          src={block.url}
-          alt={block.caption || "Image"}
-          caption={block.caption}
+        <NotionText block={block} className={className} children={children} />
+      );
+
+    case "header":
+    case "sub_header":
+    case "sub_sub_header":
+      // Check if heading is toggleable (Toggle + Heading combination)
+      if (block.format?.toggleable) {
+        return (
+          <BlockToggle
+            className={className}
+            text={
+              <NotionHeading
+                block={block}
+                recordMap={recordMap}
+                children={children}
+                isChild={true}
+              />
+            }
+            color={block.format?.block_color}
+          >
+            {children}
+          </BlockToggle>
+        );
+      }
+
+      return (
+        <NotionHeading
+          block={block}
+          recordMap={recordMap}
+          children={children}
         />
       );
 
-    case "bulleted_list_item":
+    case "text": {
+      if (!block.properties && !block.content?.length) {
+        return <div className={cn("notion-blank", block.id)}>&nbsp;</div>;
+      }
+      const blockColor = block.format?.block_color;
+      const textColor = block.format?.text_color;
+      const classNameStr = cn(
+        "notion-text",
+        block.id,
+        blockColor && `notion-${blockColor}`,
+        "abc"
+      );
       return (
-        <NotionList key={key}>
-          <li>
-            <RichText richText={block.richText || []} />
-            {block.hasChildren && block.children && (
-              <div className="ml-4 mt-2">
-                {block.children.map((child, index) => (
-                  <Block key={index} block={child} isChild={true} />
-                ))}
-              </div>
-            )}
-          </li>
-        </NotionList>
+        <NotionText
+          block={block}
+          className={classNameStr}
+          children={children}
+        />
+      );
+    }
+
+    case "image":
+      return (
+        <NotionImage block={block} recordMap={recordMap} children={children} />
       );
 
-    case "numbered_list_item":
+    case "bulleted_list":
+    case "numbered_list": {
       return (
-        <NotionList key={key} ordered number={block.number}>
-          <li>
-            <RichText richText={block.richText || []} />
-            {block.hasChildren && block.children && (
-              <div className="ml-4 mt-2">
-                {block.children.map((child, index) => (
-                  <Block key={index} block={child} isChild={true} />
-                ))}
-              </div>
-            )}
-          </li>
-        </NotionList>
+        <NotionList
+          block={block}
+          recordMap={recordMap}
+          ordered={block.type === "numbered_list"}
+          number={block.properties?.number}
+          children={children}
+        />
+      );
+    }
+
+    case "equation":
+      // For now, render as a simple math block
+      return (
+        <BlockEquation
+          block={block}
+          recordMap={recordMap}
+          children={children}
+        />
       );
 
-    case "toggle":
+    case "to_do":
       return (
-        <NotionToggle
-          key={key}
-          title={<RichText richText={block.richText || []} />}
-        >
-          {block.hasChildren && block.children && (
-            <div>
-              {block.children.map((child, index) => (
-                <Block key={index} block={child} isChild={true} />
-              ))}
-            </div>
-          )}
-        </NotionToggle>
+        <NotionTodo block={block} className={className} children={children} />
+      );
+
+    case "quote":
+      return (
+        <NotionQuote block={block} className={className} children={children} />
+      );
+
+    case "table":
+      return (
+        <div className={`${className} my-4 overflow-auto`}>
+          <table className="w-full border-collapse border border-gray-300 dark:border-gray-600">
+            <tbody>{children}</tbody>
+          </table>
+        </div>
+      );
+
+    case "table_row":
+      return (
+        <tr className="border-b border-gray-300 dark:border-gray-600">
+          {children}
+        </tr>
+      );
+
+    case "column_list":
+      return (
+        <NotionColumnList
+          block={block}
+          className={className}
+          children={children}
+        />
       );
 
     case "bookmark":
-      if (!block.url) return null;
       return (
         <NotionBookmark
-          key={key}
-          block={{
-            type: "bookmark",
-            bookmark: {
-              url: block.url,
-              title: block.title,
-              description: block.description,
-              cover: block.cover,
-              icon: block.icon,
-            },
-          }}
+          block={block}
+          recordMap={recordMap}
+          children={children}
         />
       );
 
     case "embed":
-      if (!block.url) return null;
-      return <NotionEmbed key={key} url={block.url} />;
+    case "replit":
+      return (
+        <NotionEmbed block={block} recordMap={recordMap} children={children} />
+      );
 
     case "video":
-      if (!block.url) return null;
-      return <NotionVideo key={key} url={block.url} />;
-
-    case "table":
-      if (!block.data) return null;
       return (
-        <NotionTable key={key} data={block.data} options={block.options} />
+        <NotionVideo block={block} recordMap={recordMap} children={children} />
+      );
+
+    case "file":
+      return <div className={className}>{children}</div>;
+
+    case "column":
+      return (
+        <NotionColumn block={block} className={className} children={children} />
       );
 
     case "divider":
-      return <NotionDivider key={key} />;
+      return <NotionDivider block={block} recordMap={recordMap} />;
+
+    case "collection_view_page":
+    case "transclusion_reference":
+      // Skip these for now - they're complex
+      return null;
+
+    case "page":
+      // Handle page blocks if needed
+      return <div className={className}>{children}</div>;
 
     default:
-      // Fallback to paragraph for unknown types
+      // For unsupported blocks, show debug info in development
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("Unsupported block type:", block.type);
+      }
+
       return (
-        <NotionParagraph key={key}>
-          <RichText richText={block.richText || []} />
-        </NotionParagraph>
+        <div className={className}>
+          {process.env.NODE_ENV !== "production" && (
+            <div className="text-gray-500 text-sm">
+              Unsupported block type: {block.type}
+            </div>
+          )}
+          {children}
+        </div>
       );
   }
 };

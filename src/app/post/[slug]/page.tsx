@@ -7,10 +7,11 @@ import {
 import { NotionRenderer } from "@/components/notion";
 import { MainTemplate, PageNotFound } from "@/components/templates";
 import { Route, Image as ImageHelper } from "@/lib";
-import { Notion } from "@/services/notion/enhanced.service";
-import { NotionRenderService } from "@/services/notion/render.service";
+import { convertBlogPostToPost } from "@/lib/adapters";
+import Notion from "@/services/notion";
 import Image from "next/image";
 import type { Metadata } from "next/types";
+import type { Post } from "@/types";
 import {
   GISCUS_REPO,
   GISCUS_REPO_ID,
@@ -22,15 +23,13 @@ import navigation from "@/datas/navigation";
 import { categories } from "@/datas/categories";
 import tags from "@/datas/tags";
 
-// No need for blogPostToPost helper; legacy service returns Post-compatible objects
-
 export async function generateMetadata({
   params,
 }: PostPageProps): Promise<Metadata> {
   const { slug } = await params;
 
   try {
-    const blogPost = await Notion.getEnhancedPostBySlug(slug);
+    const blogPost = await Notion.getPostBySlug(slug);
     if (!blogPost) {
       return {
         title: "Post Not Found",
@@ -56,7 +55,7 @@ export async function generateMetadata({
             ]
           : [],
         type: "article",
-        publishedTime: blogPost.created_at,
+        publishedTime: blogPost.createdAt,
         authors: ["Howz Nguyen"],
         tags: blogPost.tags,
       },
@@ -87,7 +86,7 @@ interface PostPageProps {
 // Generate static params for ISR
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   try {
-    const posts = await Notion.getPosts();
+    const posts = await Notion.getAllPosts();
     return posts.map((post: any) => ({
       slug: post.slug,
     }));
@@ -114,25 +113,32 @@ export default async function PostPage({ params }: PostPageProps) {
       return <PageNotFound />;
     }
 
-    // Get page content with NotionX integration (if available in enhanced service)
+    // Get page content using NotionX service
     const pageContent = await Notion.getPageContent(blogPost.id);
 
-    // Generate table of contents from enhanced headings
-    const toc = NotionRenderService.extractHeadings(pageContent.apiBlocks);
+    // Build page URL mapping for react-notion-x internal references
+    const postSlugMap = await Notion.getPostSlugMap();
+    const pageUrlRecord: Record<string, string> = {};
+    postSlugMap.forEach((postSlug, rawId) => {
+      if (!postSlug) {
+        return;
+      }
 
-    // Get related posts using enhanced service
-    const relatedPostsData = await Notion.getRelatedPosts(
+      pageUrlRecord[rawId] = Route.post(postSlug);
+    });
+
+    // Generate table of contents from headings
+    const toc = pageContent.headings;
+
+    // Get related posts as Post[] directly (no conversion needed)
+    const relatedPosts = await Notion.getRelatedPosts(
       blogPost.id,
       blogPost.tags,
       3
     );
-    const relatedPosts = relatedPostsData.map((p: any) => ({
-      ...p,
-      status: "Published",
-    }));
 
-    // Convert main post to Post format for components
-    const post = blogPost;
+    // Convert main post to unified Post shape for components
+    const post = convertBlogPostToPost(blogPost);
 
     // Generate social sharing URLs
     const baseUrl = "https://howz.dev";
@@ -159,7 +165,7 @@ export default async function PostPage({ params }: PostPageProps) {
         "@type": "Person",
         name: "Howz Nguyen",
       },
-      datePublished: blogPost.created_at,
+      datePublished: blogPost.createdAt,
       url: postUrl,
       mainEntityOfPage: postUrl,
     };
@@ -196,7 +202,9 @@ export default async function PostPage({ params }: PostPageProps) {
             {post.cover && (
               <div className="relative w-full aspect-[5/2] rounded-lg overflow-hidden mb-4">
                 <Image
-                  src={post.cover}
+                  src={
+                    typeof post.cover === "string" ? post.cover : post.cover.url
+                  }
                   alt={blogPost.title}
                   fill
                   sizes="(max-width: 768px) 50vw,
@@ -218,7 +226,7 @@ export default async function PostPage({ params }: PostPageProps) {
               <div className="flex items-center gap-1">
                 <Icon icon="HiOutlineCalendar" />
                 <span>Created: </span>
-                <DateTime value={blogPost.created_at} />
+                <DateTime value={blogPost.createdAt} showTooltip={true} />
               </div>
               <div className="flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-md border border-blue-200 dark:border-blue-800">
                 <Icon
@@ -229,7 +237,8 @@ export default async function PostPage({ params }: PostPageProps) {
                   Updated:{" "}
                 </span>
                 <DateTime
-                  value={blogPost.updated_at}
+                  value={blogPost.updatedAt}
+                  showTooltip={true}
                   className="text-blue-700 dark:text-blue-300"
                 />
               </div>
@@ -256,7 +265,10 @@ export default async function PostPage({ params }: PostPageProps) {
                 <div className="flex items-center gap-1 flex-wrap">
                   {post.tags &&
                     post.tags.map((tag: any, index: number) => (
-                      <Tag key={index} name={tag} />
+                      <Tag
+                        key={index}
+                        name={typeof tag === "string" ? tag : tag.name || tag}
+                      />
                     ))}
                 </div>
               </div>
@@ -267,19 +279,11 @@ export default async function PostPage({ params }: PostPageProps) {
 
           <div className="lg:grid lg:grid-cols-[auto,250px] lg:gap-4 mt-4">
             <section className="md:mr-6 leading-7 text-justify w-auto min-w-0 overflow-hidden">
-              {/* Render content using NotionRenderer with render blocks */}
-              {pageContent.apiBlocks && pageContent.apiBlocks.length > 0 ? (
-                <NotionRenderer
-                  blocks={NotionRenderService.blocksToRenderData(
-                    pageContent.apiBlocks
-                  )}
-                />
-              ) : (
-                <div className="p-4 text-gray-500 border border-gray-200 rounded">
-                  No content blocks found. Raw text content:{" "}
-                  {pageContent.textContent?.substring(0, 200)}...
-                </div>
-              )}
+              <NotionRenderer
+                recordMap={pageContent.recordMap}
+                pageUrlMap={pageUrlRecord}
+                className="notion-content"
+              />
             </section>
 
             <div className="relative">
@@ -292,7 +296,7 @@ export default async function PostPage({ params }: PostPageProps) {
                 <div className="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-100">
                   <span>{postData.relate_post}</span>
                 </div>
-                <PostList posts={relatedPosts} limit={3} />
+                <PostList posts={relatedPosts as Post[]} limit={3} />
               </div>
             )}
 

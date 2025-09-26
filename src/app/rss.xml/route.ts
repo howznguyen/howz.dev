@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Notion } from "@/services/notion/enhanced.service";
+import Notion from "@/services/notion";
 import { Route } from "@/lib";
 
 export async function GET() {
@@ -20,8 +20,10 @@ export async function GET() {
       true
     )}/rss.xml" rel="self" type="application/rss+xml"/>
     ${posts
-      .map((post) => {
-        const pubDate = post.date ? new Date(post.date).toUTCString() : new Date().toUTCString();
+      .map((post: any) => {
+        const pubDate = post.date
+          ? new Date(post.date).toUTCString()
+          : new Date().toUTCString();
         const postUrl = `${Route.index(true)}${post.url}`;
 
         return `

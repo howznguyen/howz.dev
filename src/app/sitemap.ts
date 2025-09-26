@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { Route } from "@/lib";
-import { notionService } from "@/services/notion/unofficial-api.service";
+import notionService from "@/services/notion";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
@@ -11,8 +11,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Convert posts to sitemap format
     const postsForSitemap = posts.map((post) => ({
       slug: post.slug || "",
-      lastModified: new Date(post.lastEditedTime).toISOString(),
-      published: new Date(post.createdTime).toISOString(),
+      lastModified: new Date(post.updatedAt).toISOString(),
+      published: new Date(post.createdAt).toISOString(),
     }));
 
     // Static pages

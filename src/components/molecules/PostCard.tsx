@@ -13,32 +13,18 @@ interface PostCardProps {
 }
 
 const PostCard = ({ post }: PostCardProps) => {
-  // Handle different post types
-  const postInfo = {
-    id: post.id,
-    title: post.title,
-    slug: post.slug,
-    description: post.description,
-    cover: post.cover,
-    tags: post.tags,
-    createdAt: post.createdAt,
-    updatedAt: post.updatedAt,
-    readingTime: post.readingTime || 0,
-    views: post.views || 0,
-  };
-
   return (
     <article className="overflow-hidden rounded-lg shadow transition hover:shadow-lg bg-white dark:bg-gray-800 dark:hover:shadow-sky-900">
       <Link
         className="block overflow-hidden"
-        href={Route.post(postInfo.slug || "")}
+        href={Route.post(post.slug || "")}
       >
         <div className="relative">
-          {postInfo.cover && (
+          {post.cover && (
             <div className="relative aspect-[16/9] bg-gray-200">
               <Image
-                src={postInfo.cover}
-                alt={postInfo.title}
+                src={post.cover as string}
+                alt={post.title}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 loading="lazy"
@@ -49,47 +35,50 @@ const PostCard = ({ post }: PostCardProps) => {
             </div>
           )}
 
-          {postInfo.cover && postInfo.tags.length > 0 && (
+          {post.cover && post.tags.length > 0 && (
             <div className="absolute top-2 left-2 flex flex-wrap gap-1">
-              {postInfo.tags.map((tag: string, index: number) => (
+              {post.tags.map((tag: string, index: number) => (
                 <Tag key={index} name={tag} />
               ))}
             </div>
           )}
         </div>
 
-        {!postInfo.cover && postInfo.tags.length > 0 && (
+        {!post.cover && post.tags.length > 0 && (
           <div className="p-4 pb-0 flex flex-wrap gap-1">
-            {postInfo.tags.map((tag: string, index: number) => (
-              <Tag key={index} name={tag} />
+            {post.tags.map((tag: any, index: number) => (
+              <Tag
+                key={index}
+                name={typeof tag === "string" ? tag : tag.name || tag}
+              />
             ))}
           </div>
         )}
 
         <div className="p-4">
           <h3 className="text-lg font-medium text-gray-900 dark:text-white line-clamp-2">
-            {postInfo.title}
+            {post.title}
           </h3>
 
           <div className="mt-2 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-            {postInfo.readingTime && (
+            {post.readingTime && (
               <div className="flex items-center gap-1">
                 <Icon icon="HiOutlineClock" />
-                <span>{postData.reading_time(postInfo.readingTime)}</span>
+                <span>{postData.reading_time(post.readingTime)}</span>
               </div>
             )}
-            <Views views={postInfo.views} />
-            {postInfo.createdAt && (
+            <Views views={post.views} />
+            {post.createdAt && (
               <div className="flex items-center gap-1">
                 <Icon icon="HiOutlineCalendar" />
-                <DateTime value={postInfo.createdAt} />
+                <DateTime value={post.createdAt} />
               </div>
             )}
           </div>
 
-          {postInfo.description && (
+          {post.description && (
             <p className="mt-2 line-clamp-3 text-sm text-gray-500 dark:text-gray-400">
-              {postInfo.description}
+              {post.description}
             </p>
           )}
         </div>

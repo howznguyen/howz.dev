@@ -1,34 +1,16 @@
 import { PostList } from "@/components/molecules";
 import { MainTemplate, PageNotFound } from "@/components/templates";
 import { Route } from "@/lib";
-import { Notion } from "@/services/notion/enhanced.service";
+import Notion from "@/services/notion";
 import type { BlogPost } from "@/types/notion";
 import type { Post } from "@/types";
+import { convertBlogPostToPost } from "@/lib/adapters";
 import tags from "@/datas/tags";
 import navigation from "@/datas/navigation";
 import { SITE_CONFIG } from "@/lib/constants";
 import { categories } from "@/datas/categories";
 import type { Metadata } from "next/types";
 import { LinkAtoms } from "@/components/atoms";
-
-// Helper function to convert BlogPost to Post
-function blogPostToPost(blogPost: BlogPost): Post {
-  return {
-    id: blogPost.id,
-    title: blogPost.title,
-    slug: blogPost.slug,
-    description: blogPost.description,
-    content: blogPost.content,
-    status: blogPost.status as "Published" | "Draft" | "In progress",
-    tags: blogPost.tags,
-    featured: blogPost.featured,
-    cover: blogPost.cover?.url,
-    author: blogPost.author,
-    readingTime: blogPost.reading_time || 5,
-    createdAt: blogPost.created_at,
-    updatedAt: blogPost.updated_at,
-  };
-}
 
 interface TagPageProps {
   params: Promise<{
@@ -45,14 +27,14 @@ export async function generateMetadata({
   try {
     const allTags = await Notion.getTags();
     const currentTag = allTags.find(
-      (t: string) => t.toLowerCase() === tag.toLowerCase()
+      (t) => t.name.toLowerCase() === tag.toLowerCase()
     );
 
     const title = currentTag
-      ? `Posts tagged with "${currentTag}" | Howz.dev`
+      ? `Posts tagged with "${currentTag.name}" | Howz.dev`
       : `Posts tagged with "${tag}" | Howz.dev`;
 
-    const description = `All posts tagged with ${currentTag || tag}`;
+    const description = `All posts tagged with ${currentTag?.name || tag}`;
 
     return {
       title,
@@ -80,8 +62,8 @@ export async function generateMetadata({
 export async function generateStaticParams(): Promise<Array<{ tag: string }>> {
   try {
     const allTags = await Notion.getTags();
-    return allTags.map((tagName: string) => ({
-      tag: tagName.toLowerCase(),
+    return allTags.map((tag) => ({
+      tag: tag.name.toLowerCase(),
     }));
   } catch (error) {
     console.error("Error generating static params for tags:", error);
@@ -96,33 +78,13 @@ export default async function TagPage({ params }: TagPageProps) {
   const { tag } = await params;
 
   try {
-    // Get posts by tag using enhanced service
-    const fetchedBlogPosts = await Notion.getPostsByTag(tag);
-    const posts = fetchedBlogPosts.map((post: any) =>
-      blogPostToPost({
-        id: post.id,
-        title: post.title,
-        slug: post.slug,
-        description: post.description,
-        content: "",
-        excerpt: post.description,
-        status: post.status,
-        created_at: post.created_at,
-        updated_at: post.updated_at,
-        tags: post.tags,
-        category: "Others",
-        author: "Howz Nguyen",
-        featured: post.featured,
-        cover: post.cover ? { url: post.cover, alt: post.title } : undefined,
-        reading_time: post.readingTime || 5,
-        views: post.views || 0,
-      })
-    );
+    // Get posts by tag as Post[] directly (no conversion needed)
+    const posts = await Notion.getPostsByTag(tag);
 
     // Get all tags for additional info
     const allTags = await Notion.getTags();
     const currentTag = allTags.find(
-      (t: string) => t.toLowerCase() === tag.toLowerCase()
+      (t) => t.name.toLowerCase() === tag.toLowerCase()
     );
 
     if (!currentTag && posts.length === 0) {
@@ -143,7 +105,7 @@ export default async function TagPage({ params }: TagPageProps) {
       >
         <div className="layout py-12">
           <h1 className="text-3xl md:text-5xl font-semibold">
-            {tags.tag} #{currentTag || tag}
+            {tags.tag} #{currentTag?.name || tag}
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
             {tags.post_by_tag}
