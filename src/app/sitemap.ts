@@ -5,7 +5,7 @@ import notionService from "@/services/notion";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     // Fetch posts and tags using unofficial service
-    const posts = await notionService.getAllPosts();
+    const posts = await notionService.getPosts();
     const tags = await notionService.getTags();
 
     // Convert posts to sitemap format

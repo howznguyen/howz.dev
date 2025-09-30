@@ -111,7 +111,7 @@ importers:
         specifier: ^3.6.0
         version: 3.7.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-icons:
-        specifier: ^4.7.1
+        specifier: ^4.12.0
         version: 4.12.0(react@18.2.0)
       react-iframe:
         specifier: ^1.8.5

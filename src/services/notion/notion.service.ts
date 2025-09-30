@@ -585,9 +585,6 @@ export class NotionService {
       title: post.title,
       slug: post.slug || "",
       description: post.description || undefined,
-      content: Array.isArray(post.content)
-        ? post.content.join("\n")
-        : post.content || undefined,
       status: post.status || "Draft",
       tags: post.tags,
       featured: post.featured,

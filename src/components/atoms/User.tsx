@@ -94,7 +94,6 @@ export const Users = ({
   className = "",
   hideAvatar = false,
 }: UsersProps) => {
-  console.log("Users", users.length, size);
   switch (size) {
     case "inline":
       return (

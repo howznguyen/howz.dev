@@ -69,7 +69,6 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               {author.name}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">{author.email}</p>
             <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
               {posts.length} {posts.length === 1 ? "post" : "posts"}
             </p>
