@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ReactNode } from "react";
+import cn from "classnames";
 
 interface LinkProps {
   children?: ReactNode;
@@ -20,6 +21,8 @@ const LinkAtoms = ({
   target,
   rel,
 }: LinkProps) => {
+  const defaultClassName =
+    "text-blue-600 dark:text-blue-300 relative inline-block no-underline after:absolute after:w-0 after:h-0.5 after:bg-current after:left-0 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full";
   const _target = target ?? "_self";
   const _className = className ?? "";
   const _href = href ?? "#";
@@ -29,9 +32,9 @@ const LinkAtoms = ({
       rel={rel}
       href={_href}
       title={title}
-      className={`${_className} text-blue-600 hover:underline dark:text-blue-300 ${
-        _target === "_blank" ? "cursor-newtab" : ""
-      }`}
+      className={cn(defaultClassName, _className, {
+        "cursor-newtab": _target === "_blank",
+      })}
     >
       {children}
     </Link>

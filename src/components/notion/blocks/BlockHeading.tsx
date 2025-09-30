@@ -3,33 +3,33 @@
 import React from "react";
 import type { Block, ExtendedRecordMap } from "notion-types";
 import Icon from "@/components/atoms/Icon";
-import { NotionRichText } from "./NotionRichText";
+import { BlockRichText } from "./BlockRichText";
 import cn from "classnames";
 import { createSlugFromTitleAndUuid } from "@/lib/helpers";
 
-interface NotionHeadingProps {
+interface BlockHeadingProps {
   block: Block;
   recordMap: ExtendedRecordMap;
   children?: React.ReactNode;
   isChild?: boolean;
 }
 
-export const NotionHeading: React.FC<NotionHeadingProps> = ({
+export const BlockHeading: React.FC<BlockHeadingProps> = ({
   block,
   recordMap,
   children,
   isChild = false,
 }) => {
   const sizes = {
-    header: "text-3xl scroll-mt-[80px]",
-    sub_header: "text-2xl scroll-mt-[60px]",
-    sub_sub_header: "text-xl scroll-mt-[50px]",
+    header: "text-2xl md:text-3xl scroll-mt-[80px]",
+    sub_header: "text-xl md:text-2xl scroll-mt-[60px]",
+    sub_sub_header: "text-lg md:text-xl scroll-mt-[50px]",
   };
 
   const margins = {
-    header: "mt-8",
-    sub_header: "mt-6",
-    sub_sub_header: "mt-4",
+    header: "mt-6 md:mt-8",
+    sub_header: "mt-4 md:mt-6",
+    sub_sub_header: "mt-2 md:mt-4",
   };
 
   const tagName = {
@@ -46,7 +46,7 @@ export const NotionHeading: React.FC<NotionHeadingProps> = ({
     block.properties?.title && block.properties.title.length > 0
       ? block.properties.title.reduce(
           (acc: string, curr: any) => acc + curr[0],
-          ""
+          "",
         )
       : "";
 
@@ -57,16 +57,16 @@ export const NotionHeading: React.FC<NotionHeadingProps> = ({
       className={cn(
         size,
         margin,
-        "font-semibold dark:text-white my-2 flex items-center gap-2 group"
+        "text-left font-semibold my-2 flex items-center gap-2 group",
       )}
       id={slug}
     >
       {block.properties?.title && (
-        <NotionRichText value={block.properties.title} block={block} />
+        <BlockRichText value={block.properties.title} block={block} />
       )}
       <a
         className={cn(
-          "opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          "opacity-0 group-hover:opacity-100 transition-opacity duration-200",
         )}
         href={`#${slug}`}
         title={typeof children === "string" ? children : "Link to heading"}

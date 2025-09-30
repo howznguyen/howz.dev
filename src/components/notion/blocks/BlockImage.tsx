@@ -6,7 +6,7 @@ import Zoom from "react-medium-image-zoom";
 import Image from "next/image";
 import { Image as ImageHelper } from "@/lib";
 
-interface NotionImageProps {
+interface BlockImageProps {
   block: Block;
   recordMap?: ExtendedRecordMap;
   src?: string;
@@ -15,7 +15,7 @@ interface NotionImageProps {
   children?: React.ReactNode;
 }
 
-export const NotionImage: React.FC<NotionImageProps> = ({
+export const BlockImage: React.FC<BlockImageProps> = ({
   block,
   recordMap,
   src: propSrc,

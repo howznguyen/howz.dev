@@ -40,7 +40,7 @@ interface HomePageProps {
 
 export default async function HomePage() {
   // Get all posts as Post[] directly (no conversion needed)
-  let allPosts = await Notion.getAllPosts({
+  let allPosts = await Notion.getPosts({
     limit: 50, // Get more posts for better categorization
   });
 
@@ -59,7 +59,7 @@ export default async function HomePage() {
     featuredPosts = allPosts
       .sort(
         (a: Post, b: Post) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
       )
       .slice(0, 6);
   }
@@ -128,7 +128,7 @@ export default async function HomePage() {
                   <Button className="mt-4 scale-100 hover:scale-[1.1] active:scale-[0.97] motion-safe:transform-gpu transition duration-100">
                     <Link
                       href={`${Route.blog()}?tag=${encodeURIComponent(
-                        category.value
+                        category.value,
                       )}`}
                     >
                       {home.read_more}
