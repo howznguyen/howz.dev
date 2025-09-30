@@ -1,29 +1,25 @@
-import { PostList } from "@/components/molecules";
 import { MainTemplate } from "@/components/templates";
-import { Route } from "@/lib";
 import Notion from "@/services/notion";
-import type { BlogPost } from "@/types/notion";
-import type { Post } from "@/types";
-import { convertBlogPostToPost } from "@/lib/adapters";
 import blog from "@/datas/blog";
 import navigation from "@/datas/navigation";
 import { SITE_CONFIG } from "@/lib/constants";
 import { categories } from "@/datas/categories";
 import { BlogPageClient } from "./BlogPageClient";
 import type { Metadata } from "next/types";
+import site from "@/datas/site";
 
 // Generate metadata for SEO
 export const metadata: Metadata = {
-  title: `${blog.blog} | Howz.dev`,
+  title: `${blog.blog}${site.branding.title_suffix}`,
   description: blog.intro,
   openGraph: {
-    title: `${blog.blog} | Howz.dev`,
+    title: `${blog.blog}${site.branding.title_suffix}`,
     description: blog.intro,
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: `${blog.blog} | Howz.dev`,
+    title: `${blog.blog}${site.branding.title_suffix}`,
     description: blog.intro,
   },
 };
@@ -34,7 +30,7 @@ export const revalidate = 120;
 export default async function BlogPage() {
   try {
     // Get all posts as Post[] directly (no conversion needed)
-    const convertedPosts = await Notion.getAllPosts({ sortBy: "views" });
+    const convertedPosts = await Notion.getPosts({ sortBy: "views" });
 
     return (
       <MainTemplate

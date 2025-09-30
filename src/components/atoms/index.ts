@@ -7,3 +7,4 @@ export { default as DateTime } from "./DateTime";
 export { default as Loading } from "./Loading";
 export { default as Icon } from "./Icon";
 export { default as Tag } from "./Tag";
+export { User, Users } from "./User";

@@ -3,9 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Route, Image as ImageHelper } from "@/lib";
-import { DateTime, Icon, Tag } from "../atoms";
+import { DateTime, Icon, Tag, Users } from "../atoms";
 import { Post } from "@/types";
-import postData from "@/datas/post";
 import Views from "./Views";
 
 interface PostCardProps {
@@ -38,7 +37,7 @@ const PostCard = ({ post }: PostCardProps) => {
           {post.cover && post.tags.length > 0 && (
             <div className="absolute top-2 left-2 flex flex-wrap gap-1">
               {post.tags.map((tag: string, index: number) => (
-                <Tag key={index} name={tag} />
+                <Tag key={index} name={tag} asLink={false} />
               ))}
             </div>
           )}
@@ -50,6 +49,7 @@ const PostCard = ({ post }: PostCardProps) => {
               <Tag
                 key={index}
                 name={typeof tag === "string" ? tag : tag.name || tag}
+                asLink={false}
               />
             ))}
           </div>
@@ -61,12 +61,10 @@ const PostCard = ({ post }: PostCardProps) => {
           </h3>
 
           <div className="mt-2 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-            {post.readingTime && (
-              <div className="flex items-center gap-1">
-                <Icon icon="HiOutlineClock" />
-                <span>{postData.reading_time(post.readingTime)}</span>
-              </div>
-            )}
+            <Users users={post.authors ?? []} />
+          </div>
+
+          <div className="mt-2 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
             <Views views={post.views} />
             {post.createdAt && (
               <div className="flex items-center gap-1">

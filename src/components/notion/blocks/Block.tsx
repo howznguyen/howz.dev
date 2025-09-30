@@ -3,24 +3,25 @@
 import React from "react";
 import type { Block as BlockType } from "notion-types";
 import { BlockToggle } from "./BlockToggle";
-import { NotionRichText } from "./NotionRichText";
-import { NotionCallout } from "./NotionCallout";
-import { NotionCode } from "./NotionCode";
-import { NotionParagraph } from "./NotionParagraph";
-import { NotionHeading } from "./NotionHeading";
-import { NotionImage } from "./NotionImage";
-import { NotionList } from "./NotionList";
-import { NotionTodo } from "./NotionTodo";
-import { NotionQuote } from "./NotionQuote";
-import { NotionColumn, NotionColumnList } from "./NotionColumn";
-import { NotionText } from "./NotionText";
+import { BlockRichText } from "./BlockRichText";
+import { BlockCallout } from "./BlockCallout";
+import { BlockCode } from "./BlockCode";
+import { BlockHeading } from "./BlockHeading";
+import { BlockImage } from "./BlockImage";
+import { BlockList } from "./BlockList";
+import { BlockTodo } from "./BlockTodo";
+import { BlockQuote } from "./BlockQuote";
+import { BlockColumn, BlockColumnList } from "./BlockColumn";
+import { BlockText } from "./BlockText";
 import { useNotionContext } from "../NotionContext";
 import BlockEquation from "./BlockEquation";
 import cn from "classnames";
-import { NotionDivider } from "./NotionDivider";
-import { NotionEmbed } from "./NotionEmbed";
-import { NotionVideo } from "./NotionVideo";
-import { NotionBookmark } from "./NotionBookmark";
+import { BlockDivider } from "./BlockDivider";
+import { BlockEmbed } from "./BlockEmbed";
+import { BlockVideo } from "./BlockVideo";
+import { BlockBookmark } from "./BlockBookmark";
+import { BlockTable } from "./BlockTable";
+import { BlockFile } from "./BlockFile";
 
 interface BlockProps {
   block: BlockType;
@@ -35,23 +36,22 @@ export const Block: React.FC<BlockProps> = ({
   className,
   children,
 }) => {
+  const isNested = level > 1;
   const { recordMap } = useNotionContext();
-
   // Switch case to handle different block types
   switch (block.type) {
     case "toggle":
-      console.log("Toggle block:", block);
       return (
         <BlockToggle
+          block={block}
           className={className}
-          text={
+          title={
             block.properties?.title ? (
-              <NotionRichText value={block.properties.title} block={block} />
+              <BlockRichText value={block.properties.title} block={block} />
             ) : (
               "Toggle"
             )
           }
-          color={block.format?.block_color}
         >
           {children}
         </BlockToggle>
@@ -59,23 +59,28 @@ export const Block: React.FC<BlockProps> = ({
 
     case "callout":
       return (
-        <NotionCallout block={block} className={className}>
+        <BlockCallout block={block} className={className}>
           {children}
-        </NotionCallout>
+        </BlockCallout>
       );
 
     case "code":
       return (
-        <NotionCode block={block} recordMap={recordMap!}>
+        <BlockCode block={block} recordMap={recordMap!}>
           {children}
-        </NotionCode>
+        </BlockCode>
       );
 
     case "text":
       return (
-        <NotionText block={block} className={className}>
+        <BlockText
+          block={block}
+          className={className}
+          recordMap={recordMap!}
+          isChild={isNested}
+        >
           {children}
-        </NotionText>
+        </BlockText>
       );
 
     case "header":
@@ -85,17 +90,13 @@ export const Block: React.FC<BlockProps> = ({
       if (block.format?.toggleable) {
         return (
           <BlockToggle
+            block={block}
             className={className}
-            text={
-              <NotionHeading
-                block={block}
-                recordMap={recordMap!}
-                isChild={true}
-              >
+            title={
+              <BlockHeading block={block} recordMap={recordMap!} isChild={true}>
                 {children}
-              </NotionHeading>
+              </BlockHeading>
             }
-            color={block.format?.block_color}
           >
             {children}
           </BlockToggle>
@@ -103,46 +104,24 @@ export const Block: React.FC<BlockProps> = ({
       }
 
       return (
-        <NotionHeading block={block} recordMap={recordMap!}>
+        <BlockHeading block={block} recordMap={recordMap!}>
           {children}
-        </NotionHeading>
+        </BlockHeading>
       );
-
-    case "text": {
-      if (!block.properties && !block.content?.length) {
-        return <div className={cn("notion-blank", block.id)}>&nbsp;</div>;
-      }
-      const blockColor = block.format?.block_color;
-      const classNameStr = cn(
-        "notion-text",
-        block.id,
-        blockColor && `notion-${blockColor}`,
-        "abc"
-      );
-      return (
-        <NotionText block={block} className={classNameStr}>
-          {children}
-        </NotionText>
-      );
-    }
 
     case "image":
       return (
-        <NotionImage block={block} recordMap={recordMap!}>
+        <BlockImage block={block} recordMap={recordMap!}>
           {children}
-        </NotionImage>
+        </BlockImage>
       );
 
     case "bulleted_list":
     case "numbered_list": {
       return (
-        <NotionList
-          block={block}
-          recordMap={recordMap!}
-          ordered={block.type === "numbered_list"}
-        >
+        <BlockList block={block} recordMap={recordMap!}>
           {children}
-        </NotionList>
+        </BlockList>
       );
     }
 
@@ -152,24 +131,22 @@ export const Block: React.FC<BlockProps> = ({
 
     case "to_do":
       return (
-        <NotionTodo block={block} className={className}>
+        <BlockTodo block={block} className={className}>
           {children}
-        </NotionTodo>
+        </BlockTodo>
       );
 
     case "quote":
       return (
-        <NotionQuote block={block} className={className}>
+        <BlockQuote block={block} className={className}>
           {children}
-        </NotionQuote>
+        </BlockQuote>
       );
 
     case "table":
       return (
         <div className={`${className} my-4 overflow-auto`}>
-          <table className="w-full border-collapse border border-gray-300 dark:border-gray-600">
-            <tbody>{children}</tbody>
-          </table>
+          <BlockTable block={block} recordMap={recordMap!} />
         </div>
       );
 
@@ -182,33 +159,34 @@ export const Block: React.FC<BlockProps> = ({
 
     case "column_list":
       return (
-        <NotionColumnList block={block} className={className}>
+        <BlockColumnList block={block} className={className}>
           {children}
-        </NotionColumnList>
+        </BlockColumnList>
       );
 
     case "bookmark":
-      return <NotionBookmark block={block} recordMap={recordMap!} />;
+      return <BlockBookmark block={block} recordMap={recordMap!} />;
 
     case "embed":
     case "replit":
-      return <NotionEmbed block={block} recordMap={recordMap!} />;
+      return <BlockEmbed block={block} recordMap={recordMap!} />;
 
     case "video":
-      return <NotionVideo block={block} recordMap={recordMap!} />;
-
+      return <BlockVideo block={block} recordMap={recordMap!} />;
     case "file":
-      return <div className={className}>{children}</div>;
+      return (
+        <BlockFile block={block} recordMap={recordMap!} className={className} />
+      );
 
     case "column":
       return (
-        <NotionColumn block={block} className={className}>
+        <BlockColumn block={block} className={className}>
           {children}
-        </NotionColumn>
+        </BlockColumn>
       );
 
     case "divider":
-      return <NotionDivider block={block} recordMap={recordMap!} />;
+      return <BlockDivider block={block} recordMap={recordMap!} />;
 
     case "collection_view_page":
     case "transclusion_reference":

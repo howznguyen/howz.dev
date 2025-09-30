@@ -1,17 +1,39 @@
 // Common types used across the application
 
-// Base Post interface - thống nhất cho tất cả Post types
+import { NotionHeading } from "@/services/notion";
+
+// User interface for authors
+export interface User {
+  id: string;
+  name: string;
+  avatar?: string;
+  profile_photo?: string;
+  avatar_url?: string;
+  verified: boolean;
+}
+
+export interface PageContent {
+  recordMap: any;
+  textContent: string;
+  headings: NotionHeading[];
+}
+
+// Base Post interface
 export interface BasePost {
   id: string;
   title: string;
   slug: string;
   description?: string;
-  content?: string;
+  pageContent?: PageContent;
   status: string;
   tags: string[];
   featured: boolean;
   cover?: string | { url: string; alt?: string };
+  icon?: string;
   author?: string;
+  authors?: User[];
+  userIds?: string[];
+  userSlugs?: string[];
   readingTime?: number;
   views?: number;
   createdAt: string;

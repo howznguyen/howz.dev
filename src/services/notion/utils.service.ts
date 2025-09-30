@@ -566,11 +566,36 @@ function getBoolean(prop: any): boolean {
   return text === "Yes" || text === "true" || prop === true;
 }
 
+function getUserIds(prop: any): string[] {
+  const userIds: string[] = [];
+
+  if (prop && Array.isArray(prop)) {
+    prop.forEach((item: any) => {
+      if (Array.isArray(item) && item.length >= 2) {
+        const decorations = item[1];
+        if (decorations && Array.isArray(decorations)) {
+          decorations.forEach((decoration: any) => {
+            if (
+              Array.isArray(decoration) &&
+              decoration[0] === "u" &&
+              decoration[1]
+            ) {
+              userIds.push(decoration[1]);
+            }
+          });
+        }
+      }
+    });
+  }
+
+  return userIds;
+}
+
 /**
  * Convert raw Notion collection response to clean post objects
  */
 export function convertNotionResponseToPosts(
-  rawResponse: CollectionInstance
+  rawResponse: CollectionInstance,
 ): Post[] {
   if (!rawResponse?.recordMap?.block) {
     return [];
@@ -600,6 +625,7 @@ export function convertNotionResponseToPosts(
     const statusText = getPlainText(getProp("status"));
     const viewsNum = getNumber(getProp("views"));
     const featuredBool = getBoolean(getProp("featured"));
+    const userIds = getUserIds(getProp("authors"));
 
     // Get cover image
     const coverUrl = block.value.format?.page_cover || null;
@@ -607,33 +633,23 @@ export function convertNotionResponseToPosts(
       ? defaultMapImageUrl(coverUrl, block.value)
       : null;
 
-    // Calculate reading time from content
-    const contentText = Array.isArray(block.value.content)
-      ? block.value.content.join(" ")
-      : "";
-
-    // Ensure we have some content for reading time calculation
-    const textForReadingTime =
-      contentText ||
-      titleText ||
-      "Default content for reading time calculation";
-    const readingTime = Math.max(
-      1,
-      Math.ceil(textForReadingTime.split(/\s+/).length / 200)
-    );
+    // Get page icon (emoji)
+    const pageIcon = block.value.format?.page_icon || null;
 
     results.push({
       id: block.value.id,
       title: cleanText(titleText),
       slug: slugText ? cleanText(slugText) : generateSlug(titleText),
       description: descText ? cleanText(descText) : "",
-      content: contentText,
       status: statusText || "Draft",
       tags: tagsArr,
       featured: featuredBool,
       cover: mappedCoverUrl || undefined,
+      icon: pageIcon || undefined,
       author: "Howz Nguyen",
-      readingTime: readingTime,
+      authors: [], // Will be populated by getUsers call later
+      userIds: userIds, // Store user IDs for later fetching
+      readingTime: 0, // Will be calculated in post detail page
       views: viewsNum || 0,
       createdAt: new Date(block.value.created_time || 0).toISOString(),
       updatedAt: new Date(block.value.last_edited_time || 0).toISOString(),
@@ -655,7 +671,7 @@ export function filterPublishedPosts(posts: ConvertedPost[]): ConvertedPost[] {
  */
 export function filterPostsByTags(
   posts: ConvertedPost[],
-  tags: string[]
+  tags: string[],
 ): ConvertedPost[] {
   return posts.filter((post) => tags.some((tag) => post.tags.includes(tag)));
 }
@@ -688,14 +704,14 @@ export function getFeaturedPosts(posts: ConvertedPost[]): ConvertedPost[] {
  */
 export function searchPosts(
   posts: ConvertedPost[],
-  query: string
+  query: string,
 ): ConvertedPost[] {
   const lowercaseQuery = query.toLowerCase();
   return posts.filter(
     (post) =>
       post.title.toLowerCase().includes(lowercaseQuery) ||
       (post.description &&
-        post.description.toLowerCase().includes(lowercaseQuery))
+        post.description.toLowerCase().includes(lowercaseQuery)),
   );
 }
 
@@ -714,7 +730,7 @@ export function getAllTags(posts: ConvertedPost[]): string[] {
  * Get tags with post counts
  */
 export function getTagsWithCounts(
-  posts: ConvertedPost[]
+  posts: ConvertedPost[],
 ): { name: string; count: number }[] {
   const tagCounts = new Map<string, number>();
 
@@ -734,7 +750,7 @@ export function getTagsWithCounts(
  */
 export function getPostsByTag(
   posts: ConvertedPost[],
-  tag: string
+  tag: string,
 ): ConvertedPost[] {
   return posts.filter((post) => post.tags.includes(tag));
 }
@@ -744,7 +760,7 @@ export function getPostsByTag(
  */
 export function getPostBySlug(
   posts: ConvertedPost[],
-  slug: string
+  slug: string,
 ): ConvertedPost | undefined {
   return posts.find((post) => post.slug === slug);
 }
@@ -755,12 +771,12 @@ export function getPostBySlug(
 export function getRelatedPosts(
   posts: ConvertedPost[],
   currentPost: ConvertedPost,
-  limit: number = 3
+  limit: number = 3,
 ): ConvertedPost[] {
   const relatedPosts = posts.filter(
     (post) =>
       post.id !== currentPost.id &&
-      post.tags.some((tag) => currentPost.tags.includes(tag))
+      post.tags.some((tag) => currentPost.tags.includes(tag)),
   );
 
   return relatedPosts.slice(0, limit);
@@ -771,7 +787,7 @@ export function getRelatedPosts(
  */
 export function convertRecordMapToApiBlocks(
   recordMap: AnyRecord,
-  rootPageId?: string
+  rootPageId?: string,
 ): NotionApiBlock[] {
   const blocks: AnyRecord = recordMap?.block ?? {};
   if (!blocks || typeof blocks !== "object") {
@@ -834,8 +850,8 @@ export function convertRecordMapToApiBlocks(
         type === "header"
           ? "heading_1"
           : type === "sub_header"
-          ? "heading_2"
-          : "heading_3";
+            ? "heading_2"
+            : "heading_3";
       const out: HeadingBlock = {
         object: "block",
         id,
@@ -1061,7 +1077,7 @@ export function convertRecordMapToApiBlocks(
  */
 export const defaultMapImageUrl = (
   url: string,
-  block: Block
+  block: Block,
 ): string | null => {
   if (!url) {
     return null;
