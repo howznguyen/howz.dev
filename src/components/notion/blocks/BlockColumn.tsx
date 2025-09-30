@@ -3,13 +3,13 @@
 import React from "react";
 import type { Block } from "notion-types";
 
-interface NotionColumnProps {
+interface BlockColumnProps {
   block: Block;
   children?: React.ReactNode;
   className?: string;
 }
 
-export const NotionColumn: React.FC<NotionColumnProps> = ({
+export const BlockColumn: React.FC<BlockColumnProps> = ({
   block,
   children,
   className,
@@ -32,7 +32,7 @@ interface NotionColumnListProps {
   className?: string;
 }
 
-export const NotionColumnList: React.FC<NotionColumnListProps> = ({
+export const BlockColumnList: React.FC<NotionColumnListProps> = ({
   block,
   children,
   className,

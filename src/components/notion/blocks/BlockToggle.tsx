@@ -1,59 +1,135 @@
 "use client";
 
 import React, { useState } from "react";
+import type { Block, ExtendedRecordMap } from "notion-types";
+import { BlockRichText } from "./BlockRichText";
+import { useNotionContext } from "../NotionContext";
+import { getColorClasses } from "@/lib/notion-color";
 import cn from "classnames";
+import { Icon } from "@/components/atoms";
 
 interface BlockToggleProps {
-  className?: string;
-  text: React.ReactNode;
-  color?: string;
-  updatedBlock?: React.ReactNode;
+  block: Block;
   children?: React.ReactNode;
+  title?: React.ReactNode;
+  className?: string;
+  [key: string]: any; // Allow other props from react-notion-x
 }
 
 export const BlockToggle: React.FC<BlockToggleProps> = ({
-  className,
-  text,
-  color,
-  updatedBlock,
+  block,
   children,
+  title: propTitle,
+  className,
+  ...props
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isShow, setShow] = useState(false);
+
+  // Get recordMap from context
+  const { recordMap } = useNotionContext();
+
+  // Extract title from block properties or use provided title/children
+  const renderTitle = () => {
+    if (propTitle) {
+      return propTitle;
+    }
+
+    if (block.properties?.title && block.properties.title.length > 0) {
+      return <BlockRichText value={block.properties.title} block={block} />;
+    }
+
+    if (children) {
+      return children;
+    }
+
+    return "Toggle";
+  };
+
+  // Render toggle content - similar to callout approach
+  const renderContent = () => {
+    // React-notion-x should pass rendered children - this is the primary content
+    if (children) {
+      return children;
+    }
+
+    // Try to manually render child blocks if recordMap is available
+    if (recordMap && block.content && block.content.length > 0) {
+      const childContent = block.content
+        .map((childId: string) => {
+          const childBlock = recordMap.block?.[childId]?.value;
+          if (childBlock) {
+            // Try to render different child block types
+            if (childBlock.type === "text" && childBlock.properties?.title) {
+              return (
+                <div key={childId} className="mb-2">
+                  <BlockRichText
+                    value={childBlock.properties.title}
+                    block={childBlock}
+                  />
+                </div>
+              );
+            }
+
+            // Handle other block types as needed
+            return (
+              <div key={childId} className="text-sm text-gray-600 mb-2">
+                {childBlock.type} block (not implemented)
+              </div>
+            );
+          }
+          return null;
+        })
+        .filter(Boolean);
+
+      if (childContent.length > 0) {
+        return childContent;
+      }
+    }
+
+    return (
+      <div className="text-gray-500 text-sm italic">No content available</div>
+    );
+  };
+
+  const blockColor = block.format?.block_color;
+  const colorClasses = getColorClasses(blockColor);
 
   return (
-    <div className={cn("mb-4 w-full max-w-none", className)}>
-      {updatedBlock}
-      <div
-        className="flex items-center justify-start cursor-pointer p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <svg
+    <div className="mb-4">
+      <div className="flex items-center justify-start">
+        <button
           className={cn(
-            "w-4 h-4 mr-2 text-gray-500 dark:text-gray-400 transition-transform duration-100",
-            isOpen && "rotate-90"
+            "hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center",
+            blockColor ? colorClasses : "text-gray-500 dark:text-gray-400",
           )}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          viewBox="0 0 24 24"
+          onClick={() => setShow(!isShow)}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M8.25 4.5l7.5 7.5-7.5 7.5"
+          <Icon
+            icon="FaCaretRight"
+            className={cn(
+              isShow ? "rotate-90" : "",
+              "translate-all",
+              "duration-100",
+              "w-4",
+              "h-4",
+            )}
           />
-        </svg>
-        <div className={cn("text-lg font-bold text-gray-800 dark:text-gray-100", color && `notion-${color}`)}>
-          {text}
-        </div>
+        </button>
+        <span
+          className={cn(
+            "ml-2 text-lg font-bold",
+            blockColor ? colorClasses : "text-gray-800 dark:text-gray-100",
+          )}
+        >
+          {renderTitle()}
+        </span>
       </div>
       <div
-        className={cn(
-          "pl-6 mt-2 transition-all duration-100 overflow-hidden w-full max-w-none",
-          isOpen ? "max-h-[100000px]" : "max-h-0"
-        )}
+        className={`pl-10 mt-2 transition-all duration-100 ${
+          isShow ? "max-h-[100000px]" : "max-h-0"
+        } overflow-hidden`}
       >
-        {children}
+        {renderContent()}
       </div>
     </div>
   );

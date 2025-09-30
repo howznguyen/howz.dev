@@ -2,15 +2,15 @@
 
 import React from "react";
 import type { Block } from "notion-types";
-import { NotionRichText } from "./NotionRichText";
+import { BlockRichText } from "./BlockRichText";
 
-interface NotionTodoProps {
+interface BlockTodoProps {
   block: Block;
   children?: React.ReactNode;
   className?: string;
 }
 
-export const NotionTodo: React.FC<NotionTodoProps> = ({
+export const BlockTodo: React.FC<BlockTodoProps> = ({
   block,
   children,
   className,
@@ -32,7 +32,7 @@ export const NotionTodo: React.FC<NotionTodoProps> = ({
         className="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100"
       >
         {block.properties?.title && (
-          <NotionRichText value={block.properties.title} block={block} />
+          <BlockRichText value={block.properties.title} block={block} />
         )}
         {children}
       </label>

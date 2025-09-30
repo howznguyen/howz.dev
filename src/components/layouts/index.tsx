@@ -104,24 +104,10 @@ interface BlogLayoutProps extends MainLayoutProps {
 export const BlogLayout: React.FC<BlogLayoutProps> = ({
   children,
   sidebar,
-  showSidebar = false,
   ...props
 }) => (
   <MainLayout {...props}>
-    <div className="layout">
-      {showSidebar ? (
-        <div className="grid lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-3">{children}</div>
-          {sidebar && (
-            <div className="lg:col-span-1">
-              <aside className="sticky top-20">{sidebar}</aside>
-            </div>
-          )}
-        </div>
-      ) : (
-        children
-      )}
-    </div>
+    <div className="layout">{children}</div>
   </MainLayout>
 );
 
@@ -155,7 +141,7 @@ export const PostLayout: React.FC<PostLayoutProps> = ({
 // HOC for adding layouts to pages
 export function withLayout<P extends object>(
   LayoutComponent: React.FC<any>,
-  layoutProps?: any
+  layoutProps?: any,
 ) {
   return function WrappedComponent(PageComponent: React.FC<P>) {
     const WithLayoutComponent = (props: P) => (

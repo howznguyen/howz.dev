@@ -9,6 +9,7 @@ import "prismjs/plugins/line-numbers/prism-line-numbers.css";
 import { Inter } from "next/font/google";
 import type { Metadata } from "next/types";
 import { Route } from "@/lib";
+import site from "@/datas/site";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
@@ -33,7 +34,7 @@ export default function RootLayout({
         <link
           rel="alternate"
           type="application/rss+xml"
-          title="Howz Nguyen Blog RSS Feed"
+          title={`${site.name} RSS Feed`}
           href={Route.rss(true)}
         />
       </head>
