@@ -7,7 +7,7 @@ import { useCopyToClipboard } from "react-use";
 import Icon from "@/components/atoms/Icon";
 import hljs from "highlight.js";
 
-interface NotionCodeProps {
+interface BlockCodeProps {
   block: Block;
   recordMap: ExtendedRecordMap;
   children?: React.ReactNode;
@@ -298,7 +298,7 @@ const detectLanguage = (code: string): string => {
   }
 };
 
-export const NotionCode: React.FC<NotionCodeProps> = ({
+export const BlockCode: React.FC<BlockCodeProps> = ({
   block,
   recordMap,
   children,
@@ -342,7 +342,7 @@ export const NotionCode: React.FC<NotionCodeProps> = ({
           language={finalLanguage}
           theme="github-dark"
           showLineNumbers
-          className="bg-gray-900 rounded-xl shadow-lg w-full max-w-none text-sm"
+          className="bg-gray-900 rounded-xl shadow-lg w-full max-w-none text-sm p-2"
         >
           {codeString}
         </ShikiHighlighter>

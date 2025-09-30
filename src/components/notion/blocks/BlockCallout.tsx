@@ -2,17 +2,23 @@
 
 import React from "react";
 import type { Block, ExtendedRecordMap } from "notion-types";
-import { NotionRichText } from "./NotionRichText";
+import { BlockRichText } from "./BlockRichText";
 import { useNotionContext } from "../NotionContext";
+import {
+  getColorClasses,
+  getBackgroundColorClasses,
+  isBackgroundColor,
+} from "@/lib/notion-color";
+import cn from "classnames";
 
-interface NotionCalloutProps {
+interface BlockCalloutProps {
   block: Block;
   className?: string;
   children?: React.ReactNode;
   [key: string]: any; // Allow other props from react-notion-x
 }
 
-export const NotionCallout: React.FC<NotionCalloutProps> = ({
+export const BlockCallout: React.FC<BlockCalloutProps> = ({
   block,
   className,
   children,
@@ -45,7 +51,7 @@ export const NotionCallout: React.FC<NotionCalloutProps> = ({
             if (childBlock.type === "text" && childBlock.properties?.title) {
               return (
                 <div key={childId}>
-                  <NotionRichText
+                  <BlockRichText
                     value={childBlock.properties.title}
                     block={childBlock}
                   />
@@ -75,14 +81,28 @@ export const NotionCallout: React.FC<NotionCalloutProps> = ({
     );
   };
 
+  const blockColor = block.format?.block_color;
+  const colorClasses = getColorClasses(blockColor);
+  const hasBackgroundColor = isBackgroundColor(blockColor);
+
   return (
-    <div className="p-3 mb-4 flex items-center bg-gray-100 rounded-lg dark:bg-gray-800 w-full max-w-none">
-      <span className="text-lg mr-3 text-gray-500 dark:text-gray-400">
+    <div
+      className={cn(
+        "p-3 mb-4 flex items-center rounded-lg w-full max-w-none",
+        blockColor
+          ? colorClasses
+          : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white",
+      )}
+    >
+      <span
+        className={cn(
+          "text-lg mr-3",
+          blockColor ? "" : "text-gray-500 dark:text-gray-400",
+        )}
+      >
         {emoji}
       </span>
-      <span className="text-base text-gray-900 dark:text-white">
-        {renderContent()}
-      </span>
+      <span className="text-base">{renderContent()}</span>
     </div>
   );
 };

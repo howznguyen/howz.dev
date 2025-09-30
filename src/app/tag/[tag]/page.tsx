@@ -1,16 +1,13 @@
 import { PostList } from "@/components/molecules";
 import { MainTemplate, PageNotFound } from "@/components/templates";
-import { Route } from "@/lib";
 import Notion from "@/services/notion";
-import type { BlogPost } from "@/types/notion";
-import type { Post } from "@/types";
-import { convertBlogPostToPost } from "@/lib/adapters";
 import tags from "@/datas/tags";
 import navigation from "@/datas/navigation";
 import { SITE_CONFIG } from "@/lib/constants";
 import { categories } from "@/datas/categories";
 import type { Metadata } from "next/types";
 import { LinkAtoms } from "@/components/atoms";
+import site from "@/datas/site";
 
 interface TagPageProps {
   params: Promise<{
@@ -27,12 +24,12 @@ export async function generateMetadata({
   try {
     const allTags = await Notion.getTags();
     const currentTag = allTags.find(
-      (t) => t.name.toLowerCase() === tag.toLowerCase()
+      (t) => t.name.toLowerCase() === tag.toLowerCase(),
     );
 
     const title = currentTag
-      ? `Posts tagged with "${currentTag.name}" | Howz.dev`
-      : `Posts tagged with "${tag}" | Howz.dev`;
+      ? `Posts tagged with "${currentTag.name}"${site.branding.title_suffix}`
+      : `Posts tagged with "${tag}"${site.branding.title_suffix}`;
 
     const description = `All posts tagged with ${currentTag?.name || tag}`;
 
@@ -52,7 +49,7 @@ export async function generateMetadata({
     };
   } catch (error) {
     return {
-      title: `Posts tagged with "${tag}" | Howz.dev`,
+      title: `Posts tagged with "${tag}"${site.branding.title_suffix}`,
       description: `All posts tagged with ${tag}`,
     };
   }
@@ -84,7 +81,7 @@ export default async function TagPage({ params }: TagPageProps) {
     // Get all tags for additional info
     const allTags = await Notion.getTags();
     const currentTag = allTags.find(
-      (t) => t.name.toLowerCase() === tag.toLowerCase()
+      (t) => t.name.toLowerCase() === tag.toLowerCase(),
     );
 
     if (!currentTag && posts.length === 0) {

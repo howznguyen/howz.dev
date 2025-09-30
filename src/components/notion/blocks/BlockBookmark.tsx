@@ -6,15 +6,15 @@ import Link from "next/link";
 import Image from "next/image";
 import cn from "classnames";
 
-interface NotionBookmarkProps {
+interface BlockBookmarkProps {
   block: Block;
   recordMap: ExtendedRecordMap;
 }
 
-export const NotionBookmark: React.FC<NotionBookmarkProps> = ({
+export const BlockBookmark: React.FC<BlockBookmarkProps> = ({
   block,
   recordMap,
-}: NotionBookmarkProps) => {
+}: BlockBookmarkProps) => {
   const [coverError, setCoverError] = useState(false);
   const [iconError, setIconError] = useState(false);
 
@@ -38,7 +38,7 @@ export const NotionBookmark: React.FC<NotionBookmarkProps> = ({
           "cursor-newtab relative",
           cover && !coverError
             ? "md:max-h-32 flex flex-col items-center md:flex-row"
-            : "flex flex-col"
+            : "flex flex-col",
         )}
       >
         {cover && !coverError && (
@@ -57,15 +57,15 @@ export const NotionBookmark: React.FC<NotionBookmarkProps> = ({
             cover && !coverError ? "md:w-auto" : ""
           } flex flex-col justify-between p-4`}
         >
-          <span className="mb-2 text-left text-sm md:text-xl font-semibold tracking-tight text-gray-900 dark:text-white overflow-hidden leading-0 max-h-5 md:max-h-8">
+          <span className="mb-1 text-left text-md md:text-lg font-semibold tracking-tight text-gray-900 dark:text-white overflow-hidden leading-0 max-h-5 md:max-h-8">
             {title || url}
           </span>
           {description && (
-            <div className="mb-3 font-normal text-xs md:text-base text-gray-700 dark:text-gray-400 overflow-hidden leading-4 max-h-8 md:max-h-12 md:h-14 text-left">
+            <div className="mb-1 md:mb-2 font-normal text-xs md:text-sm text-gray-700 dark:text-gray-400 overflow-hidden leading-4 md:max-h-10 text-left">
               {description}
             </div>
           )}
-          <div className="text-sm text-gray-600 dark:text-gray-400 w-full max-w-[600px] overflow-hidden max-h-6 md:h-6 flex items-center">
+          <div className="text-xs text-gray-600 dark:text-gray-400 w-full max-w-[600px] overflow-hidden max-h-6 md:h-6 flex items-center">
             {icon && !iconError ? (
               <Image
                 width={20}

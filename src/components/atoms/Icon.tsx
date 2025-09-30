@@ -28,6 +28,7 @@ import * as ri_vs from "react-icons/vsc";
 import * as ri_tb from "react-icons/tb";
 import * as ri_tf from "react-icons/tfi";
 import * as ri_rx from "react-icons/rx";
+import * as ri_pi from "react-icons/pi";
 
 const icons: any = {
   ...ri_ci,
@@ -57,6 +58,7 @@ const icons: any = {
   ...ri_tb,
   ...ri_tf,
   ...ri_rx,
+  ...ri_pi,
 };
 
 interface IconProps {

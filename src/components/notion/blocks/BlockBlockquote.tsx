@@ -3,13 +3,13 @@
 import React from "react";
 import type { Block, ExtendedRecordMap } from "notion-types";
 
-interface NotionBlockquoteProps {
+interface BlockBlockquoteProps {
   block: Block;
   recordMap: ExtendedRecordMap;
   children?: React.ReactNode;
 }
 
-export const NotionBlockquote: React.FC<NotionBlockquoteProps> = ({
+export const BlockBlockquote: React.FC<BlockBlockquoteProps> = ({
   block,
   recordMap,
   children

@@ -13,13 +13,13 @@ import {
 } from "react-social-media-embed";
 import ReactPlayer from "react-player";
 
-interface NotionEmbedProps {
+interface BlockEmbedProps {
   block: Block;
   recordMap: ExtendedRecordMap;
   url?: string;
 }
 
-export const NotionEmbed: React.FC<NotionEmbedProps> = ({
+export const BlockEmbed: React.FC<BlockEmbedProps> = ({
   block,
   recordMap,
   url: propUrl,

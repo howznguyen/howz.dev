@@ -6,18 +6,18 @@ import type { Block, ExtendedRecordMap } from "notion-types";
 
 import { defaultMapImageUrl } from "@/services/notion/utils.service";
 
-import { NotionRichText } from "./blocks";
+import { BlockRichText } from "./blocks";
 import { Block as ExtendedBlock } from "./blocks/Block";
 import { NotionProvider, useNotionContext } from "./NotionContext";
 
 const Pdf = dynamic(
   () => import("react-notion-x/build/third-party/pdf").then((m) => m.Pdf),
-  { ssr: false }
+  { ssr: false },
 );
 
 const Modal = dynamic(
   () => import("react-notion-x/build/third-party/modal").then((m) => m.Modal),
-  { ssr: false }
+  { ssr: false },
 );
 
 interface NotionRendererProps {
@@ -69,13 +69,13 @@ export const NotionRenderer: React.FC<NotionRendererProps> = ({
     () => ({
       // Override Block component to handle all custom block rendering
       Block: ExtendedBlock,
-      Text: NotionRichText, // Custom text rendering
+      Text: BlockRichText, // Custom text rendering
       // Empty Collection component to suppress warnings
       Collection: () => null,
       Pdf,
       Modal,
     }),
-    []
+    [],
   );
 
   const resolvedPageUrlMap = useMemo(() => pageUrlMap ?? {}, [pageUrlMap]);

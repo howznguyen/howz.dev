@@ -1,11 +1,11 @@
 import { getUnofficialDatabase } from "./api.service";
-import { getPage } from "./notion-x.service";
+import { getPage, getUsers } from "./notion-x.service";
 import { convertNotionResponseToPosts } from "./utils.service";
 import { NotionRenderService } from "./render.service";
 import { umamiService } from "@/services/umami/umami.service";
-import type { Post } from "@/types";
+import type { Post, User, PageContent } from "@/types";
 import type { BlogPost, Tag, SearchResult } from "@/types/notion";
-import type { NotionHeading } from "./render.service";
+import { generateAuthorSlug } from "@/lib/author-utils";
 
 /**
  * Unified Notion Service
@@ -44,15 +44,17 @@ export class NotionService {
   /**
    * Get all posts from Notion database as Post[]
    */
-  async getAllPosts(
+  async getPosts(
     options: {
       tags?: string[];
       featured?: boolean;
       limit?: number;
       sortBy?: "date" | "views";
-    } = {}
+      publishedOnly?: boolean;
+    } = {},
   ): Promise<Post[]> {
     const cacheKey = this.getPostsCacheKey(options);
+
     const cachedPosts = this.postsCache.get(cacheKey);
     if (cachedPosts) {
       return cachedPosts;
@@ -69,7 +71,7 @@ export class NotionService {
         !this.notionApiWeb
       ) {
         console.warn(
-          "Notion environment variables not configured, returning empty posts"
+          "Notion environment variables not configured, returning empty posts",
         );
         return [];
       }
@@ -97,7 +99,10 @@ export class NotionService {
         return [];
       }
 
-      convertedPosts = this.filterPublishedPosts(convertedPosts);
+      // Apply publishedOnly filter (default to true)
+      if (options.publishedOnly !== false) {
+        convertedPosts = this.filterPublishedPosts(convertedPosts);
+      }
 
       // Apply filters
       if (options.tags && options.tags.length > 0) {
@@ -119,7 +124,7 @@ export class NotionService {
             views: post.slug ? viewsMap.get(post.slug) || 0 : 0,
           }));
           convertedPosts = convertedPosts.sort(
-            (a, b) => (b.views || 0) - (a.views || 0)
+            (a, b) => (b.views || 0) - (a.views || 0),
           );
         } catch (error) {
           console.error("Error fetching views for sorting:", error);
@@ -136,24 +141,88 @@ export class NotionService {
       const posts = convertedPosts.map((post) => this.convertToPost(post));
       this.postsCache.set(cacheKey, posts);
 
-      return posts;
+      // Populate authors for all posts
+      const postsWithAuthors = await this.populatePostsAuthors(posts);
+
+      this.postsCache.set(cacheKey, postsWithAuthors);
+
+      return postsWithAuthors;
     } catch (error) {
-      console.error("Error in getAllPosts:", error);
+      console.error("Error in getPosts:", error);
       throw new Error("Failed to fetch posts");
     }
   }
 
   /**
+   * Populate authors for posts using their userIds
+   */
+  private async populatePostsAuthors(posts: Post[]): Promise<Post[]> {
+    // Collect all unique user IDs
+    const allUserIds = new Set<string>();
+    posts.forEach((post) => {
+      if (post.userIds && post.userIds.length > 0) {
+        post.userIds.forEach((id) => allUserIds.add(id));
+      }
+    });
+
+    if (allUserIds.size === 0) {
+      console.log("No userIds found, returning posts as is");
+      return posts;
+    }
+
+    // Fetch all users at once
+    const usersResponse = await getUsers(Array.from(allUserIds));
+
+    // Extract users from the response structure
+    const users: Record<string, any> = {};
+    if (usersResponse.results && Array.isArray(usersResponse.results)) {
+      usersResponse.results.forEach((result: any) => {
+        if (result.value && result.value.id) {
+          users[result.value.id] = result.value;
+        }
+      });
+    }
+
+    // Map users to posts
+    return posts.map((post) => {
+      if (!post.userIds || post.userIds.length === 0) {
+        return post;
+      }
+
+      const authors: User[] = post.userIds
+        .map((userId) => users[userId])
+        .filter(Boolean)
+        .map((user) => ({
+          id: user.id,
+          name: user.name,
+          avatar: user.profile_photo || user.avatar_url || "",
+          profile_photo: user.profile_photo,
+          avatar_url: user.avatar_url,
+          verified: !user.reverify,
+        }));
+
+      const userSlugs: string[] = authors.map((author) =>
+        generateAuthorSlug(author),
+      );
+      return {
+        ...post,
+        authors,
+        userSlugs,
+      };
+    });
+  }
+
+  /**
    * Get posts with pagination
    */
-  async getPosts(
+  async getPostsPaginated(
     options: {
       page?: number;
       perPage?: number;
       tags?: string[];
       featured?: boolean;
       sortBy?: "date" | "views";
-    } = {}
+    } = {},
   ): Promise<{
     posts: Post[];
     total: number;
@@ -163,9 +232,8 @@ export class NotionService {
     has_next: boolean;
     has_prev: boolean;
   }> {
-    const { page = 1, perPage = 10 } = options;
-
-    const allPosts = await this.getAllPosts(options);
+    const { page = 1, perPage = 10, ...restOptions } = options;
+    const allPosts = await this.getPosts(restOptions);
     const total = allPosts.length;
     const totalPages = Math.ceil(total / perPage);
     const offset = (page - 1) * perPage;
@@ -186,7 +254,7 @@ export class NotionService {
    * Build slug map for internal Notion page links
    */
   async getPostSlugMap(): Promise<Map<string, string>> {
-    const posts = await this.getAllPosts();
+    const posts = await this.getPosts();
     const map = new Map<string, string>();
 
     posts.forEach((post) => {
@@ -206,7 +274,7 @@ export class NotionService {
    */
   async getPostBySlug(slug: string): Promise<BlogPost | null> {
     try {
-      const allPosts = await this.getAllPosts();
+      const allPosts = await this.getPosts();
 
       const post = allPosts.find((p) => p.slug === slug);
 
@@ -217,6 +285,37 @@ export class NotionService {
 
       const pageContent = await this.getPageContent(post.id);
       const readingTime = this.calculateReadingTime(pageContent.textContent);
+
+      // Fetch authors if userIds exist
+      let authors: User[] = [];
+      if (post.userIds && post.userIds.length > 0) {
+        try {
+          const usersResponse = await getUsers(post.userIds);
+
+          const users: Record<string, any> = {};
+          // Try both possible response structures
+          const userMap = usersResponse?.results;
+          if (userMap) {
+            Object.values(userMap).forEach((user: any) => {
+              if (user?.value) {
+                users[user.value.id] = user.value;
+              }
+            });
+          }
+
+          authors = post.userIds
+            .map((userId) => users[userId])
+            .filter(Boolean)
+            .map((user) => ({
+              id: user.id,
+              name: user.given_name + " " + user.family_name,
+              avatar: user.profile_photo,
+              verified: !user.reverify,
+            }));
+        } catch (error) {
+          console.error("Error fetching authors for post:", slug, error);
+        }
+      }
 
       let views = 0;
       try {
@@ -231,14 +330,15 @@ export class NotionService {
         slug: post.slug || "",
         title: post.title,
         description: post.description || "",
-        content: pageContent.textContent,
+        pageContent: pageContent,
+        readingTime: readingTime,
         excerpt: post.description || "",
         status: post.status,
         createdAt: new Date(post.createdAt).toISOString(),
         updatedAt: new Date(post.updatedAt).toISOString(),
         tags: post.tags,
         category: "Others",
-        author: "Howz Nguyen",
+        authors: authors,
         featured: post.featured,
         cover: post.cover
           ? {
@@ -246,7 +346,7 @@ export class NotionService {
               alt: post.title,
             }
           : undefined,
-        reading_time: readingTime,
+        icon: post.icon,
         views: views,
       };
     } catch (error) {
@@ -255,14 +355,44 @@ export class NotionService {
     }
   }
 
+  async getPostByUserSlug(userSlug: string): Promise<{
+    author?: User;
+    posts: Post[];
+  }> {
+    try {
+      const allPosts = await this.getPosts();
+      const filteredPosts = allPosts.filter((post) =>
+        (post.userSlugs ?? []).includes(userSlug),
+      );
+      let author: User | undefined = undefined;
+      if (
+        filteredPosts.length &&
+        filteredPosts[0]?.authors &&
+        filteredPosts[0]?.authors?.length > 0
+      ) {
+        author = filteredPosts[0]?.authors[0];
+      }
+
+      return {
+        author: author,
+        posts: filteredPosts,
+      };
+    } catch (error) {
+      console.error("Error in getPostByUserSlug:", error);
+      throw new Error("Failed to fetch posts by user slug");
+    }
+  }
+
   /**
    * Get posts by tag as Post[]
    */
   async getPostsByTag(tag: string): Promise<Post[]> {
     try {
-      const allPosts = await this.getAllPosts();
+      const allPosts = await this.getPosts();
       const filteredPosts = allPosts.filter((post) =>
-        post.tags.some((postTag) => postTag.toLowerCase() === tag.toLowerCase())
+        post.tags.some(
+          (postTag) => postTag.toLowerCase() === tag.toLowerCase(),
+        ),
       );
       return filteredPosts;
     } catch (error) {
@@ -277,10 +407,10 @@ export class NotionService {
   async getRelatedPosts(
     currentPostId: string,
     currentPostTags: string[],
-    limit: number = 3
+    limit: number = 3,
   ): Promise<Post[]> {
     try {
-      const allPosts = await this.getAllPosts();
+      const allPosts = await this.getPosts();
       const currentPost = allPosts.find((post) => post.id === currentPostId);
 
       if (!currentPost) {
@@ -291,7 +421,7 @@ export class NotionService {
         .filter(
           (post) =>
             post.id !== currentPost.id &&
-            post.tags.some((tag) => currentPostTags.includes(tag))
+            post.tags.some((tag) => currentPostTags.includes(tag)),
         )
         .slice(0, limit);
 
@@ -307,7 +437,7 @@ export class NotionService {
    */
   async getFeaturedPosts(limit: number = 5): Promise<Post[]> {
     try {
-      return await this.getAllPosts({ featured: true, limit });
+      return await this.getPosts({ featured: true, limit });
     } catch (error) {
       console.error("Error in getFeaturedPosts:", error);
       return [];
@@ -319,7 +449,7 @@ export class NotionService {
    */
   async getTags(): Promise<Tag[]> {
     try {
-      const allPosts = await this.getAllPosts();
+      const allPosts = await this.getPosts();
       const tagNames = allPosts.flatMap((post) => post.tags);
 
       // Remove duplicates first
@@ -344,7 +474,7 @@ export class NotionService {
    */
   async getTagsWithCounts(): Promise<{ name: string; count: number }[]> {
     try {
-      const allPosts = await this.getAllPosts();
+      const allPosts = await this.getPosts();
       const tagCounts = new Map<string, number>();
       allPosts.forEach((post) => {
         post.tags.forEach((tag) => {
@@ -367,14 +497,14 @@ export class NotionService {
    */
   async searchPosts(query: string): Promise<SearchResult[]> {
     try {
-      const allPosts = await this.getAllPosts();
+      const allPosts = await this.getPosts();
       const filteredPosts = allPosts.filter(
         (post) =>
           post.title.toLowerCase().includes(query.toLowerCase()) ||
           post.description?.toLowerCase().includes(query.toLowerCase()) ||
           post.tags.some((tag) =>
-            tag.toLowerCase().includes(query.toLowerCase())
-          )
+            tag.toLowerCase().includes(query.toLowerCase()),
+          ),
       );
 
       return filteredPosts.map((post) => ({
@@ -397,7 +527,7 @@ export class NotionService {
   /**
    * Get page content with blocks
    */
-  async getPageContent(pageId: string) {
+  async getPageContent(pageId: string): Promise<PageContent> {
     try {
       const recordMap = await getPage(pageId);
       const textContent = NotionRenderService.extractPlainText(recordMap);
@@ -463,6 +593,8 @@ export class NotionService {
       featured: post.featured,
       cover: post.cover || undefined,
       author: "Howz Nguyen",
+      authors: post.authors || [],
+      userIds: post.userIds || [],
       readingTime: post.readingTime || 5,
       views: post.views,
       createdAt: post.createdAt,
@@ -477,7 +609,7 @@ export class NotionService {
   private sortPostsByDate(posts: Post[]): Post[] {
     return posts.sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
   }
 
@@ -511,7 +643,7 @@ export class NotionService {
     }
 
     const matchingTags = post.tags.filter((tag) =>
-      tag.toLowerCase().includes(queryLower)
+      tag.toLowerCase().includes(queryLower),
     );
     score += matchingTags.length * 3;
 
@@ -539,7 +671,7 @@ export class NotionService {
    */
   async getPostsForSitemap(): Promise<any[]> {
     try {
-      const posts = await this.getAllPosts();
+      const posts = await this.getPosts();
       return posts.map((post) => ({
         url: `/post/${post.slug}`,
         lastModified: new Date(post.updatedAt).toISOString(),
@@ -558,7 +690,7 @@ export class NotionService {
    */
   async getPostsForRSS(): Promise<any[]> {
     try {
-      const posts = await this.getAllPosts();
+      const posts = await this.getPosts();
       return posts.map((post) => ({
         title: post.title,
         description: post.description || "",

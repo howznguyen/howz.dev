@@ -21,7 +21,8 @@ import {
 import { SITE_CONFIG } from "@/lib/constants";
 import navigation from "@/datas/navigation";
 import { categories } from "@/datas/categories";
-import tags from "@/datas/tags";
+import site from "@/datas/site";
+import { BASE_URL } from "@/lib/env";
 
 export async function generateMetadata({
   params,
@@ -38,32 +39,30 @@ export async function generateMetadata({
     }
 
     return {
-      title: `${blogPost.title} | Howz.dev`,
+      title: `${blogPost.title}${site.branding.title_suffix}`,
       description: blogPost.description,
       keywords: blogPost.tags?.join(", "),
       openGraph: {
         title: blogPost.title,
         description: blogPost.description,
-        images: blogPost.cover
-          ? [
-              {
-                url: blogPost.cover.url,
-                width: 800,
-                height: 400,
-                alt: blogPost.title,
-              },
-            ]
-          : [],
+        images: [
+          {
+            url: `/og?slug=${slug}`,
+            width: 1200,
+            height: 630,
+            alt: blogPost.title,
+          },
+        ],
         type: "article",
         publishedTime: blogPost.createdAt,
-        authors: ["Howz Nguyen"],
+        authors: [site.author.name],
         tags: blogPost.tags,
       },
       twitter: {
         card: "summary_large_image",
         title: blogPost.title,
         description: blogPost.description,
-        images: blogPost.cover ? [blogPost.cover] : [],
+        images: [`/og?slug=${slug}`],
       },
     };
   } catch (error) {
@@ -74,8 +73,16 @@ export async function generateMetadata({
     };
   }
 }
-import { DateTime, Icon, LinkAtoms, Tag } from "@/components/atoms";
+import {
+  DateTime,
+  Icon,
+  LinkAtoms,
+  Tag,
+  User,
+  Users,
+} from "@/components/atoms";
 import postData from "@/datas/post";
+import React from "react";
 
 interface PostPageProps {
   params: Promise<{
@@ -86,7 +93,7 @@ interface PostPageProps {
 // Generate static params for ISR
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   try {
-    const posts = await Notion.getAllPosts();
+    const posts = await Notion.getPosts();
     return posts.map((post: any) => ({
       slug: post.slug,
     }));
@@ -106,15 +113,15 @@ export default async function PostPage({ params }: PostPageProps) {
 
     // Get post with full content using enhanced Notion service
     const blogPost = await Notion.getPostBySlug(slug);
-    console.log("Post fetched:", blogPost ? "success" : "not found");
 
     if (!blogPost) {
       console.log("Post not found, returning 404");
       return <PageNotFound />;
     }
-
-    // Get page content using NotionX service
-    const pageContent = await Notion.getPageContent(blogPost.id);
+    // Convert main post to unified Post shape for components
+    const post = convertBlogPostToPost(blogPost);
+    // Calculate reading time from pageContent
+    //
 
     // Build page URL mapping for react-notion-x internal references
     const postSlugMap = await Notion.getPostSlugMap();
@@ -128,30 +135,27 @@ export default async function PostPage({ params }: PostPageProps) {
     });
 
     // Generate table of contents from headings
-    const toc = pageContent.headings;
+    const toc = post.pageContent?.headings || [];
 
     // Get related posts as Post[] directly (no conversion needed)
     const relatedPosts = await Notion.getRelatedPosts(
       blogPost.id,
       blogPost.tags,
-      3
+      3,
     );
 
-    // Convert main post to unified Post shape for components
-    const post = convertBlogPostToPost(blogPost);
-
     // Generate social sharing URLs
-    const baseUrl = "https://howz.dev";
+    const baseUrl = BASE_URL;
     const postUrl = `${baseUrl}/post/${slug}`;
     const socialUrls = {
       twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-        postUrl
+        postUrl,
       )}&text=${encodeURIComponent(blogPost.title)}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        postUrl
+        postUrl,
       )}`,
       linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-        postUrl
+        postUrl,
       )}`,
     };
 
@@ -163,7 +167,7 @@ export default async function PostPage({ params }: PostPageProps) {
       description: blogPost.description,
       author: {
         "@type": "Person",
-        name: "Howz Nguyen",
+        name: site.author.displayName,
       },
       datePublished: blogPost.createdAt,
       url: postUrl,
@@ -218,9 +222,16 @@ export default async function PostPage({ params }: PostPageProps) {
               </div>
             )}
 
-            <h1 className="text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-4xl dark:text-white">
-              {post.title}
-            </h1>
+            <div className="flex items-start gap-3 mb-4">
+              {blogPost.icon && (
+                <div className="text-4xl md:text-5xl lg:text-6xl flex-shrink-0 mt-1">
+                  {blogPost.icon}
+                </div>
+              )}
+              <h1 className="text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-4xl dark:text-white flex-1">
+                {post.title}
+              </h1>
+            </div>
 
             <div className="md:mt-6 mt-2 flex items-center justify-start gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 flex-wrap">
               <div className="flex items-center gap-1">
@@ -275,12 +286,13 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           </div>
 
-          <hr className="dark:border-gray-600" />
+          {/* Author Section */}
+          <Users users={post.authors ?? []} size="section" />
 
           <div className="lg:grid lg:grid-cols-[auto,250px] lg:gap-4 mt-4">
             <section className="md:mr-6 leading-7 text-justify w-auto min-w-0 overflow-hidden">
               <NotionRenderer
-                recordMap={pageContent.recordMap}
+                recordMap={post.pageContent?.recordMap}
                 pageUrlMap={pageUrlRecord}
                 className="notion-content"
               />

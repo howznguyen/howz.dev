@@ -2,8 +2,6 @@
 
 import React from "react";
 import { Footer, Header } from "@/components/organisms";
-import Head from "next/head";
-import { HeadMeta, Route } from "@/lib";
 
 interface MainTemplateProps {
   children: React.ReactNode;

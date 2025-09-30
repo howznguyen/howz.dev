@@ -14,7 +14,6 @@ export interface BlogPost extends BasePost {
     keywords?: string[];
     og_image?: string;
   };
-  reading_time?: number;
   likes?: number;
 }
 

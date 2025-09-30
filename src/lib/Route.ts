@@ -15,7 +15,7 @@ const Route = {
   },
   author: (slug: string, includeDomain = false) => {
     const base = includeDomain ? BASE_URL : "";
-    return `${base}/author/${slug}`;
+    return `${base}/u/${slug}`;
   },
   tag: {
     index: (includeDomain = false) => {
