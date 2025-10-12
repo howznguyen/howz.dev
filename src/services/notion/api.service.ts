@@ -43,6 +43,7 @@ export async function getUnofficialDatabaseImpl(opts: {
     "Content-Type": "application/json",
     cookie: `token_v2=${notionTokenV2}`,
     "x-notion-active-user-header": notionActiveUser,
+    "x-notion-space-id": spaceId,
   };
 
   const body = {
@@ -123,7 +124,7 @@ export async function queryDatabaseImpl(opts: {
     const res = await fetch(url, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${notionToken || process.env.NOTION_TOKEN}`,
+        Authorization: `Bearer ${notionToken || process.env.NOTION_TOKEN_V2}`,
         "Notion-Version":
           notionVersion || (process.env.NOTION_VERSION as string),
         "Content-Type": "application/json",

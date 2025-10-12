@@ -78,7 +78,7 @@ export function User({
             >
               <span>{user.name}</span>
               {user.verified && (
-                <Icon icon="PiSealCheckFill" className="w-4 h-4 inline-block" />
+                <Icon icon="PiSealCheckFill" className="ml-1 w-4 h-4 inline-block" />
               )}
             </LinkAtoms>
             <div>Content Writer</div>

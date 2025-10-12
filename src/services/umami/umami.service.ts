@@ -60,7 +60,7 @@ export class UmamiService {
 
       const response = await fetch(url, {
         headers: {
-          "x-umami-api-key": this.token,
+          Authorization: `Bearer ${this.token}`,
           "Content-Type": "application/json",
         },
       });
@@ -115,7 +115,7 @@ export class UmamiService {
 
       const response = await fetch(apiUrl, {
         headers: {
-          "x-umami-api-key": this.token,
+          Authorization: `Bearer ${this.token}`,
           "Content-Type": "application/json",
         },
       });

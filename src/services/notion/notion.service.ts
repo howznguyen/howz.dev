@@ -308,7 +308,7 @@ export class NotionService {
             .filter(Boolean)
             .map((user) => ({
               id: user.id,
-              name: user.given_name + " " + user.family_name,
+              name: user.name,
               avatar: user.profile_photo,
               verified: !user.reverify,
             }));

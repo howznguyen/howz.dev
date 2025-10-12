@@ -152,7 +152,7 @@ export const BlockRichText: React.FC<TextProps> = ({
 
               case "u":
                 const userId = decorator[1];
-                const user = recordMap?.notion_user[userId]?.value;
+                const user = recordMap?.notion_user[userId]?.value as any;
 
                 if (!user) {
                   console.log("missing user", userId);
@@ -163,7 +163,7 @@ export const BlockRichText: React.FC<TextProps> = ({
 
                 const userProps = {
                   id: user.id,
-                  name: user.given_name + " " + user.family_name,
+                  name: user.name,
                   avatar: user.profile_photo,
                 };
 
