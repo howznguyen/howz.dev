@@ -41,6 +41,11 @@ export const BlockCallout: React.FC<BlockCalloutProps> = ({
       return children;
     }
 
+    // Check if block has title property (main callout content)
+    if (block.properties?.title) {
+      return <BlockRichText value={block.properties.title} block={block} />;
+    }
+
     // Try to manually render child blocks if recordMap is available
     if (recordMap && block.content && block.content.length > 0) {
       const childContent = block.content
@@ -76,9 +81,7 @@ export const BlockCallout: React.FC<BlockCalloutProps> = ({
     }
 
     // Fallback
-    return (
-      <div className="text-gray-500 text-sm italic">No content available</div>
-    );
+    return null;
   };
 
   const blockColor = block.format?.block_color;

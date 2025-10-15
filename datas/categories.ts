@@ -1,10 +1,15 @@
 import { Category } from '@/types';
 
-export const categories = [
+export const categories: Category[] = [
   {
     name: "Knowledge",
     description: "Programming knowledge and algorithm related articles.",
     value: ["code", "algorithm"],
+  },
+  {
+    name: "NAS & Smarthome DIY",
+    description: "Articles about NAS and Smarthome DIY.",
+    value: ["nas", "smarthome", "diy"],
   },
   {
     name: "Tutorial & Tips",

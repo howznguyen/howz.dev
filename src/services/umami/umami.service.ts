@@ -18,11 +18,13 @@ export class UmamiService {
   private baseUrl: string;
   private websiteId: string;
   private token: string;
+  private usingApiKey: boolean;
 
   constructor() {
-    this.baseUrl = process.env.UMAMI_HOST || "";
+    this.baseUrl = process.env.UMAMI_HOST || "https://api.umami.is/v1";
     this.websiteId = process.env.UMAMI_WEBSITE_ID || "";
     this.token = process.env.UMAMI_TOKEN || "";
+    this.usingApiKey = this.baseUrl === "https://api.umami.is/v1";
   }
 
   /**
@@ -30,6 +32,47 @@ export class UmamiService {
    */
   isConfigured(): boolean {
     return !!(this.baseUrl && this.websiteId && this.token);
+  }
+
+  /**
+   * Create Request Default
+   */
+   private async createRequest(method: string, endpoint: string, {
+     body = {},
+     headers = {},
+     query = {},
+   }: {
+     body?: Record<string, any>;
+     headers?: Record<string, any>;
+     query?: Record<string, any>;
+   }) {
+
+    const defaultHeaders : Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    // if usingApiKey then set x-umami-api-key
+    if (this.usingApiKey) {
+      defaultHeaders["x-umami-api-key"] = this.token;
+    } else {
+      defaultHeaders["Authorization"] = `Bearer ${this.token}`;
+    }
+
+    const options: Record<string, any> = {
+      method,
+      headers: {...defaultHeaders, ...headers},
+    };
+
+    if (Object.keys(body).length > 0) {
+      options.body = JSON.stringify(body);
+    }
+
+    if (Object.keys(query).length > 0) {
+      const queryParams = new URLSearchParams(query);
+      endpoint += `?${queryParams.toString()}`;
+    }
+
+    return fetch(`${this.baseUrl}${endpoint}`, options);
   }
 
   /**
@@ -49,19 +92,14 @@ export class UmamiService {
     const endAt = timeRange?.endAt || now.getTime();
 
     try {
-      const url =
-        `${this.baseUrl}/websites/${this.websiteId}/metrics?` +
-        new URLSearchParams({
+      const endpoint = `/websites/${this.websiteId}/metrics`;
+
+      const response = await this.createRequest("GET", endpoint, {
+        query: {
           startAt: String(startAt),
           endAt: String(endAt),
           type: "url",
-          limit: "1000", // Get up to 1000 URLs
-        });
-
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-          "Content-Type": "application/json",
+          limit: "100000", // Get up to 10000 URLs
         },
       });
 
@@ -75,7 +113,27 @@ export class UmamiService {
       }
 
       const data: UmamiUrlMetric[] = await response.json();
-      return data || [];
+
+      // Merge data by URL (remove hash and sum views)
+      const urlMap = new Map<string, number>();
+
+      data.forEach((item) => {
+        // Remove hash from URL
+        const cleanUrl = item.x.replace(/#.*/, '');
+        // Sum views for the same URL
+        const currentViews = urlMap.get(cleanUrl) || 0;
+        urlMap.set(cleanUrl, currentViews + item.y);
+      });
+
+      // Convert map back to array format
+      const mergedData: UmamiUrlMetric[] = Array.from(urlMap.entries()).map(
+        ([url, views]) => ({
+          x: url,
+          y: views,
+        })
+      );
+
+      return mergedData;
     } catch (error) {
       console.error("Error fetching Umami URL metrics:", error);
       return [];
@@ -92,67 +150,14 @@ export class UmamiService {
    */
   async getUrlPageviews(
     url: string,
-    timeRange?: { startAt?: number; endAt?: number }
   ): Promise<number> {
     if (!this.isConfigured()) {
       return 0;
     }
+    const res = await this.getUrlMetrics();
 
-    const now = new Date();
-    const startAt = timeRange?.startAt || Date.UTC(2024, 0, 1);
-    const endAt = timeRange?.endAt || now.getTime();
-
-    try {
-      const apiUrl =
-        `${this.baseUrl}/websites/${this.websiteId}/pageviews?` +
-        new URLSearchParams({
-          startAt: String(startAt),
-          endAt: String(endAt),
-          url: url,
-          unit: "day",
-          timezone: "Asia/Ho_Chi_Minh",
-        });
-
-      const response = await fetch(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Umami API error:", response.status, errorText);
-        return 0;
-      }
-
-      const data = await response.json();
-
-      // Handle the actual response format from Umami v1 API
-      if (data?.sessions && Array.isArray(data.pageviews)) {
-        // Sum up pageviews from array of daily data: [{ x: '2025-08-31T17:00:00Z', y: 10 }]
-        return data.sessions.reduce(
-          (sum: number, item: any) => sum + (item.y || 0),
-          0
-        );
-      } else if (Array.isArray(data)) {
-        // Fallback: if data is directly an array
-        return data.reduce(
-          (sum: number, item: any) => sum + (item.y || item.value || 0),
-          0
-        );
-      } else if (data?.sessions?.value) {
-        // Handle stats response format (legacy)
-        return data.sessions.value;
-      } else if (typeof data === "number") {
-        return data;
-      }
-
-      return 0;
-    } catch (error) {
-      console.error("Error fetching Umami pageviews:", error);
-      return 0;
-    }
+    const metric = res.filter((m) => m.x.split('#')[0] == url);
+    return metric.length > 0 ? metric.reduce((acc, curr) => acc + curr.y, 0) : 0;
   }
 
   /**
@@ -170,7 +175,6 @@ export class UmamiService {
         viewsMap.set(slug, metric.y);
       }
     });
-
     return viewsMap;
   }
 }
